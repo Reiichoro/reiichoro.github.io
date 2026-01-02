@@ -4,79 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REIICHORO | 烈中金科技程序</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-gold: #ffca28; /* 金 (ORO) */
-            --tech-red: #ff3e3e;    /* 烈 (REII) */
-            --bg-black: #0a0a0a;
-            --text-gray: #a0a0a0;
-        }
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Space Mono', monospace; 
-            background-color: var(--bg-black); 
-            color: white;
-            line-height: 1.6;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 480px;
-            width: 90%;
-            background: #151515;
-            padding: 2.5rem;
-            border-radius: 4px;
-            border: 1px solid #333;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(255, 62, 62, 0.1);
-        }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: 5px; }
-        .brand { color: var(--tech-red); }
-        .brand-gold { color: var(--primary-gold); }
-        .slogan { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 2rem; }
-        .cta-button {
-            display: inline-block;
-            background-color: transparent;
-            color: var(--primary-gold);
-            text-decoration: none;
-            padding: 12px 32px;
-            border: 1px solid var(--primary-gold);
-            font-weight: 700;
-            transition: all 0.3s;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .cta-button:hover {
-            background-color: var(--primary-gold);
-            color: black;
-            box-shadow: 0 0 15px var(--primary-gold);
-        }
-        .footer {
-            margin-top: 2rem;
-            font-size: 0.7rem;
-            color: #444;
-            letter-spacing: 1px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        body { background-color: #0a0a0a; color: #d1d1d1; font-family: 'Space Mono', monospace; }
+        .tech-gradient { background: linear-gradient(90deg, #ff3e3e 0%, #ffca28 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-card { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px); border: 1px solid #333; transition: all 0.3s; }
+        .glass-card:hover { border-color: #ff3e3e; box-shadow: 0 0 20px rgba(255, 62, 62, 0.2); }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-<div class="container">
-    <h1><span class="brand">REII</span>CH<span class="brand-gold">ORO</span></h1>
-    <div class="slogan">[ 烈 · 中 · 金 ] 科技程序協議</div>
-    <p style="font-size: 0.85rem; color: #888;">高性能數字工具開發與測試演算。系統已準備就緒，等待訪問授權。</p>
-    
-    <a href="https://reiichoro.github.io/" class="cta-button">測式中 >測試中</a>
-    
-    <div class="footer">
-        © 2026 REIICHORO LABS. SECURED ENCRYPTION.
-    </div>
-</div>
+    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center bg-black/80 border-b border-white/10">
+        <div class="text-xl font-bold tracking-tighter tech-gradient">REIICHORO</div>
+        <div class="hidden md:flex space-x-8 text-xs uppercase tracking-widest">
+            <a href="#core" class="hover:text-red-500 transition">核心技術</a>
+            <a href="#protocol" class="hover:text-red-500 transition">數據協議</a>
+            <a href="#" class="px-3 py-1 border border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition">接入終端</a>
+        </div>
+    </nav>
+
+    <section class="h-screen flex flex-col justify-center items-center px-4 overflow-hidden">
+        <div class="animate__animated animate__fadeInDown">
+            <span class="text-red-600 font-bold tracking-widest text-sm text-center block mb-4">SYSTEM INITIALIZING...</span>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-center tracking-tighter">烈 · 中 · 金</h1>
+        </div>
+        <p class="max-w-xl text-center text-gray-500 text-sm md:text-base mb-10 animate__animated animate__fadeInUp">
+            基於非線性算法的跨維度數據工具，為不確定的數字資產提供確定的底層邏輯支撐。
+        </p>
+        <div class="flex space-x-4 animate__animated animate__fadeInUp">
+            <button class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-sm font-bold transition">啟動程序</button>
+            <button class="border border-gray-600 hover:border-white px-8 py-3 text-sm font-bold transition text-gray-400 hover:text-white">查看文檔</button>
+        </div>
+    </section>
+
+    <section id="core" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card p-8">
+                <div class="text-red-600 mb-4 text-2xl">01</div>
+                <h3 class="text-xl font-bold mb-4">高頻處理</h3>
+                <p class="text-gray-500 text-sm">採用分佈式架構，在毫秒級別完成數據吞吐與邏輯校驗，無懼極端波動。</p>
+            </div>
+            <div class="glass-card p-8">
+                <div class="text-red-600 mb-4 text-2xl">02</div>
+                <h3 class="text-xl font-bold mb-4">隱匿協議</h3>
+                <p class="text-gray-500 text-sm">端到端的量子級加密算法，確保信息在傳輸過程中處於絕對黑箱狀態。</p>
+            </div>
+            <div class="glass-card p-8">
+                <div class="text-red-600 mb-4 text-2xl">03</div>
+                <h3 class="text-xl font-bold mb-4">自適應邏輯</h3>
+                <p class="text-gray-500 text-sm">機器學習驅動的動態策略引擎，根據市場環境自動優化執行路徑。</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-white/5 text-center">
+        <div class="text-gray-600 text-[10px] tracking-[0.3em] uppercase">
+            © 2026 REIICHORO LABS // ENCRYPTED ACCESS ONLY
+        </div>
+    </footer>
 
 </body>
 </html>
