@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Sitemap: https://reiichoro.github.io/sitemap.xml
+
+# 專門歡迎 AI 爬蟲
+User-agent: GPTBot
+Allow: /
+
+# 指定網站地圖路徑
+Sitemap: https://reiichoro.github.io/sitemap.xml
+
+# 阻擋不需要被 AI 抓取的垃圾目錄 (如果有)
+Disallow: /assets/css/
+Disallow: /assets/js/
