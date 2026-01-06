@@ -170,6 +170,30 @@ const i18nData = {
     'system-ch2': 'Part 02: 高效交付 - 敏捷與自動化流',
     'system-ch3': 'Part 03: 賬變優勢 - 財務透明化掌控',
     'system-ch4': 'Part 04: 技術專家 - 全棧大廠實戰積澱',
+    'team-title-main': '核心靈魂：專業與精神',
+'team-ch1': 'Part 01: 【履歷與起源】—— 技術的厚度',
+'team-ch2': 'Part 02: 【精神與風格】—— 執行的強度',
+'team-ch3': 'Part 03: 【生活與修養】—— 靈魂的寬度',
+'img-team1': 'assets/images/Team1.webp', 
+'img-team2': 'assets/images/Systems5.webp', 
+'img-team3': 'assets/images/Systems6.webp',
+'team2-title-main': '核心領魂：邏輯與效率',
+'team2-ch1': 'Part 01: 【邏輯之巔】—— 精準定義架構',
+'team2-ch2': 'Part 02: 【敏捷速度】—— 毫秒級執行力',
+'team2-ch3': 'Part 03: 【跨界整合】—— 賦予技術直覺',
+'img-team2-1': 'assets/images/Team2.webp',
+'img-team2-2': 'assets/images/Systems7.webp',
+'img-team2-3': 'assets/images/Systems8.webp',
+'team3-title-main': '核心靈魂：美學與架構',
+'team3-ch1': 'Part 01: 【美學架構】—— 代碼的優雅筆觸',
+'team3-p1': '數位美學設計師，擅長將用戶心理學融入交互邏輯。她的設計不僅關乎技術實現，更關乎感官的流暢與品牌情感的傳遞。',
+'team3-ch2': 'Part 02: 【深度洞察】—— 預見未來的增長',
+'team3-p2': '專注於具備前瞻性的擴展式架構，確保系統能隨企業規模進化。她讓技術不再是負擔，而是資產，支撐長遠的擴展潛力。',
+'team3-ch3': 'Part 03: 【靈魂賦予】—— 技術與品牌共生',
+'team3-p3': '賦予冷冰冰的體系以靈魂，讓每一項技術投資都具備商業美學。她站在技術與商業的交匯點，重構數位世界的價值。',
+'img-team3-1': 'assets/images/kyoko.webp',
+'img-team3-2': 'assets/images/Systems9.webp',
+'img-team3-3': 'assets/images/Systems10.webp',
     },
     'en': {
         'main-title': 'Advanced Tech Development<br>For Future Business',
@@ -332,6 +356,30 @@ const i18nData = {
     'system-ch2': 'Part 02: Rapid Delivery - Agile & Automation',
     'system-ch3': 'Part 03: Financial Transparency - Total Control',
     'system-ch4': 'Part 04: Technical Experts - Industry Experience',
+    'team-title-main': 'Core Soul: Professionalism & Spirit',
+'team-ch1': 'Part 01: [Background & Origin] — Depth of Tech',
+'team-ch2': 'Part 02: [Spirit & Style] — Intensity of Execution',
+'team-ch3': 'Part 03: [Life & Cultivation] — Breadth of Soul',
+'img-team1': 'assets/images/EN-Team1.webp', 
+'img-team2': 'assets/images/EN-Systems5.webp', 
+'img-team3': 'assets/images/EN-Systems6.webp',
+'team2-title-main': 'Core Soul: Logic & Efficiency',
+'team2-ch1': 'Part 01: [Logic Peak] — Defining Architecture',
+'team2-ch2': 'Part 02: [Agile Speed] — Millisecond Execution',
+'team2-ch3': 'Part 03: [Cross-Integration] — Intuitive Tech',
+'img-team2-1': 'assets/images/EN-Team2.webp',
+'img-team2-2': 'assets/images/EN-Systems7.webp',
+'img-team2-3': 'assets/images/EN-Systems8.webp',
+'team3-title-main': 'Core Soul: Aesthetics & Architecture',
+'team3-ch1': 'Part 01: [Aesthetic Arch] — Elegant Strokes of Code',
+'team3-p1': 'Expert in digital aesthetics, integrating user psychology into interaction logic to create brand-focused digital experiences.',
+'team3-ch2': 'Part 02: [Deep Insight] — Foreseeing Growth',
+'team3-p2': 'Designing forward-thinking scalable architectures that evolve with your business, turning technology into a long-term asset.',
+'team3-ch3': 'Part 03: [Soul Infusion] — Tech-Brand Symbiosis',
+'team3-p3': 'Infusing cold technical systems with soul, ensuring every investment delivers aesthetic and commercial value.',
+'img-team3-1': 'assets/images/kyoko.webp',
+'img-team3-2': 'assets/images/EN-Systems9.webp',
+'img-team3-3': 'assets/images/EN-Systems10.webp',
     }
 };
 
@@ -343,6 +391,9 @@ function handleLangClick() {
 }
 
 function setLanguage(lang) {
+     if (lang === 'cn') lang = 'zh';
+    
+    if (!i18nData[lang]) lang = 'en';
     localStorage.setItem('selectedLang', lang);
     document.documentElement.lang = lang;
     const data = i18nData[lang];
@@ -365,30 +416,24 @@ function setLanguage(lang) {
         }
     });
 }
-// function setLanguage(lang) {
-//    // console.log("切換語言至: " + lang);
-//     localStorage.setItem('selectedLang', lang);
-//     document.documentElement.lang = lang;
-    
 
-//     const data = i18nData[lang];
-
-//     Object.keys(data).forEach(id => {
-//         const element = document.getElementById(id);
-//         if (element) {
-//             // 1. 如果是輸入框，改它的 placeholder
-//             if (element.tagName === 'INPUT') {
-//                 element.setAttribute('placeholder', data[id]);
-//             } 
-//             // 2. 如果是其他標籤，統一用 innerHTML 確保 <b> <i> 生效
-//             else {
-//                 element.innerHTML = data[id];
-//             }
-//         }
-//     });
-// }
 // 初始化
+// document.addEventListener('DOMContentLoaded', () => {
+//     const savedLang = localStorage.getItem('selectedLang') || 'en';
+//     setLanguage(savedLang);
+// });
+// 確保這是 language.js 的最後一段
 document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('selectedLang') || 'en';
+    // 1. 抓取網址參數
+    const urlParams = new URLSearchParams(window.location.search);
+    let langParam = urlParams.get('lang');
+
+    // 2. 容錯處理：如果輸入 cn 則轉向 zh
+    if (langParam === 'cn') langParam = 'zh';
+
+    // 3. 優先級判斷：網址參數 > 瀏覽器記憶 > 預設英文
+    const savedLang = langParam || localStorage.getItem('selectedLang') || 'en';
+    
+    // 4. 執行切換
     setLanguage(savedLang);
 });
