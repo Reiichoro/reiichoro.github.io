@@ -108,10 +108,10 @@ const i18nData = {
         // 技術日誌區塊 (Blog Section)
         'blog-sub': '最新動態',
         'blog-title': '技術洞察',
-        'blog-t1': 'AI 整合的未來',
-        'blog-d1': '探索機器學習如何重塑企業級軟體架構。',
-        'blog-t2': '雲端原生優化',
-        'blog-d2': '在保持高性能的同時降低雲端成本的 5 大策略。',
+        'blog-t1': '火星殖民可行性架構',
+        'blog-d1': '硬核技術分析與未來商業洞察的結合',
+        'blog-t2': '返老還童細胞重編程',
+        'blog-d2': '醫學革命與長壽社會的重構',
         'blog-t3': '2024 網絡安全標準',
         'blog-d3': '現今數位企業必須實施的基本安全協議。',
         'port-sub': '專案展示',
@@ -191,9 +191,37 @@ const i18nData = {
 'team3-p2': '專注於具備前瞻性的擴展式架構，確保系統能隨企業規模進化。她讓技術不再是負擔，而是資產，支撐長遠的擴展潛力。',
 'team3-ch3': 'Part 03: 【靈魂賦予】—— 技術與品牌共生',
 'team3-p3': '賦予冷冰冰的體系以靈魂，讓每一項技術投資都具備商業美學。她站在技術與商業的交匯點，重構數位世界的價值。',
-'img-team3-1': 'assets/images/kyoko.webp',
+'img-team3-1': 'assets/images/Team3.webp',
 'img-team3-2': 'assets/images/Systems9.webp',
 'img-team3-3': 'assets/images/Systems10.webp',
+// Blog 1: Mars Colonization
+       'blog1-title-main': '火星殖民：技術架構與商業願景',
+        // Slide 1
+        'blog1-ch1': 'Part 01: 【可行性】—— 跨星際技術堆疊',
+        'blog1-p1': '從重型運載到在地資源利用（ISRU），解析支撐人類跨越星際的核心技術底層。包含封閉式生態循環與能源供應系統。',
+        // Slide 2
+        'blog1-ch2': 'Part 02: 【路徑圖】—— 從前哨站到永久殖民',
+        'blog1-p2': '分析從無人探測、樣本回收、載人前哨站到最終完全自治社會的演進過程，確保系統具備長期擴展性。',
+        // Slide 3
+        'blog1-ch3': 'Part 03: 【價值鏈】—— 商業模型與戰略獲利',
+        'blog1-p3': '探索火星殖民的長期投資回報：包含科學數據銷售、特殊材料製造、技術專利授權以及高淨值太空旅遊。',
+        'img-blog1-1': 'assets/images/Blog1.webp',
+        'img-blog1-2': 'assets/images/Blog2.webp',
+        'img-blog1-3': 'assets/images/Blog3.webp',
+        'blog2-title-main': '人類基因編程：返老還童工程',
+        // Slide 1
+        'blog2-ch1': 'Part 01: 【技術重置】—— 表觀遺傳的逆轉邏輯',
+        'blog2-p1': '基於山中因子與細胞重編程技術，我們正在嘗試重置細胞的老化標記。雖然面臨腫瘤化風險，但「細胞年輕化」的技術路徑已然清晰。',
+        // Slide 2
+        'blog2-ch2': 'Part 02: 【醫學變革】—— 重新定義生命長度',
+        'blog2-p2': '從治療疾病轉向消除衰老。這不僅是醫療模式的顛覆，更將徹底解決老齡化社會的醫療負擔，重新定義人類的工作與退休制度。',
+        // Slide 3
+        'blog2-ch3': 'Part 03: 【長壽資本】—— 頂層醫療的商業版圖',
+        'blog2-p3': '掌握長壽技術即掌握全球生物科技霸權。從百萬美元級的富豪療程到面向大眾的專利授權，開啟人類文明最強大的盈利引擎。',
+        
+        'img-blog2-1': 'assets/images/Blog4.webp',
+        'img-blog2-2': 'assets/images/Blog5.webp',
+        'img-blog2-3': 'assets/images/Blog6.webp'
     },
     'en': {
         'main-title': 'Advanced Tech Development<br>For Future Business',
@@ -295,10 +323,10 @@ const i18nData = {
         // Blog Section
         'blog-sub': 'Latest News',
         'blog-title': 'Tech Insights',
-        'blog-t1': 'The Future of AI Integration',
-        'blog-d1': 'Exploring how machine learning is reshaping enterprise software architecture.',
-        'blog-t2': 'Cloud-Native Optimization',
-        'blog-d2': 'Top 5 strategies to reduce cloud costs while maintaining high performance.',
+        'blog-t1': 'MARS INFRASTRUCTURE STACK',
+        'blog-d1': 'Mars Colonization: Tech Stack & Feasibility Architecture.',
+        'blog-t2': 'Cellular Rejuvenation Reprogramming',
+        'blog-d2': 'Medical Revolution & Reconstruction of Longevity Society.',
         'blog-t3': 'Cybersecurity Standards 2024',
         'blog-d3': 'Essential security protocols every digital business must implement today.',
         'port-sub': 'Portfolio',
@@ -377,9 +405,38 @@ const i18nData = {
 'team3-p2': 'Designing forward-thinking scalable architectures that evolve with your business, turning technology into a long-term asset.',
 'team3-ch3': 'Part 03: [Soul Infusion] — Tech-Brand Symbiosis',
 'team3-p3': 'Infusing cold technical systems with soul, ensuring every investment delivers aesthetic and commercial value.',
-'img-team3-1': 'assets/images/kyoko.webp',
+'img-team3-1': 'assets/images/EN-Team3.webp',
 'img-team3-2': 'assets/images/EN-Systems9.webp',
 'img-team3-3': 'assets/images/EN-Systems10.webp',
+// Blog 1: Mars Colonization
+        'blog1-title-main': 'Mars Colonization: Tech & Vision',
+        // Slide 1
+        'blog1-ch1': 'Part 01: [Feasibility] — Interplanetary Tech Stack',
+        'blog1-p1': 'From heavy-lift vehicles to ISRU, analyzing core technologies for survival, including CELSS and fission power systems.',
+        // Slide 2
+        'blog1-ch2': 'Part 02: [Roadmap] — From Outpost to Colony',
+        'blog1-p2': 'Mapping the evolution from unmanned probes to fully autonomous societies, ensuring long-term systemic scalability.',
+        // Slide 3
+        'blog1-ch3': 'Part 03: [Value Chain] — Commercial ROI',
+        'blog1-p3': 'Exploring ROI in Mars colonization: including data sales, specialty manufacturing, patent licensing, and high-end space tourism.',
+        
+        'img-blog1-1': 'assets/images/EN-Blog1.webp',
+        'img-blog1-2': 'assets/images/EN-Blog2.webp',
+        'img-blog1-3': 'assets/images/EN-Blog3.webp',
+        'blog2-title-main': 'Genetic Programming: Human Rejuvenation',
+        // Slide 1
+        'blog2-ch1': 'Part 01: [The Reset] — Epigenetic Reversal Logic',
+        'blog2-p1': 'Utilizing Yamanaka factors and cellular reprogramming to reset aging markers. Despite oncogenic risks, the path to cellular rejuvenation is now technically clear.',
+        // Slide 2
+        'blog2-ch2': 'Part 02: [The Revolution] — Redefining Lifespan',
+        'blog2-p2': 'Shifting from treating disease to eradicating aging. This revolution will reshape healthcare models and social structures of retired life.',
+        // Slide 3
+        'blog2-ch3': 'Part 03: [Longevity Capital] — The Biotech Hegemony',
+        'blog2-p3': 'Longevity technology is the ultimate capital. From million-dollar treatments for elites to mass-market patents, it drives the most powerful revenue engine.',
+        
+        'img-blog2-1': 'assets/images/EN-Blog4.webp',
+        'img-blog2-2': 'assets/images/EN-Blog5.webp',
+        'img-blog2-3': 'assets/images/EN-Blog6.webp'
     }
 };
 
