@@ -1,0 +1,361 @@
+<html lang="zh-Hant">
+
+<head>
+ <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>外星客戶案例：靈族 (Aeldari) 網道導航與靈能預警系統 | REII CHORO 交付專案</title>
+    <meta name="title" content="外星交付案例：靈族 (Aeldari) 網道智能導航拓撲系統 | REII CHORO">
+    <meta name="description" content="解析為方舟世界靈族開發的網道 (Webway) 導航解決方案。利用非線性算法預測亞空間靈能漲落，實現零延遲航行預警與靈骨控制面板集成。">
+    <meta name="keywords" content="靈族, Aeldari, 網道導航, Webway, 靈骨技術, Wraithbone, 亞空間預警, 靈能算法, REII CHORO, 外星軟體架構">
+    
+    <link rel="alternate" hreflang="zh" href="https://reiichoro.github.io/case2.html?lang=zh" />
+    <link rel="alternate" hreflang="en" href="https://reiichoro.github.io/case2.html?lang=en" />
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://reiichoro.github.io/case2.html">
+    <meta property="og:title" content="跨維度導航技術：靈族 (Aeldari) 專案實錄 - REII CHORO">
+    <meta property="og:description" content="掌握星辰跳動的節奏。解析如何通過大數據算法，在混亂的網道中為古老文明開闢安全的航線。">
+    <meta property="og:image" content="https://reiichoro.github.io/assets/images/Case4.webp">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://reiichoro.github.io/case2.html">
+    <meta property="twitter:title" content="REII CHORO 跨星系專案：靈族網道導航拓撲系統">
+    <meta property="twitter:description" content="當 IT 算法遇上靈能文明，看地球程序員如何定義亞空間航行新標準。">
+    <meta property="twitter:image" content="https://reiichoro.github.io/assets/images/Case4.webp">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "name": "靈族 (Aeldari) 網道導航系統專案 (Aeldari Webway Navigation Project)",
+      "headline": "基於非線性算法的靈能漲落預測與導航拓撲開發",
+      "description": "Technical implementation of a Warp-Rift topology system for the Aeldari Craftworlds, enabling safe passage through the Webway via psionic fluctuation predictive models.",
+      "image": [
+        "https://reiichoro.github.io/assets/images/Case4.webp",
+        "https://reiichoro.github.io/assets/images/Case5.webp",
+        "https://reiichoro.github.io/assets/images/Case6.webp"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Kyoko (Senior Architect)",
+        "url": "https://reiichoro.github.io/team3.html"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "REII CHORO"
+      },
+      "datePublished": "2026-01-11",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://reiichoro.github.io/case2.html"
+      },
+      "keywords": "Aeldari, Webway Navigation, Warp-Rift Topology, Psionic Algorithm, Tech Case Study"
+    }
+    </script>
+</head>
+<style>
+	body, html {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    color: var(--font-color);
+    
+    /* 系統字體方案：按順序優先調用各平台最美字體 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+</style>
+<link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/5.0.1/css/bootstrap.min.css"> 
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/5.15.2/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+
+</head>
+
+<body>
+<style>
+/* --- 1. 顏色變量定義 --- */
+:root {
+    --logo-reii: #007bff;      /* REII 藍色 */
+    --logo-text: #333333;      /* CH, R 與圖標黑 */
+    --font-color: #333333;     /* 導航與內文黑 */
+    --nav-bg: #ffffff;         /* 導航背景白 */
+    --copyright-color: #8996a0;/* 版權灰色 */
+    --bg-color: #ffffff;       /* 頁面背景白 */
+}
+
+[data-theme='dark'] {
+    --logo-reii: #4dabff;      /* 深色模式亮藍 */
+    --logo-text: #ffffff;      /* 深色模式變白 */
+    --font-color: #eeeeee;     /* 深色模式文字白 */
+    --nav-bg: #151515;         /* 深色模式背景黑 */
+    --copyright-color: #c2c2c2;/* 深色模式版權亮灰 */
+    --bg-color: #151515;       /* 深色模式背景黑 */
+}
+
+/* --- 2. 導航欄 (Header) 強制樣式 --- */
+#site-header {
+    background-color: var(--nav-bg) !important;
+    padding: 10px 0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo 顏色精準控制 */
+.navbar-brand .logo-reii { color: var(--logo-reii) !important; font-weight: bold; }
+.navbar-brand .logo-text, 
+.navbar-brand i.fa-opera { 
+    color: var(--logo-text) !important; 
+    transition: color 0.3s ease; 
+}
+
+/* 導航連結顏色 */
+#site-header .navbar-nav .nav-link {
+    color: var(--font-color) !important;
+}
+
+/* --- 3. 行動端選單按鈕 (漢堡鈕) --- */
+.navbar-toggler {
+    background-color: #007bff !important; /* 始終藍底 */
+    border: none; padding: 8px; border-radius: 5px;
+}
+.navbar-toggler .icon-expand, 
+.navbar-toggler .icon-close {
+    color: #ffffff !important; /* 始終白槓 */
+}
+
+/* --- 4. 文章內容區塊 --- */
+#article-content {
+    padding-top: 140px !important; /* 避免被 Header 遮擋 */
+    padding-bottom: 60px;
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    min-height: 80vh;
+}
+
+/* --- 5. 頁尾 (Footer) --- */
+#copyright {
+    color: var(--copyright-color) !important;
+    font-size: 15px;
+    line-height: 26px;
+    transition: color 0.3s ease;
+}
+
+.wthree-footerhny .footer-links ul li a {
+    color: #8996a0; /* 保持頁尾鏈接低調 */
+}
+
+.wthree-footerhny .footer-links ul li a:hover {
+    color: var(--logo-reii);
+}
+/* 增加圖片懸停效果，讓 PPT 感更強 */
+.ppt-slide img {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.ppt-slide img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+</style>
+<!--/Header-->
+<header id="site-header" class="fixed-top">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light stroke py-lg-0">
+			<h1><a class="navbar-brand" href="">
+					<!-- <span class="w3yellow">REII </span>CH<i class="fab fa-opera"></i>R<i class="fab fa-opera"></i> -->
+                     <span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
+				</a></h1>
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+				<span class="navbar-toggler-icon fa icon-close fa-times"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				<ul class="navbar-nav ms-lg-auto my-2 my-lg-0 navbar-nav-scroll">
+    <li class="nav-item">
+        <a class="nav-link active" id="nav-home" href="/index.html">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-about" href="/about.html">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-services" href="/system.html">Solutions</a> </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/index.html#Pages" id="nav-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources <span class="fa fa-angle-down ms-1"></span> </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item pt-2 scroll" id="nav-stats" href="/index.html#counts">Insights</a></li> <li><a class="dropdown-item scroll" id="nav-team" href="/index.html#team">Engineers</a></li> <li><a class="dropdown-item scroll" id="nav-portfolio" href="/index.html#portfolio">Cases</a></li> <li><a class="dropdown-item scroll" id="nav-pricing" href="/index.html#pricing">Plans</a></li> <li><a class="dropdown-item scroll" id="nav-blog" href="/index.html#blog">Tech Blog</a></li>
+            <li><a class="dropdown-item scroll" id="nav-test" href="/index.html#testimonials">Clients</a></li>
+        </ul>
+    </li>
+    <li class="nav-item me-lg-4">
+        <a class="nav-link scroll" id="nav-contact" href="/index.html#contact">Contact</a>
+    </li>
+</ul>
+				<!--/search-right-->
+				<ul class="header-search me-lg-4">
+					<div class="theme-switch-wrapper">
+						
+				</ul>
+				<!--//search-right-->
+			</div>
+			<!-- toggle switch for light and dark theme -->
+			
+			<div class="mobile-position diaflex">
+				
+			 <div class="language-selector">
+    <span id="lang-toggle" style="cursor:pointer; font-weight:bold; color:#f5af23;" onclick="handleLangClick()">
+        EN
+    </span>
+</div>
+				<nav class="navigation">
+								<label class="theme-switch" for="checkbox">
+							<input type="checkbox" id="checkbox">
+							<div class="mode-container">
+								<i class="gg-sun"></i>
+								<i class="gg-moon"></i>
+							</div>
+						</label>
+					
+				</nav>
+				</div>
+			</div>
+			<!-- //toggle switch for light and dark theme -->
+		</nav>
+	</div>
+</header>
+<section id="article-content" class="py-5" style="background-color: #345da7;">
+    <div class="container py-lg-3">
+        <div class="header-section text-center mb-5">
+            <h3 id="case2-title-main" class="title-w3l" style="color: #fdfdfd !important; font-weight: 700; letter-spacing: 1px;">
+                外星交付案例：靈族 (Aeldari) 網道智能導航系統
+            </h3>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="article-body">
+                    
+                    <div class="ppt-slide mb-5">
+                        <img id="img-case2-1" src="assets/images/Case4.webp" alt="Aeldari Client Profile" class="img-fluid w-100 shadow-lg" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <p id="case2-ch1" class="mt-3 text-center" style="color: #d1dce8; font-size: 0.95rem; opacity: 0.8; font-weight: 600;">
+                            Part 01: 【客戶畫像】—— 方舟世界的守望者
+                        </p>
+                    </div>
+
+                    <div class="ppt-slide mb-5">
+                        <img id="img-case2-2" src="assets/images/Case5.webp" alt="Webway Topology System Development" class="img-fluid w-100 shadow-lg" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <p id="case2-ch2" class="mt-3 text-center" style="color: #d1dce8; font-size: 0.95rem; opacity: 0.8; font-weight: 600;">
+                            Part 02: 【開發軟體】—— 網道亞空間裂隙預警與拓撲系統
+                        </p>
+                    </div>
+
+                    <div class="ppt-slide mb-5">
+                        <img id="img-case2-3" src="assets/images/Case6.webp" alt="Aeldari Feedback" class="img-fluid w-100 shadow-lg" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <p id="case2-ch3" class="mt-3 text-center" style="color: #d1dce8; font-size: 0.95rem; opacity: 0.8; font-weight: 600;">
+                            Part 03: 【好評原因】—— 精準避開亞空間風暴的威脅
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--/footer-->
+<footer id="footer" class="wthree-footerhny">
+
+	<div class="container d-md-flex py-4">
+
+		<div class="me-md-auto text-center text-md-start">
+			<div class="copyright text-center">
+    <p class="copy-footer-29">
+        <span id="copyright">Copyright &copy; 2026 REII CHORO. All rights reserved.</span>
+        <span class="ms-2"> | </span>
+        <a href="sitemap.xml" style="color: var(--copyright-color); font-size: 13px; text-decoration: none; margin-left: 5px;">Sitemap</a>
+    </p>
+</div>
+
+		</div>
+		<div class="social-links text-center text-md-end pt-3 pt-md-0">
+			<a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+			<a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+			<a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+			<a href="#" class="google-plus"><i class="fab fa-google-plus-g"></i></a>
+			<a href="#" class="linkedin"><i class="fab fa-linkedin-in"></i></a>
+		</div>
+	</div>
+	<button onclick="topFunction()" id="movetop" title="Go to top" style="display: block;">
+		<span class="fa fa-angle-up"></span>
+	</button>
+	<script>
+		// When the user scrolls down 20px from the top of the document, show the button
+		window.onscroll = function() {
+			scrollFunction()
+		};
+
+		function scrollFunction() {
+			if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+				document.getElementById("movetop").style.display = "block";
+			} else {
+				document.getElementById("movetop").style.display = "none";
+			}
+		}
+
+		// When the user clicks on the button, scroll to the top of the document
+		function topFunction() {
+			document.body.scrollTop = 0;
+			document.documentElement.scrollTop = 0;
+		}
+
+
+	</script>
+	<!-- //move top -->
+</footer><!-- End Footer -->
+
+
+<!-- Template JavaScript -->
+<script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="assets/js/theme-change.js"></script>
+<script src="assets/js/language.js"></script>
+<!-- MENU-JS -->
+<script>
+	$(window).on("scroll", function() {
+		var scroll = $(window).scrollTop();
+
+		if (scroll >= 80) {
+			$("#site-header").addClass("nav-fixed");
+		} else {
+			$("#site-header").removeClass("nav-fixed");
+		}
+	});
+	//Main navigation Active Class Add Remove
+	$(".navbar-toggler").on("click", function() {
+		$("header").toggleClass("active");
+	});
+	$(document).on("ready", function() {
+		if ($(window).width() > 991) {
+			$("header").removeClass("active");
+		}
+		$(window).on("resize", function() {
+			if ($(window).width() > 991) {
+				$("header").removeClass("active");
+			}
+		});
+	});
+
+</script>
+<!-- //MENU-JS -->
+<!-- disable body scroll which navbar is in active -->
+<script>
+	$(function() {
+		$('.navbar-toggler').click(function() {
+			$('body').toggleClass('noscroll');
+		})
+	});
+</script>
+<!-- //disable body scroll which navbar is in active -->
+<!-- //bootstrap -->
+ <!-- <script src="assets/js/bootstrap.min.js"></script> -->
+<script src="https://lib.baomitu.com/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

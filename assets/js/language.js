@@ -112,8 +112,8 @@ const i18nData = {
         'blog-d1': '硬核技術分析與未來商業洞察的結合',
         'blog-t2': '返老還童細胞重編程',
         'blog-d2': '醫學革命與長壽社會的重構',
-        'blog-t3': '2024 網絡安全標準',
-        'blog-d3': '現今數位企業必須實施的基本安全協議。',
+        'blog-t3': '液態金屬機器人',
+        'blog-d3': '解析室溫液態金屬、電場驅動形變與未來',
         'port-sub': '專案展示',
         'port-title': '近期交付案例',
         'test-name1': '丹尼斯 · 威爾遜',
@@ -221,7 +221,47 @@ const i18nData = {
         
         'img-blog2-1': 'assets/images/Blog4.webp',
         'img-blog2-2': 'assets/images/Blog5.webp',
-        'img-blog2-3': 'assets/images/Blog6.webp'
+        'img-blog2-3': 'assets/images/Blog6.webp',
+        'blog3-title-main': '液態金屬機器人：T-1000 的技術實現路徑',
+        // Slide 1
+        'blog3-ch1': 'Part 01: 【物質基礎】—— 室溫液態金屬合金',
+        'blog3-p1': '基於鎵基合金（Ga-based alloys）的特性，探索具備高導電性與表面張力可控性的液態金屬，實現形體自癒與柔性運動。',
+        // Slide 2
+        'blog3-ch2': 'Part 02: 【形變控制】—— 電場驅動與編程相變',
+        'blog3-p2': '透過外部電場誘導表面張力梯度，實現液態金屬的精準位移、融合與形狀鎖定。這是從「流體」轉向「結構體」的關鍵。',
+        // Slide 3
+        'blog3-ch3': 'Part 03: 【功能賦予】—— 戰略價值與未來盈利',
+        'blog3-p3': '從災難救援的狹縫滲透到人體內的微型醫療介入。這項技術將重構機器人定義，並在高尖端國防與精準醫療領域創造巨額產值。',
+        
+        'img-blog3-1': 'assets/images/Blog7.webp',
+        'img-blog3-2': 'assets/images/Blog8.webp',
+        'img-blog3-3': 'assets/images/Blog9.webp',
+        'case1-title-main': '外星交付案例：沃隆族 (Vorlons) 跨維度系統集成',
+    // Slide 1
+    'case1-ch1': 'Part 01: 【客戶畫像】—— 天苑四的能量守望者',
+    'case1-p1': '沃隆族為能量發光體文明，其建築與設備均為活體有機結構。本次合作旨在解決其在高維交互中的意識疲勞問題。',
+    'img-case1-1': 'assets/images/Case1.webp',
+    // Slide 2
+    'case1-ch2': 'Part 02: 【開發軟體】—— Vocalis-OS 生物光學接口系統',
+    'case1-p2': '開發 TF-BEI 編譯引擎，將思想頻率轉換為生物電指令，實現活體飛船對主人情緒的自動感應與環境補償。',
+    'img-case1-2': 'assets/images/Case2.webp',
+    // Slide 3
+    'case1-ch3': 'Part 03: 【好評原因】—— 重塑放棄肉身後的「感官自由」',
+    'case1-p3': '成功降低精神熵值 42%，沃隆族反饋稱這是其放棄肉身以來最流暢的思想交互體驗。',
+    'img-case1-3': 'assets/images/Case3.webp',
+    'case2-title-main': '外星交付案例：靈族 (Aeldari) 網道智能導航系統',
+    // Slide 1
+    'case2-ch1': 'Part 01: 【客戶畫像】—— 方舟世界的守望者',
+    'case2-p1': '擁有極高審美與靈能文明的靈族。本次合作旨在為其提供無接縫的亞空間穿行解決方案，規避不可名狀的靈能風險。',
+    'img-case2-1': 'assets/images/Case4.webp',
+    // Slide 2
+    'case2-ch2': 'Part 02: 【交付產物】—— 網道亞空間裂隙預警與拓撲系統',
+    'case2-p2': '開發基於大數據與非線性算法的靈能漲落預測模型，完美嵌入其靈骨（Wraithbone）控制面板。',
+    'img-case2-2': 'assets/images/Case5.webp',
+    // Slide 3
+    'case2-ch3': 'Part 03: 【好評原因】—— 精準避開亞空間風暴的威脅',
+    'case2-p3': '這名地球程序員掌握了星辰跳動的節奏。系統上線後，網道航行事故率下降了 99%。',
+    'img-case2-3': 'assets/images/Case6.webp'
     },
     'en': {
         'main-title': 'Advanced Tech Development<br>For Future Business',
@@ -327,8 +367,8 @@ const i18nData = {
         'blog-d1': 'Mars Colonization: Tech Stack & Feasibility Architecture.',
         'blog-t2': 'Cellular Rejuvenation Reprogramming',
         'blog-d2': 'Medical Revolution & Reconstruction of Longevity Society.',
-        'blog-t3': 'Cybersecurity Standards 2024',
-        'blog-d3': 'Essential security protocols every digital business must implement today.',
+        'blog-t3': 'liquid metal robot',
+        'blog-d3': 'Analyze electric-field-driven deformation technology',
         'port-sub': 'Portfolio',
         'port-title': 'Recent Deliveries',
         'test-name1': 'Dennis Wilson',
@@ -436,7 +476,47 @@ const i18nData = {
         
         'img-blog2-1': 'assets/images/EN-Blog4.webp',
         'img-blog2-2': 'assets/images/EN-Blog5.webp',
-        'img-blog2-3': 'assets/images/EN-Blog6.webp'
+        'img-blog2-3': 'assets/images/EN-Blog6.webp',
+        // Blog 3: Liquid Metal Robot
+    'blog3-title-main': 'Liquid Metal Robots: Technical Path to T-1000',
+    // Slide 1
+    'blog3-ch1': 'Part 01: [Material Foundation] — Room Temp Liquid Metal Alloys',
+    'blog3-p1': 'Exploring Ga-based alloys with high conductivity and controllable surface tension to achieve self-healing and flexible locomotion.',
+    // Slide 2
+    'blog3-ch2': 'Part 02: [Deformation Control] — Electric Field Drive & Programmable Phase Change',
+    'blog3-p2': 'Inducing surface tension gradients via external electric fields to enable precise displacement, fusion, and shape-locking of liquid metals.',
+    // Slide 3
+    'blog3-ch3': 'Part 03: [Functional Empowerment] — Strategic Value & Future Profitability',
+    'blog3-p3': 'From infiltration through cracks in disaster rescue to micro-medical intervention within the human body, redefining robotics and creating immense value in defense and healthcare.',
+    'img-blog3-1': 'assets/images/EN-Blog7.webp',
+    'img-blog3-2': 'assets/images/EN-Blog8.webp',
+    'img-blog3-3': 'assets/images/EN-Blog9.webp',
+    'case1-title-main': 'Interstellar Case: Vorlon Dimension System Integration',
+    // Slide 1
+    'case1-ch1': 'Part 01: [Client Profile] — Energy Watchers of Epsilon Eridani',
+    'case1-p1': 'Vorlons are energy beings using organic living tech. This project addresses consciousness fatigue in high-dimensional interactions.',
+    'img-case1-1': 'assets/images/EN-Case1.webp',
+    // Slide 2
+    'case1-ch2': 'Part 02: [Deliverable] — Vocalis-OS Bio-Optical Interface',
+    'case1-p2': 'Developed the TF-BEI engine to translate thought frequencies into bio-electric commands for real-time organic resonance.',
+    'img-case1-2': 'assets/images/EN-Case2.webp',
+    // Slide 3
+    'case1-ch3': 'Part 03: [Success Factors] — Redefining Sensory Freedom',
+    'case1-p3': 'Reduced mental entropy by 42%. The client cited it as the most fluid interaction experience since transcending physical forms.',
+    'img-case1-3': 'assets/images/EN-Case3.webp',
+    'case2-title-main': 'Interstellar Case: Aeldari Webway Navigation System',
+    // Slide 1
+    'case2-ch1': 'Part 01: [Client Profile] — Guardians of the Craftworlds',
+    'case2-p1': 'The Aeldari are an ancient race with hyper-intelligent civilization. This project provides seamless warp-travel solutions within the Webway.',
+    'img-case2-1': 'assets/images/EN-Case4.webp',
+    // Slide 2
+    'case2-ch2': 'Part 02: [Deliverable] — Webway Warp-Rift Topology System',
+    'case2-p2': 'Developing a psionic fluctuation prediction model based on non-linear algorithms, integrated into Wraithbone consoles.',
+    'img-case2-2': 'assets/images/EN-Case5.webp',
+    // Slide 3
+    'case2-ch3': 'Part 03: [Success Factors] — Navigating Millennia-old Risks',
+    'case2-p3': 'The human programmer has mastered the rhythm of the stars. Navigation accidents decreased by 99% post-deployment.',
+    'img-case2-3': 'assets/images/EN-Case6.webp'
     }
 };
 

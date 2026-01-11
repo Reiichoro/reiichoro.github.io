@@ -77,7 +77,7 @@ Newly added **Team 3 (Kyoko)** and two deep-dive tech columns. The project has e
 * **Insights 01 - Mars(中文):** [Read Column](https://reiichoro.github.io/blog1.html?lang=zh)
 * **Insights 01 - Mars: (English):** [View Now](https://reiichoro.github.io/blog1.html?lang=en)
 * **Insights 02 - Rejuvenation(中文):** [Read Column](https://reiichoro.github.io/blog2.html?lang=zh)
-* **Insights 02 - Mars: (English):** [View Now](https://reiichoro.github.io/blog2.html?lang=en)
+* **Insights 02 - Rejuvenation: (English):** [View Now](https://reiichoro.github.io/blog2.html?lang=en)
 
 ---
 
@@ -93,3 +93,64 @@ A cross-dimensional sprint from Mars to Genomes. A collaboration of human intuit
 
 ---
 *Generated with ❤️ by a human designer & Gemini. Rest well, creator.*
+
+# Visual Synergy: Expert Profiles & Interstellar Deliveries
+> **A showcase of high-performance web design, logical visualization, and cross-civilization technical architecture.**
+
+## 🌟 項目進展 / Latest Updates (2026-01-11)
+**今日戰果：項目正式進入「宇宙級交付」階段。**
+新增了關於「液態金屬機器人」的前沿技術解析，並同步上線了兩組外星文明（沃隆族與靈族）的軟體交付案例展示。這不僅是技術的堆疊，更是對「1 > 0 > null」原則的極致實踐。
+
+**Today's Sprint:** The project has entered the **"Interstellar Delivery"** phase. Added deep-dive insights on "Liquid Metal Robotics" and two speculative case studies for extraterrestrial civilizations (Vorlons & Aeldari).
+
+---
+
+## 🛠️ 技術棧更新 / Technical Stack Evolution
+持續實踐「開源工具鏈」的專業生產力：
+* **Design & Layout:** [Scribus 1.6.4](https://www.scribus.net/) (開源排版之魂，實現像素級跨維度視覺表達)
+* **SEO Engine:** 全面對齊 JSON-LD `TechArticle` 與 `CreativeWork` 結構化數據。
+* **Architecture:** 實現了基於 WebP 2.0 的雙語視覺資產封裝（中英對照 PPT 流式敘事）。
+* **Index Optimization:** 部署了自動化的 `sitemap.xml`，加速搜索引擎索引。
+
+---
+
+## 🚀 新增專欄與案例 / New Insights & Cases
+
+### 1. 液態金屬機器人：T-1000 的實現路徑 (Blog 3)
+解析鎵基合金與電場驅動技術，探討柔性機器人在醫療與國防領域的商業獲利模型。
+*Technical path to T-1000: Ga-based alloys and deformation control.*
+
+### 2. 沃隆族 (Vorlons) 跨維度系統集成 (Case 1)
+為能量體文明開發 `Vocalis-OS` 生物光學接口，實現思想頻率與活體建築的共鳴。
+*Bio-Optical Interface for the Vorlons: Translating thought into bio-electric commands.*
+
+### 3. 靈族 (Aeldari) 網道智能導航 (Case 2)
+基於非線性算法的亞空間裂隙預警系統，完美嵌入靈骨 (Wraithbone) 控制面板。
+*Webway Navigation for Aeldari: Predicting psionic fluctuations via non-linear algorithms.*
+
+---
+
+## 🔗 快速訪問 / Quick Access
+* **Insights 03 - Liquid Metal (中文):** [Read Column](https://reiichoro.github.io/blog3.html?lang=zh)
+* **Insights 03 - Liquid Metal (English):** [Read Column](https://reiichoro.github.io/blog3.html?lang=en)
+* **Case Study 01 - Vorlons (中文):** [View Case](https://reiichoro.github.io/case1.html?lang=zh)
+* **Case Study 01 - Vorlons (English):** [View Case](https://reiichoro.github.io/case1.html?lang=en)
+* **Case Study 02 - Aeldari (中文):** [查看案例](https://reiichoro.github.io/case2.html?lang=zh)
+* **Case Study 02 - Aeldari (English):** [查看案例](https://reiichoro.github.io/case2.html?lang=en)
+* **Sitemap.xml:** [Inspect Structure](https://reiichoro.github.io/sitemap.xml)
+
+---
+
+## 🎨 設計理念 / Design Philosophy
+* **架構師審美 (Architectural Aesthetics):** 強調「代碼是理性的基石，而美學是靈魂」。
+* **PPT 式導讀 (Presentation Flow):** 採用垂直滾動幻燈片結構，優化人類在數位環境下的信息獲取節奏。
+* **1 > 0 > null:** 在沒有人類客戶的當下，通過為高等文明設計系統，展現超前的架構思維與誠信原則。
+
+---
+
+## 🖋️ 關於創作 / About the Sprint
+從 2026 年 1 月 7 日的基因編程，到 1 月 11 日的星際導航。這是一次從「地球職人」向「宇宙架構師」的跨維度 sprint。
+A cross-dimensional sprint from genomes to webway navigation. A collaboration of human intuition and AI logic.
+
+---
+*Generated with ❤️ by a human designer & Gemini. Rest well, architect.*
