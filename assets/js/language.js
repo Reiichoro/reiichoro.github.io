@@ -16,9 +16,9 @@ const i18nData = {
         'nav-contact': '聯繫我們',
         'main-title': '卓越軟體開發<br>為您量身定制解決方案',
         'label-from': '項目類型',
-        'input-project': '例如：網頁應用', // 這裡會自動填入 placeholder
-        'label-to': '技術棧需求',
-        'input-tech': '例如：React/Python', // 這裡會自動填入 placeholder
+        'input-project': '例如：開發應用', // 這裡會自動填入 placeholder
+        'label-to': '您的郵件地址',
+        'input-tech': '郵箱@reiichoro', // 這裡會自動填入 placeholder
         'label-submit': '立即提交',
         'btn-text': '發送請求',
         'form-footer-info': '<b>獲取<i>免費技術報價</i></b> 填寫表單即刻開啟諮詢 - 或 - ',
@@ -239,15 +239,15 @@ const i18nData = {
         'case1-title-main': '外星交付案例：沃隆族 (Vorlons) 跨維度系統集成',
     // Slide 1
     'case1-ch1': 'Part 01: 【客戶畫像】—— 天苑四的能量守望者',
-    'case1-p1': '沃隆族為能量發光體文明，其建築與設備均為活體有機結構。本次合作旨在解決其在高維交互中的意識疲勞問題。',
     'img-case1-1': 'assets/images/Case1.webp',
     // Slide 2
     'case1-ch2': 'Part 02: 【開發軟體】—— Vocalis-OS 生物光學接口系統',
-    'case1-p2': '開發 TF-BEI 編譯引擎，將思想頻率轉換為生物電指令，實現活體飛船對主人情緒的自動感應與環境補償。',
     'img-case1-2': 'assets/images/Case2.webp',
     // Slide 3
     'case1-ch3': 'Part 03: 【好評原因】—— 重塑放棄肉身後的「感官自由」',
-    'case1-p3': '成功降低精神熵值 42%，沃隆族反饋稱這是其放棄肉身以來最流暢的思想交互體驗。',
+    'case1-p1': '來自天苑四的高維度能量文明。合作重點在於解決其放棄肉身後，如何與物理維度中的有機建築及環境進行無損、實時的思想交互。',
+'case1-p2': '開發全球首個基於高維頻率轉譯的 Vocalis-OS，將沃隆族的意念震盪轉化為精確的生物電指令，驅動有機飛船與城市的機能運作。',
+'case1-p3': '這不僅是軟體交付，更是跨文明的邏輯對話。系統上線後，顯著降低了沃隆族在物理維度的交互精神熵值，實現了真正的感官自由。',
     'img-case1-3': 'assets/images/Case3.webp',
     'case2-title-main': '外星交付案例：靈族 (Aeldari) 網道智能導航系統',
     // Slide 1
@@ -261,7 +261,59 @@ const i18nData = {
     // Slide 3
     'case2-ch3': 'Part 03: 【好評原因】—— 精準避開亞空間風暴的威脅',
     'case2-p3': '這名地球程序員掌握了星辰跳動的節奏。系統上線後，網道航行事故率下降了 99%。',
-    'img-case2-3': 'assets/images/Case6.webp'
+    'img-case2-3': 'assets/images/Case6.webp',
+    'case3-title-main': '外星交付案例：普洛仙 (Protheans) 全感官數據封存陣列',
+    // Slide 1
+    'case3-ch1': 'Part 01: 【客戶畫像】—— 失落帝國的文明傳承者',
+    'case3-p1': '擁有四目複眼的甲殼類文明，通過生物觸覺交換記憶。本次合作旨在解決其生物存儲媒介隨時間降解的「文明遺忘危機」。',
+    'img-case3-1': 'assets/images/Case7.webp',
+    // Slide 2
+    'case3-ch2': 'Part 02: 【交付產物】—— 四目聯覺：數字封存與 5D 內存陣列',
+    'case3-p2': '開發五維內存池無損壓縮算法，將觸覺、視覺與生物電信號整合，封存於分子級精密發光的幾何方尖碑中。',
+    'img-case3-2': 'assets/images/Case8.webp',
+    // Slide 3
+    'case3-ch3': 'Part 03: 【好評原因】—— 對抗時間熵增的最後防線',
+    'case3-p3': '成功實現感官信息的跨世代完整傳承。客戶反饋稱：這名地球程序員，讓我們的文明在時間的洪流中永生。',
+    'img-case3-3': 'assets/images/Case9.webp',
+    'case4-title-main': '外星交付案例：8472 種族 (Species 8472) 物理參數兼容控制層',
+    // Slide 1
+    'case4-ch1': 'Part 01: 【客戶畫像】—— 流體空間的巔峰掠食者',
+    'case4-p1': '擁有三足結構與五隻冷光複眼的跨維度生物。其居住環境為純有機流體維度，進入實體宇宙後常因物理常數不兼容導致生物組織應激。',
+    'img-case4-1': 'assets/images/Case10.webp',
+    // Slide 2
+    'case4-ch2': 'Part 02: 【交付產物】—— 物理模擬中間件與引力場調節系統',
+    'case4-p2': '開發物理參數兼容層，在生物戰艦周圍生成局部流體物理場，將實體宇宙的重力阻力重新編碼為生物體可承受的壓強環境。',
+    'img-case4-2': 'assets/images/Case11.webp',
+    // Slide 3
+    'case4-ch3': 'Part 03: 【好評原因】—— 定義跨維度的物理自由',
+    'case4-p3': '完美解決了跨維度航行的物理排斥反應。客戶評價道：「三足不再顫抖，五眼看清了這片乾枯的宇宙。」',
+    'img-case4-3': 'assets/images/Case12.webp',
+    'case5-title-main': '先驅者 (Forerunners) —— 硬光動態建築指令集專案',
+    // Slide 1
+    'case5-ch1': 'Part 01: 【客戶畫像】—— 銀河系秩序的終極維護者',
+    'case5-p1': '身高 3 米以上的類人文明，手部擁有多指關節。崇尚極致的數學理性，其建築技術核心為「硬光（Hard Light）」。',
+    'img-case5-1': 'assets/images/Case13.webp',
+    // Slide 2
+    'case5-ch2': 'Part 02: 【交付產物】—— Lux-Arch v10.0：硬光結構動態建築指令集',
+    'case5-p2': '優化渲染引擎算法，將巨型建築重組延遲降低至普朗克時間以下，實現 100% 的純淨幾何對稱。',
+    'img-case5-2': 'assets/images/Case14.webp',
+    // Slide 3
+    'case5-ch3': 'Part 03: 【好評原因】—— 重塑神級文明的幾何美學',
+    'case5-p3': '解決了宏觀尺度下的同步難題。客戶反饋：「他的代碼，像光一樣精準且優雅。」',
+    'img-case5-3': 'assets/images/Case15.webp',
+    'case6-title-main': '氪星文明 (Kryptonians) —— 液態金屬智能幾何交互環境專案',
+    // Slide 1
+    'case6-ch1': 'Part 01: 【客戶畫像】—— 基因優化的完美體與液態建築',
+    'case6-p1': '來自紅色恆星「柯魯」系統。建築如同從黑曜石山脈中直接長出的活體，內部裝飾使用「液態幾何」技術，追求古典貴族的奢靡與超前科技的冰冷。',
+    'img-case6-1': 'assets/images/Case16.webp',
+    // Slide 2
+    'case6-ch2': 'Part 02: 【交付產物】—— Liquid-Geometry UI：量子引力交互引擎',
+    'case6-p2': '開發基於「量子引力」的 UI 引擎，操控數億個細小金屬球的物理碰撞，消除大規模粒子重組時的延遲，實現完美的流體美學。',
+    'img-case6-2': 'assets/images/Case17.webp',
+    // Slide 3
+    'case6-ch3': 'Part 03: 【好評原因】—— 定義超前科技的冰冷美學',
+    'case6-p3': '成功實現絲滑的液態界面，星圖隨手指揮動瞬間成型。客戶反饋：「這是氪星重生以來，最符合藝術美學的交互界面。」',
+    'img-case6-3': 'assets/images/Case18.webp'
     },
     'en': {
         'main-title': 'Advanced Tech Development<br>For Future Business',
@@ -281,8 +333,8 @@ const i18nData = {
         'main-title': 'Custom Software <br> Development Solutions',
         'label-from': 'Project Type',
         'input-project': 'e.g. Web App',
-        'label-to': 'Tech Stack',
-        'input-tech': 'e.g. React/Python',
+        'label-to': 'Your Contact Email',
+        'input-tech': 'mail@reiichoro',
         'label-submit': 'Action',
         'btn-text': 'Send request',
         'form-footer-info': '<b>Get your <i>Free Tech Quote</i></b> by completing our quick form - or - ',
@@ -494,16 +546,16 @@ const i18nData = {
     'case1-title-main': 'Interstellar Case: Vorlon Dimension System Integration',
     // Slide 1
     'case1-ch1': 'Part 01: [Client Profile] — Energy Watchers of Epsilon Eridani',
-    'case1-p1': 'Vorlons are energy beings using organic living tech. This project addresses consciousness fatigue in high-dimensional interactions.',
     'img-case1-1': 'assets/images/EN-Case1.webp',
     // Slide 2
     'case1-ch2': 'Part 02: [Deliverable] — Vocalis-OS Bio-Optical Interface',
-    'case1-p2': 'Developed the TF-BEI engine to translate thought frequencies into bio-electric commands for real-time organic resonance.',
     'img-case1-2': 'assets/images/EN-Case2.webp',
     // Slide 3
     'case1-ch3': 'Part 03: [Success Factors] — Redefining Sensory Freedom',
-    'case1-p3': 'Reduced mental entropy by 42%. The client cited it as the most fluid interaction experience since transcending physical forms.',
     'img-case1-3': 'assets/images/EN-Case3.webp',
+    'case1-p1': 'A high-dimensional energy civilization from Epsilon Eridani. The project focused on seamless, real-time thought interaction with organic structures after their physical forms were shed.',
+'case1-p2': 'Developed the first-ever high-frequency translation Vocalis-OS, converting Vorlon neural vibrations into precise bio-electric commands to operate organic fleets and cities.',
+'case1-p3': 'More than a software delivery, it was a logic dialogue across civilizations. Post-deployment, it significantly reduced interaction entropy in the physical dimension.',
     'case2-title-main': 'Interstellar Case: Aeldari Webway Navigation System',
     // Slide 1
     'case2-ch1': 'Part 01: [Client Profile] — Guardians of the Craftworlds',
@@ -516,7 +568,59 @@ const i18nData = {
     // Slide 3
     'case2-ch3': 'Part 03: [Success Factors] — Navigating Millennia-old Risks',
     'case2-p3': 'The human programmer has mastered the rhythm of the stars. Navigation accidents decreased by 99% post-deployment.',
-    'img-case2-3': 'assets/images/EN-Case6.webp'
+    'img-case2-3': 'assets/images/EN-Case6.webp',
+    'case3-title-main': 'Interstellar Case: Prothean Total Sensory Archiving Array',
+    // Slide 1
+    'case3-ch1': 'Part 01: [Client Profile] — Guardians of the Vanished Empire',
+    'case3-p1': 'A quad-eyed crustacean civilization using tactile memory exchange. This project prevents the "Crisis of Oblivion" caused by bio-medium degradation.',
+    'img-case3-1': 'assets/images/EN-Case7.webp',
+    // Slide 2
+    'case3-ch2': 'Part 02: [Deliverable] — Quad-Link: 5D Memory Pool & Digital Array',
+    'case3-p2': 'Developing 5D Memory Pool algorithms to compress tactile and bio-electric signals into molecular-level luminous obelisks.',
+    'img-case3-2': 'assets/images/EN-Case8.webp',
+    // Slide 3
+    'case3-ch3': 'Part 03: [Success Factors] — Defense Against Temporal Entropy',
+    'case3-p3': 'Enabling intact cross-generational sensory transmission. The client stated: The human programmer has granted our civilization immortality.',
+    'img-case3-3': 'assets/images/EN-Case9.webp',
+    'case4-title-main': 'Interstellar Case: Species 8472 Physical Compatibility Layer',
+    // Slide 1
+    'case4-ch1': 'Part 01: [Client Profile] — Apex Predators of Fluidic Space',
+    'case4-p1': 'Tripodal beings from a fluidic dimension with five bioluminescent eyes. This project addresses the biological stress caused by physical constant mismatch in the material universe.',
+    'img-case4-1': 'assets/images/EN-Case10.webp',
+    // Slide 2
+    'case4-ch2': 'Part 02: [Deliverable] — Physics Middleware & Gravity Modulation System',
+    'case4-p2': 'Developing a compatibility layer that generates localized fluidic fields around bio-vessels, re-encoding external gravity into tolerable pressure.',
+    'img-case4-2': 'assets/images/EN-Case11.webp',
+    // Slide 3
+    'case4-ch3': 'Part 03: [Success Factors] — Defining Multi-Dimensional Freedom',
+    'case4-p3': 'Successfully eliminated physical rejection during travel. The client remarked: "The three legs no longer tremble; the five eyes see this parched universe clearly."',
+    'img-case4-3': 'assets/images/EN-Case12.webp',
+    'case5-title-main': 'Forerunner Case: Dynamic Hard Light Instruction Set Project',
+    // Slide 1
+    'case5-ch1': 'Part 01: [Client Profile] — Ultimate Stewards of Galactic Order',
+    'case5-p1': 'Towering beings (3m+) embodying absolute mathematical logic. Their architecture relies on "Hard Light," allowing structures to reconfigure or levitate via commands.',
+    'img-case5-1': 'assets/images/EN-Case13.webp',
+    // Slide 2
+    'case5-ch2': 'Part 02: [Deliverable] — Lux-Arch v10.0: Dynamic Hard Light Instruction Set',
+    'case5-p2': 'Optimized rendering engine algorithms to reduce reconfiguration latency below Planck time, achieving 100% pure geometric symmetry.',
+    'img-case5-2': 'assets/images/EN-Case14.webp',
+    // Slide 3
+    'case5-ch3': 'Part 03: [Success Factors] — Redefining the Aesthetics of God-like Civilizations',
+    'case5-p3': 'Solved synchronization challenges at macro-scales. The client remarked: "His code is as precise and elegant as light itself."',
+    'img-case5-3': 'assets/images/EN-Case15.webp',
+    'case6-title-main': 'Kryptonian Case: Liquid-Geometry Intelligent Interaction Environment',
+    // Slide 1
+    'case6-ch1': 'Part 01: [Client Profile] — Genetically Optimized Perfection & Liquid Architecture',
+    'case6-p1': 'From the Rao system. Their "Liquid Geometry" technology allows metal spheres to form structures dynamically within obsidian-like spires, blending ancient luxury with cold technology.',
+    'img-case6-1': 'assets/images/EN-Case16.webp',
+    // Slide 2
+    'case6-ch2': 'Part 02: [Deliverable] — Liquid-Geometry UI: Quantum Gravity Engine',
+    'case6-p2': 'A UI engine based on "Quantum Gravity" to manage physical collisions of billions of micro-spheres, achieving zero-latency fluid reconfiguration.',
+    'img-case6-2': 'assets/images/EN-Case17.webp',
+    // Slide 3
+    'case6-ch3': 'Part 03: [Success Factors] — Defining the Aesthetic of Hyper-Advanced Tech',
+    'case6-p3': 'Client remarked: "The most aesthetic interface since Krypton\'s rebirth." Seamless star maps manifest instantly with a simple gesture.',
+    'img-case6-3': 'assets/images/EN-Case18.webp'
     }
 };
 
