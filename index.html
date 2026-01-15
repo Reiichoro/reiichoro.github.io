@@ -65,12 +65,91 @@
     /* 系統字體方案：按順序優先調用各平台最美字體 */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+.form-status {
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: rgba(40, 167, 69, 0.1); /* 淡淡的綠色背景 */
+    text-align: center;
+    transition: all 0.3s ease;
+}
+/* 針對 PC 端（螢幕寬度大於 992px）進行限制 */
+    @media (min-width: 992px) {
+        .footer-ig-img {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: contain; /* 確保圖片不變形 */
+            margin-top: 15px;
+        }
+    }
+
+    /* 手機端（螢幕小於 991px）會繼承 img-fluid 的屬性，自動撐滿容器寬度 */
+    @media (max-width: 991px) {
+        .footer-ig-img {
+            max-width: 200px; /* 手機端通常不需要佔滿全螢幕寬度，建議設一個合適的上線 */
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+    }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"  crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 精確抓取所有指向 Formspree 的表單
+    const forms = document.querySelectorAll('form[action*="formspree.io"]');
 
+    forms.forEach(form => {
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault(); // 【核心】阻止跳轉發生
+            const status = form.querySelector('.form-status') || document.createElement('div');
+            // 【新增這一行】強制讓狀態欄顯示出來
+            status.style.display = "block";
+            if (!status.classList.contains('form-status')) {
+                status.className = 'form-status';
+                status.style.marginTop = '15px';
+                form.appendChild(status);
+            }
+
+            const button = form.querySelector('button[type="submit"]');
+            const data = new FormData(form);
+            const currentLang = document.documentElement.lang || 'en';
+
+            // 狀態切換：發送中
+            const originalBtnText = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = (currentLang === 'zh') ? "傳送中..." : "Sending...";
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    status.style.color = "#28a745";
+                    status.innerHTML = (currentLang === 'zh') ? "✅ 感謝！訊息已傳送至亞空間。" : "✅ Thanks! Message sent to the subspace.";
+                    form.reset();
+                } else {
+                    const result = await response.json();
+                    status.style.color = "#dc3545";
+                    status.innerHTML = result.errors ? result.errors.map(e => e.message).join(", ") : "Error.";
+                }
+            } catch (error) {
+                status.style.color = "#dc3545";
+                status.innerHTML = "Network error, please try again.";
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalBtnText;
+            }
+        });
+    });
+});
+</script>
 </head>
 
 <body>
@@ -903,6 +982,7 @@
                         <a class="navbar-brand" href="/index.html"><span>REII </span>CH<i class="fab fa-opera"></i>R<i class="fab fa-opera"></i></a>
                     </div>
                     <p id="foot-desc">Leading software solutions focusing on cloud architecture and AI integration.</p>
+                    <img loading="lazy" src="assets/images/InstaGram.webp" class="img-fluid footer-ig-img" alt="Instagram QR Code">
                 </div>
 
                 <div class="col-lg-2 col-md-6 footer-links">
@@ -928,12 +1008,16 @@
                 <div class="col-lg-4 col-md-6 footer-newsletter ps-lg-4">
                     <h4 id="foot-h3">Join Our Newsletter</h4>
                     <p id="foot-news-desc">Get updates by subscribing to our weekly newsletter.</p>
-                    <form action="https://formspree.io/f/xwvvpolz" class="d-flex" method="POST">
+                <form action="https://formspree.io/f/xwvvpolz" method="POST">
     <input type="hidden" name="_subject" value="[Newsletter] New Subscriber to the Technical Weekly">
-    <input type="email" name="_replyto" id="f-input" placeholder="Enter Your Email" required="">
-    <button type="submit" class="btn btn-primary btn-style text-nowrap" id="f-sub-btn">Subscribe</button>
+    
+    <div class="d-flex">
+        <input type="email" name="_replyto" id="f-input" class="form-control" placeholder="Enter Your Email" required="" style="flex: 1;">
+        <button type="submit" class="btn btn-primary btn-style text-nowrap" id="f-sub-btn">Subscribe</button>
+    </div>
+
+    <div class="form-status" style="margin-top: 10px;display: none;"></div>
 </form>
-                
                 </div>
             </div>
         </div>
