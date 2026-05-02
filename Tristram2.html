@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>[Morpheus_Protocol] Diablo: Hellfire Archive</title>
+    <style>
+        /* 全局初始化：防止像素溢出 */
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root { 
+            --diablo-red: #660000; 
+            --hellfire-gold: #ffaa00; 
+            --stone-grey: #2c2c2c;
+            --parchment: #d4c4a8;
+            --blood-dark: #330000;
+        }
+        
+        body { 
+            font-family: 'Georgia', serif; 
+            background: #1a1a1a; 
+            background-image: url('https://www.transparenttextures.com/patterns/black-linen.png');
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin: 0; 
+            padding: 10px 0 100px 0; /* 底部預留導航空間 */
+            min-height: 100vh;
+            color: var(--parchment);
+            overflow-x: hidden; /* 徹底禁止左右晃動 */
+        }
+
+        /* 統一容器架構 */
+        .wrapper {
+            width: 95%;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* 莫菲斯風格標頭：對齊修正 */
+        .header-box {
+            width: 100%;
+            background: var(--stone-grey); 
+            border: 4px solid var(--diablo-red);
+            margin-bottom: 25px; 
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+        }
+
+        .header-visual {
+            position: relative; 
+            height: 200px; /* 稍微壓縮高度提升緊湊感 */
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--diablo-red);
+            overflow: hidden;
+        }
+
+        /* 動態法陣：縮小比例以適應容器 */
+        .seal-rotate {
+            position: absolute;
+            width: 160px; height: 160px;
+            border: 4px double #8B0000;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff0000, inset 0 0 20px #ff0000;
+            opacity: 0.5;
+            animation: rotate-seal 20s linear infinite;
+        }
+
+        .pentagram {
+            position: absolute;
+            width: 120px; height: 120px;
+            background: #8B0000;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            box-shadow: 0 0 30px #ff4400;
+            opacity: 0.7;
+        }
+
+        .royal-seal-text {
+            position: relative; z-index: 5; 
+            color: var(--hellfire-gold); 
+            font-size: 1.6rem;
+            text-shadow: 0 0 15px #ff0000, 2px 2px 2px #000;
+            letter-spacing: 4px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .title-en-zone {
+            background: var(--blood-dark); color: var(--hellfire-gold);
+            padding: 15px; font-size: 1.2rem; font-weight: bold;
+            text-align: center; cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .title-zh-zone {
+            background: #111; color: #fff;
+            padding: 10px; font-size: 1rem; text-align: center;
+            cursor: pointer; border-top: 1px solid var(--diablo-red);
+        }
+
+        /* 內容容器：確保與標頭完美等寬 */
+        .container { 
+            width: 100%; 
+            background: rgba(30, 30, 30, 0.95); 
+            padding: 25px; 
+            border-radius: 2px; 
+            border: 1px solid var(--diablo-red);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .speech-block { 
+            margin-bottom: 25px; 
+            border-bottom: 1px solid #444; 
+            padding-bottom: 20px;
+        }
+
+        .tag { 
+            background: var(--diablo-red); color: white; 
+            padding: 2px 10px; font-size: 0.7rem; 
+            letter-spacing: 1px; margin-bottom: 10px; display: inline-block;
+        }
+
+        .en-txt { 
+            font-size: 1.2rem; font-weight: 600; color: var(--hellfire-gold); 
+            cursor: pointer; margin-bottom: 10px; line-height: 1.4;
+        }
+
+        .zh-txt { 
+            font-size: 0.95rem; color: #bbb; cursor: pointer; 
+            border-left: 3px solid var(--diablo-red); padding-left: 15px; 
+            line-height: 1.6;
+        }
+
+        /* 導航欄修正 */
+        .page-nav {
+            position: fixed; bottom: 0; 
+            width: 100%; max-width: 750px;
+            background: rgba(0,0,0,0.9);
+            display: flex; justify-content: space-around;
+            padding: 12px 0; border-top: 3px solid var(--diablo-red);
+            z-index: 100;
+        }
+        .nav-btn {
+            background: transparent; color: #888;
+            border: 1px solid #444; padding: 6px 12px;
+            cursor: pointer; font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .nav-btn.active { 
+            background: var(--diablo-red); color: white; border-color: var(--hellfire-gold);
+        }
+
+        @keyframes rotate-seal {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+/* --- 點擊變色交互增強 --- */
+
+/* 1. 標題區：點擊時產生深紅色的「壓制感」 */
+.title-en-zone:active, .title-zh-zone:active {
+    background-color: #ff0000 !important;
+    color: #ffffff !important;
+    transition: background 0.1s; /* 極速反應 */
+}
+
+/* 2. 內容塊：點擊時產生邊框閃爍效果 */
+.speech-block:active {
+    background-color: rgba(102, 0, 0, 0.3) !important;
+    border-left: 5px solid var(--hellfire-gold) !important;
+}
+
+/* 3. 英文與中文文本：點擊時文字發光，模擬數據讀取 */
+.en-txt:active {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px var(--hellfire-gold) !important;
+}
+
+.zh-txt:active {
+    background-color: rgba(255, 170, 0, 0.1) !important;
+    color: #ffffff !important;
+}
+
+/* 4. 導航按鈕：點擊時產生「縮入」的物理感 */
+.nav-btn:active {
+    transform: scale(0.92);
+    background-color: var(--hellfire-gold) !important;
+    color: var(--diablo-red) !important;
+}
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header-box">
+        <div class="header-visual">
+            <div class="seal-rotate"></div>
+            <div class="pentagram"></div>
+            <div class="royal-seal-text">
+                HELLFIRE<br>
+                <span style="font-size: 0.8rem; letter-spacing: 6px; color: #8B0000;">ARCHIVE</span>
+            </div>
+        </div>
+        <div id="main-title-en" class="title-en-zone" onclick="speak(this.innerText, 'en')">Diablo 1: Hellfire | The Full Story</div>
+        <div id="main-title-zh" class="title-zh-zone" onclick="speak(this.innerText, 'zh')">暗黑破壞神：地獄火 | 完整劇情檔案</div>
+    </div>
+
+    <div class="container" id="content-container"></div>
+</div>
+
+<div class="page-nav" id="page-nav"></div>
+
+<script>
+    const gameData = {
+        title: {
+    en: "Hellfire Protocol: The Defiler's Hive and the Descent into Na-Krul's Crypt",
+    zh: "地獄火協議：污染者的異形蟲巢與納克魯墓穴的深淵降臨"
+},
+        pages: [
+            {
+                id: "Hellfire Protocol",
+                content: [
+                    {
+                        tag: "WIRTS_GREED",
+                        en: "Wirt eyes the map greedily: 'Treasure, you say? Maybe I could be interested... but don't you need some rare and expensive supplies first?'",
+                        zh: "維特（Wirt）貪婪地盯著地圖：『你說寶藏？或許我有興趣……但在那之前，你難道不需要一些稀有且昂貴的補給嗎？』"
+                    },
+                    {
+                        tag: "OGDENS_WARNING",
+                        en: "Ogden scolds: 'I bet Wirt saw you coming and put on an act just so he can laugh at you later. I'd ignore it.'",
+                        zh: "奧格登（Ogden）責罵道：『我敢打賭維特早就看準你會來，故意演戲好在事後嘲笑你。換作是我就不理他。』"
+                    },
+                    {
+                        tag: "CAINS_WISDOM",
+                        en: "Cain the Elder remains a non-believer: 'Hidden caves and buried treasure are common fantasies of any child. Wirt seldom indulges in youthful games.'",
+                        zh: "智者凱恩（Cain）同樣不信：『隱藏洞穴和埋藏寶藏只是小孩子的幻想。維特很少玩這種幼稚的遊戲。』"
+                    },
+                    {
+                        tag: "GRISWOLDS_REBUKE",
+                        en: "Griswold dismisses the map: 'This is foolishness. These drawings are inaccurate; they don't match our town at all. Keep your mind on what lies below the cathedral.'",
+                        zh: "格里斯瓦德（Griswold）不屑一顧：『這太愚蠢了。這些畫一點都不精確，跟我們鎮上一點都不像。把心思放在大教堂下面吧。』"
+                    },
+                    {
+                        tag: "ADRIAS_ADVICE",
+                        en: "Adria the Witch advises: 'Maintain your quest. Do not let the Sands of Time confuse your search.'",
+                        zh: "女巫艾德莉亞（Adria）建議道：『堅持你的使命。別讓時間的流沙迷惑了你的搜尋。』"
+                    },
+                    {
+                        tag: "THE_OFFERING",
+                        en: "Realizing the 'Sands of Time' refers to the dead in the graveyard, we lay the map on the crypt. To our shock, the lid falls back, revealing a staircase.",
+                        zh: "意識到『時間流沙』暗指墓地中的死者，我們將地圖放在墓穴上。令我們震驚的是，蓋子翻開，露出了一段階梯。"
+                    },
+                    {
+                        tag: "ENTERING_DARKNESS",
+                        en: "A red glow matches the ominous cathedral lighting. We step inside: 'This is a place of great power.'",
+                        zh: "紅色的光芒與大教堂那不祥的燈光相呼應。我們踏入其中：『這是一個擁有強大力量的地方。』"
+                    },
+                    {
+                        tag: "FIRST_CONTACT",
+                        en: "We are set upon by undead Gravediggers, shovels in hand, gambling towards us and falling into the doorway.",
+                        zh: "手持鏟子的不死族『掘墓者』向我們襲來，他們笨拙地衝向門口。"
+                    }
+                ]
+            },
+            {
+               
+                id: "The Defiler's Hive",
+                content: [
+                    {
+                        tag: "ELITE_ENEMIES",
+                        en: "The Lich: Fire-flinging fiends who maintain a three-tile distance. As a warrior, you must corner them to effectively fell these magma-dripping foes.",
+                        zh: "巫妖（Lich）：投擲火球的惡魔，始終保持三格距離。作為戰士，你必須將這些滴著岩漿的敵人逼入死角才能將其斬殺。"
+                    },
+                    {
+                        tag: "GRAVEDIGGERS",
+                        en: "Grave Diggers: Shambling yet persistent. If allowed to dig, they will regenerate hit points. Do not let them catch their breath.",
+                        zh: "掘墓者：雖然步履蹣跚但異常頑固。如果讓他們開始挖掘，他們會回復生命值。絕不能讓他們有喘息之機。"
+                    },
+                    {
+                        tag: "ANCIENT_STASH",
+                        en: "The Cornerstone of the World: A translucent stone that allows item transfer between different characters, a precursor to the 'Shared Stash' system.",
+                        zh: "世界基石：一塊半透明的奇異石頭，允許不同角色之間轉移物品，這是早期『共享倉庫』系統的雛形。"
+                    },
+                    {
+                        tag: "LORE_CONNECTION",
+                        en: "Decreed in the year of Golden Light, the stone was carved from material named for an Angel. It reflects the Worldstone lore established in later Diablo titles.",
+                        zh: "根據記載，這塊石頭在金光之年由天使授名的材料雕刻而成。這在某種程度上反映了後來《暗黑破壞神 2》中至關重要的『世界之石』設定。"
+                    },
+                    {
+                        tag: "THE_MEETING",
+                        en: "Journal entry: 'My methods of enslaving lesser demons have no effect on this fearsome beast.' A madman has found a creature that cannot be bound.",
+                        zh: "日記記載：『我奴役下級惡魔的方法對這隻可怕的野獸毫無作用。』一名瘋狂的術士發現了一個無法被束縛的存在。"
+                    },
+                    {
+                        tag: "THE_TIRADE",
+                        en: "The Summoner's home becomes corrupted. Shadows move beyond vision, and the scrabble of claws dances at the edges of hearing.",
+                        zh: "召喚師的住所逐漸被腐蝕。陰影在視線邊緣游走，利爪抓撓的聲音在耳畔迴盪。"
+                    },
+                    {
+                        tag: "NA_KRUL_TERROR",
+                        en: "The creature is named Na-Krul. Its howls of fury keep the summoner from sleep, raging against the one who trapped it in the void.",
+                        zh: "那隻生物名為『納克魯（Na-Krul）』。它憤怒的咆哮讓召喚師無法入眠，咒罵著將它困在虛空中的人。"
+                    }
+                ]
+            },
+            {
+                id: "Descent into Na-Krul's Crypt",
+                content: [
+                    {
+                        tag: "SUMMONERS_LEGACY",
+                        en: "The Summoner's final notes reveal the secret to weakening Na-Krul: Read the three grimoires in their proper sequence before pulling the levers.",
+                        zh: "召喚師的最後筆記揭示了削弱納克魯的祕訣：在拉動槓桿釋放它之前，必須按正確順序閱讀三本魔法書。"
+                    },
+                    {
+                        tag: "ARCANE_SEQUENCE",
+                        en: "The ritual chant: 'In Spiritu, Sanctum, Praedictum, Otium.' Failing to do this releases the demon at its full, nightmare-inducing strength.",
+                        zh: "儀式咒語：『In Spiritu, Sanctum, Praedictum, Otium。』若不執行此儀式，釋放出的惡魔將擁有令人恐懼的完整力量。"
+                    },
+                    {
+                        tag: "DEMONIC_PRISON",
+                        en: "Na-Krul's cell is sealed by a pentagram and a horned demon head. To pull the lever without the ritual is to invite immediate retribution.",
+                        zh: "納克魯的囚室由五角星陣與牛頭惡魔浮雕封印。若不舉行儀式便拉動槓桿，將會招致毀滅性的報復。"
+                    },
+                    {
+                        tag: "FINAL_CONFRONTATION",
+                        en: "Na-Krul, a bipedal tentacled beast the size of Diablo, rushes out. We stand our ground, jamming Griswold's Edge into its abdomen.",
+                        zh: "納克魯，一隻與迪亞布羅體型相當、長滿觸手的雙足巨獸衝了出來。我們固守陣地，將格里斯瓦德之刃刺入它的腹部。"
+                    },
+                    {
+                        tag: "DIVINE_SPOILS",
+                        en: "Upon its defeat, Na-Krul drops legendary relics: A Book of Apocalypse, a Magic Long Bow, a Great Sword, and an Arch Staff.",
+                        zh: "擊敗它後，納克魯掉落了傳奇遺物：天啟之書、魔法長弓、大劍以及大天使之杖。"
+                    },
+                    {
+                        tag: "MISSION_SUCCESS",
+                        en: "With Na-Krul dead and the Summoner's minions banished, the Crypt is clear. Tristram is safe from Hellfire's horrors... for now.",
+                        zh: "隨著納克魯死亡且召喚師的隨從被驅逐，墓穴重歸寂靜。崔斯特瑞姆暫時從地獄火的恐怖中解脫了。"
+                    }
+                ]
+            }
+        ]
+    };
+
+    function init() {
+        document.getElementById('main-title-en').innerText = gameData.title.en;
+        document.getElementById('main-title-zh').innerText = gameData.title.zh;
+        const nav = document.getElementById('page-nav');
+        gameData.pages.forEach((page, index) => {
+            const btn = document.createElement('button');
+            btn.className = `nav-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerText = page.id;
+            btn.onclick = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderPage(page.id);
+            };
+            nav.appendChild(btn);
+        });
+        renderPage(gameData.pages[0].id);
+    }
+
+    function renderPage(pageId) {
+        const container = document.getElementById('content-container');
+        container.innerHTML = '';
+        const pageData = gameData.pages.find(p => p.id === pageId);
+        pageData.content.forEach(item => {
+            const block = document.createElement('div');
+            block.className = 'speech-block';
+            block.innerHTML = `
+                <span class="tag"># ${item.tag}</span>
+                <div class="en-txt" onclick="speak(this.innerText, 'en')">${item.en}</div>
+                <div class="zh-txt" onclick="speak(this.innerText, 'zh')">${item.zh}</div>
+            `;
+            container.appendChild(block);
+        });
+    }
+
+    function speak(text, lang) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = lang === 'en' ? 'en-US' : 'zh-TW';
+        msg.rate = lang === 'en' ? 0.75 : 1.3;
+        window.speechSynthesis.speak(msg);
+    }
+    window.onload = init;
+</script>
+</body>
+</html>
