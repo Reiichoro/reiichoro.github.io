@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>[Morpheus_Protocol] Diablo: Hellfire Archive</title>
+    <style>
+        /* 全局初始化：防止像素溢出 */
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root { 
+            --diablo-red: #660000; 
+            --hellfire-gold: #ffaa00; 
+            --stone-grey: #2c2c2c;
+            --parchment: #d4c4a8;
+            --blood-dark: #330000;
+        }
+        
+        body { 
+            font-family: 'Georgia', serif; 
+            background: #1a1a1a; 
+            background-image: url('https://www.transparenttextures.com/patterns/black-linen.png');
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin: 0; 
+            padding: 10px 0 100px 0; /* 底部預留導航空間 */
+            min-height: 100vh;
+            color: var(--parchment);
+            overflow-x: hidden; /* 徹底禁止左右晃動 */
+        }
+
+        /* 統一容器架構 */
+        .wrapper {
+            width: 95%;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* 莫菲斯風格標頭：對齊修正 */
+        .header-box {
+            width: 100%;
+            background: var(--stone-grey); 
+            border: 4px solid var(--diablo-red);
+            margin-bottom: 25px; 
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+        }
+
+        .header-visual {
+            position: relative; 
+            height: 200px; /* 稍微壓縮高度提升緊湊感 */
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--diablo-red);
+            overflow: hidden;
+        }
+
+        /* 動態法陣：縮小比例以適應容器 */
+        .seal-rotate {
+            position: absolute;
+            width: 160px; height: 160px;
+            border: 4px double #8B0000;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff0000, inset 0 0 20px #ff0000;
+            opacity: 0.5;
+            animation: rotate-seal 20s linear infinite;
+        }
+
+        .pentagram {
+            position: absolute;
+            width: 120px; height: 120px;
+            background: #8B0000;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            box-shadow: 0 0 30px #ff4400;
+            opacity: 0.7;
+        }
+
+        .royal-seal-text {
+            position: relative; z-index: 5; 
+            color: var(--hellfire-gold); 
+            font-size: 1.6rem;
+            text-shadow: 0 0 15px #ff0000, 2px 2px 2px #000;
+            letter-spacing: 4px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .title-en-zone {
+            background: var(--blood-dark); color: var(--hellfire-gold);
+            padding: 15px; font-size: 1.2rem; font-weight: bold;
+            text-align: center; cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .title-zh-zone {
+            background: #111; color: #fff;
+            padding: 10px; font-size: 1rem; text-align: center;
+            cursor: pointer; border-top: 1px solid var(--diablo-red);
+        }
+
+        /* 內容容器：確保與標頭完美等寬 */
+        .container { 
+            width: 100%; 
+            background: rgba(30, 30, 30, 0.95); 
+            padding: 25px; 
+            border-radius: 2px; 
+            border: 1px solid var(--diablo-red);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .speech-block { 
+            margin-bottom: 25px; 
+            border-bottom: 1px solid #444; 
+            padding-bottom: 20px;
+        }
+
+        .tag { 
+            background: var(--diablo-red); color: white; 
+            padding: 2px 10px; font-size: 0.7rem; 
+            letter-spacing: 1px; margin-bottom: 10px; display: inline-block;
+        }
+
+        .en-txt { 
+            font-size: 1.2rem; font-weight: 600; color: var(--hellfire-gold); 
+            cursor: pointer; margin-bottom: 10px; line-height: 1.4;
+        }
+
+        .zh-txt { 
+            font-size: 0.95rem; color: #bbb; cursor: pointer; 
+            border-left: 3px solid var(--diablo-red); padding-left: 15px; 
+            line-height: 1.6;
+        }
+
+        /* 導航欄修正 */
+        .page-nav {
+            position: fixed; bottom: 0; 
+            width: 100%; max-width: 750px;
+            background: rgba(0,0,0,0.9);
+            display: flex; justify-content: space-around;
+            padding: 12px 0; border-top: 3px solid var(--diablo-red);
+            z-index: 100;
+        }
+        .nav-btn {
+            background: transparent; color: #888;
+            border: 1px solid #444; padding: 6px 12px;
+            cursor: pointer; font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .nav-btn.active { 
+            background: var(--diablo-red); color: white; border-color: var(--hellfire-gold);
+        }
+
+        @keyframes rotate-seal {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+/* --- 點擊變色交互增強 --- */
+
+/* 1. 標題區：點擊時產生深紅色的「壓制感」 */
+.title-en-zone:active, .title-zh-zone:active {
+    background-color: #ff0000 !important;
+    color: #ffffff !important;
+    transition: background 0.1s; /* 極速反應 */
+}
+
+/* 2. 內容塊：點擊時產生邊框閃爍效果 */
+.speech-block:active {
+    background-color: rgba(102, 0, 0, 0.3) !important;
+    border-left: 5px solid var(--hellfire-gold) !important;
+}
+
+/* 3. 英文與中文文本：點擊時文字發光，模擬數據讀取 */
+.en-txt:active {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px var(--hellfire-gold) !important;
+}
+
+.zh-txt:active {
+    background-color: rgba(255, 170, 0, 0.1) !important;
+    color: #ffffff !important;
+}
+
+/* 4. 導航按鈕：點擊時產生「縮入」的物理感 */
+.nav-btn:active {
+    transform: scale(0.92);
+    background-color: var(--hellfire-gold) !important;
+    color: var(--diablo-red) !important;
+}
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header-box">
+        <div class="header-visual">
+            <div class="seal-rotate"></div>
+            <div class="pentagram"></div>
+            <div class="royal-seal-text">
+                HELLFIRE<br>
+                <span style="font-size: 0.8rem; letter-spacing: 6px; color: #8B0000;">ARCHIVE</span>
+            </div>
+        </div>
+        <div id="main-title-en" class="title-en-zone" onclick="speak(this.innerText, 'en')">Diablo 1: Hellfire | The Full Story</div>
+        <div id="main-title-zh" class="title-zh-zone" onclick="speak(this.innerText, 'zh')">暗黑破壞神：地獄火 | 完整劇情檔案</div>
+    </div>
+
+    <div class="container" id="content-container"></div>
+</div>
+
+<div class="page-nav" id="page-nav"></div>
+
+<script>
+    const gameData = {
+        title: {
+    en: "Hellfire Protocol: From the Eldritch Hive to the Ritual of Na-Krul and the Bovine Secret",
+    zh: "地獄火協議：從不可名狀之蟲巢、納克魯禁忌儀式到奶牛裝的荒誕祕寶"
+},
+        pages: [
+            {
+                id: "Eldritch Hive",
+                content: [
+                    {
+                        tag: "CELIAS_PLEA",
+                        en: "South of Adria's shack, we meet Celia. She is weeping for her lost friend, Theo, who was snatched by a 'big green bug' by the river.",
+                        zh: "在艾德莉亞小屋南方，我們遇到了賽莉亞。她正為失蹤的好友希奧多（Theo）哭泣，據說他在河邊被一隻『大綠蟲』抓走了。"
+                    },
+                    {
+                        tag: "THE_HOG_DEMON",
+                        en: "Deep in the Hive, we encounter the Hognosis (Hog Demon). This 10-foot-tall monstrosity births endless 'Hawk Spawn' to protect its nest.",
+                        zh: "在蟲巢深處，我們遭遇了 Hognosis（豬魔）。這隻 10 英尺高的怪物不斷產下『鷹隼幼體』來守護巢穴。"
+                    },
+                    {
+                        tag: "THEODORE_THE_BEAR",
+                        en: "After felling the demon, we find... a teddy bear named Theodore. Celia rewards us with a high-level amulet for rescuing her plush friend.",
+                        zh: "擊殺惡魔後，我們發現……一個名叫希奧多的泰迪熊。賽莉亞為了感謝我們救回她的玩伴，贈送了一個高等級護身符。"
+                    },
+                    {
+                        tag: "LOVECRAFTIAN_HORROR",
+                        en: "Hellfire was an attempt to bring Lovecraftian elements into Diablo. The Hive represents eldritch, otherworldly horror rather than classic Gothic style.",
+                        zh: "《地獄火》嘗試將洛夫克拉夫特元素引入暗黑。蟲巢代表的是那種不可名狀、異世界的恐懼，而非傳統的哥德式風格。"
+                    },
+                    {
+                        tag: "CONGRUENCY_ISSUE",
+                        en: "While Sierra kept the horror vibe, the direction feels less congruent with vanilla Diablo's aesthetic, branching into alien and biological terror.",
+                        zh: "雖然 Sierra 保留了恐怖氛圍，但其方向與原版暗黑的美學並不完全一致，更多地轉向了外星生物般的肉體恐怖。"
+                    },
+                    {
+                        tag: "THE_PHONEY_COW",
+                        en: "By altering 'command.txt', Lester the Farmer is replaced by a man in a Cow Suit. He flatly states: 'Look, I'm just a cow, okay?'",
+                        zh: "透過修改『command.txt』，農夫萊斯特會被一個穿著奶牛裝的人取代。他平淡地說：『看著，我只是一頭牛，好嗎？』"
+                    },
+                    {
+                        tag: "I_SAID_MOO",
+                        en: "The man in the suit scoffs: 'I said, MOO. You're monster bait. Get some experience, then we'll talk.'",
+                        zh: "那套裝裡的男人嘲諷道：『我說了，哞！你只是怪物的誘餌，先去積累點經驗再跟我說話。』"
+                    }
+                ]
+            },
+            {
+               
+                id: "Ritual of Na-Krul",
+                content: [
+                    {
+                        tag: "COW_SKEPTICISM",
+                        en: "If we approach the 'Cow' early, he dismisses us: 'Quit bugging me. I'm looking for someone really heroic, and you're not it. I don't trust tourists.'",
+                        zh: "若過早接近那頭「牛」，他會打發我們：『別煩我，我在找真正的英雄，而你顯然不是。我不信任觀光客。』"
+                    },
+                    {
+                        tag: "SELF_MADE_COW",
+                        en: "Upon our second return, he roasts us: 'I'm a self-made cow. Make something of yourself, and then we'll talk.'",
+                        zh: "第二次返回時，他嘲諷道：『我是一頭白手起家的牛。先做出點成績來，我們再談。』"
+                    },
+                    {
+                        tag: "IDENTITY_CRISIS",
+                        en: "At level 15, he finally breaks down: 'All right, I'm not really a cow. I don't normally go around like this, but these bugs and vines started coming out of my floor!'",
+                        zh: "直到第 15 層，他終於崩潰了：『好吧，我不是真的牛。我平時不這樣穿，但那些蟲子和藤蔓突然從我家地板冒出來了！』"
+                    },
+                    {
+                        tag: "THE_BROWN_SUIT",
+                        en: "The mission: 'Go back to my place and get my suit—the brown one, not the gray one. That's for evening wear. I don't want anyone seeing me like this.'",
+                        zh: "任務目標：『回我家幫我拿西裝——要棕色那套，別拿灰色的，那是晚宴穿的。我不想讓人看到我這副德性。』"
+                    },
+                    {
+                        tag: "RUNE_BOMB_GIFT",
+                        en: "The Nut drops a single Rune Bomb to help us clear the Hive: 'You can't miss my house. It's south of the river fork with the overgrown garden.'",
+                        zh: "「瘋子」丟下了一個符文炸彈幫我們清理蟲巢：『你不會錯過我家的。就在河叉口南方，有個雜草叢生菜園的那間。』"
+                    }
+                ]
+            },
+            {
+                id: "The Bovine Secret",
+                content: [
+                    {
+                        tag: "SUIT_MISUNDERSTANDING",
+                        en: "We find a gray cow suit in the Hive, but the Nut rebukes us: 'No, no! This is my gray suit for evening wear, formal occasions. I need the BROWN suit!'",
+                        zh: "我們在蟲巢找到了灰色奶牛裝，但那個瘋子卻斥責：『不不不！這是我的灰色西裝，晚宴正裝用的。我要的是那件棕色的！』"
+                    },
+                    {
+                        tag: "ARMOR_DESTRUCTION",
+                        en: "Deep in the Hive, the acid from Venom Tails eats through our 'Arkaine's Valor'. Exposed and desperate, we finally recover the brown suit.",
+                        zh: "在蟲巢深處，毒尾怪的酸液腐蝕了我們的『阿凱尼的榮耀』。在失去護甲的絕境中，我們終於奪回了那件棕色西裝。"
+                    },
+                    {
+                        tag: "MISSION_COMPLETE",
+                        en: "The smiling madman is satisfied: 'That's much better. It has some dignity. Are my antlers on straight?'",
+                        zh: "那微笑的瘋子滿意了：『這好多了，體面一點。我的鹿角歪了嗎？』"
+                    },
+                    {
+                        tag: "BOVINE_PLATE_STATS",
+                        en: "He gifts us the 'Bovine Plate'. Stats: AC 150, +50% Light Radius, +30 Resist All, Indestructible. But minus 50 Mana.",
+                        zh: "他贈送了『奶牛戰甲』。屬性：防禦 150、+50% 光照範圍、全抗性+30、永不磨損。但法力上限 -50。"
+                    },
+                    {
+                        tag: "FASHION_CRITIQUE",
+                        en: "The Nut's final advice: 'Your whole adventure motif is just so retro.' He returns to his cow persona with a euphoric grin.",
+                        zh: "瘋子最後的建議：『你的冒險穿搭太復古了。』隨後他帶著愉悅的笑容，重新進入了他的「牛」角色。"
+                    }
+                ]
+
+            }
+        ]
+    };
+
+    function init() {
+        document.getElementById('main-title-en').innerText = gameData.title.en;
+        document.getElementById('main-title-zh').innerText = gameData.title.zh;
+        const nav = document.getElementById('page-nav');
+        gameData.pages.forEach((page, index) => {
+            const btn = document.createElement('button');
+            btn.className = `nav-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerText = page.id;
+            btn.onclick = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderPage(page.id);
+            };
+            nav.appendChild(btn);
+        });
+        renderPage(gameData.pages[0].id);
+    }
+
+    function renderPage(pageId) {
+        const container = document.getElementById('content-container');
+        container.innerHTML = '';
+        const pageData = gameData.pages.find(p => p.id === pageId);
+        pageData.content.forEach(item => {
+            const block = document.createElement('div');
+            block.className = 'speech-block';
+            block.innerHTML = `
+                <span class="tag"># ${item.tag}</span>
+                <div class="en-txt" onclick="speak(this.innerText, 'en')">${item.en}</div>
+                <div class="zh-txt" onclick="speak(this.innerText, 'zh')">${item.zh}</div>
+            `;
+            container.appendChild(block);
+        });
+    }
+
+    function speak(text, lang) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = lang === 'en' ? 'en-US' : 'zh-TW';
+        msg.rate = lang === 'en' ? 0.75 : 1.3;
+        window.speechSynthesis.speak(msg);
+    }
+    window.onload = init;
+</script>
+</body>
+</html>
