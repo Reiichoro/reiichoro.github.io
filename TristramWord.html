@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>[Hellfire_Archive] Vocabulary Terminal</title>
+    <style>
+        /* 暗黑破壞神視覺架構 */
+        :root { 
+            --diablo-red: #660000; 
+            --hellfire-gold: #ffaa00; 
+            --stone-grey: #2c2c2c;
+            --parchment: #d4c4a8;
+            --blood-dark: #330000;
+            --deep-black: #0d0208;
+        }
+        
+        body { 
+            font-family: 'Georgia', serif; 
+            background: #1a1a1a; 
+            background-image: url('https://www.transparenttextures.com/patterns/black-linen.png');
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh;
+            color: var(--parchment);
+            overflow-x: hidden;
+        }
+
+        /* 標頭法陣 */
+        .header-box {
+            width: 100%;
+            max-width: 500px;
+            background: var(--stone-grey); 
+            border: 4px solid var(--diablo-red);
+            margin-bottom: 25px; 
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+        }
+
+        .header-visual {
+            position: relative; 
+            height: 120px;
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--diablo-red);
+        }
+
+        .seal-rotate {
+            position: absolute;
+            width: 100px; height: 100px;
+            border: 4px double #8B0000;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: rotate-seal 20s linear infinite;
+        }
+
+        .royal-seal-text {
+            position: relative; z-index: 5; 
+            color: var(--hellfire-gold); 
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px #ff0000;
+            letter-spacing: 4px;
+            text-align: center;
+        }
+
+        /* 單詞卡容器 */
+        .card { 
+            background: rgba(30, 30, 30, 0.95); 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 450px; 
+            padding: 40px 25px; 
+            border: 2px solid var(--diablo-red);
+            border-radius: 2px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+        }
+
+        #word { 
+            font-size: 3rem; 
+            font-weight: bold; 
+            color: var(--hellfire-gold); 
+            text-shadow: 2px 2px 4px #000, 0 0 20px rgba(255, 170, 0, 0.3);
+            margin-bottom: 20px; 
+            cursor: pointer; 
+        }
+
+        #answer-area { 
+            display: none; 
+            animation: fade-in 0.4s ease;
+        }
+        
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #definition { 
+            font-size: 1.6rem; 
+            color: #fff; 
+            border-bottom: 1px solid var(--diablo-red);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            white-space: pre-line;
+        }
+
+        .sentence-box { 
+            background: var(--blood-dark); 
+            padding: 15px; 
+            border-left: 4px solid var(--hellfire-gold); 
+            margin-bottom: 20px; 
+            cursor: pointer; 
+            text-align: left;
+        }
+
+        #sentence { font-size: 1.1rem; color: var(--parchment); font-style: italic; line-height: 1.5; }
+
+        #mnemonic { 
+            font-size: 0.9rem; 
+            color: #d4c4a8; 
+            background: rgba(0, 0, 0, 0.4); 
+            padding: 12px; 
+            border: 1px dashed var(--diablo-red);
+        }
+
+        /* 導航控制 */
+        .controls { 
+            margin-top: 25px; 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            width: 100%; 
+            max-width: 500px; 
+        }
+
+        button { 
+            background: var(--stone-grey); 
+            color: var(--parchment);
+            border: 1px solid var(--diablo-red); 
+            padding: 15px 5px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+
+        button:active { transform: scale(0.95); background: var(--diablo-red); color: white; }
+        
+        .btn-show { 
+            grid-column: span 4; 
+            font-size: 1.3rem; 
+            background: var(--diablo-red); 
+            color: var(--hellfire-gold);
+            letter-spacing: 2px;
+        }
+
+        .stats { margin-top: 20px; color: var(--diablo-red); letter-spacing: 2px; font-weight: bold; }
+
+        @keyframes rotate-seal { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <div class="header-visual">
+            <div class="seal-rotate"></div>
+            <div class="royal-seal-text">HELLFIRE<br><span style="font-size: 0.7rem; color: #8B0000;">VOCABULARY ARCHIVE</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div id="word" onclick="speak('word')">Loading...</div>
+        
+        <div id="answer-area">
+            <div id="definition" onclick="speak('def')">意義</div>
+            <div class="sentence-box" onclick="speak('sentence')">
+                <div id="sentence">Loading Sentence...</div>
+            </div>
+            <div id="mnemonic">Mnemonic Logic...</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-show" onclick="showAnswer()">DECODE (Space)</button>
+        <button onclick="handleScore(1)">FAIL</button>
+        <button onclick="handleScore(2)">HARD</button>
+        <button onclick="handleScore(3)">GOOD</button>
+        <button onclick="handleScore(4)">EASY</button>
+    </div>
+
+    <div class="stats" id="stats">SYNC: 0/0</div>
+
+<script>
+// 提督，意志與數據正在同步至暗黑架構...
+    const masterMatrix = [
+        // --- 暗黑地獄火核心詞：場景與威脅 ---
+        { w: "Festering", p: "/ˈfestərɪŋ/", d: "潰爛的 / 腐爛的", s: "Near Adria's shack, we find a festering nest.", m: "💡 莫菲斯：形容問題久拖不決而惡化，比 bad 強力十倍。" },
+        { w: "Tendrils", p: "/ˈtendrəlz/", d: "觸手 / 蔓延物", s: "Otherworldly tendrils protrude from the ground.", m: "💡 莫菲斯：在系統中指代盤根錯節、難以釐清的依賴關係。" },
+        { w: "Protrude", p: "/prəˈtruːd/", d: "突出 / 伸出", s: "Strange metal pipes protrude from the foundation.", m: "💡 莫菲斯：正式動詞。形容某物不正常地從表面凸出來。" },
+        { w: "Cyst", p: "/sɪst/", d: "囊腫 / 包囊", s: "A cracked cyst bubbles in the center of the nest.", m: "💡 莫菲斯：在架構中象徵封裝了大量 Bug 的封閉模組。" },
+        { w: "Bubbles", p: "/ˈbʌblz/", d: "冒泡 / 沸騰", s: "The liquid bubbles with unnatural heat.", m: "💡 莫菲斯：形容不穩定的狀態，危險正在醞釀（Brewing）。" },
+        { w: "Unnatural", p: "/ʌnˈnætʃrəl/", d: "不自然的 / 超自然的", s: "The biology of the forest was twisted and unnatural.", m: "💡 莫菲斯：警報詞。當數據不符合正態分佈時使用。" },
+        { w: "Flora", p: "/ˈflɔːrə/", d: "植物群", s: "The cave was filled with luminous, toxic flora.", m: "💡 莫菲斯：科學術語，與 Fauna (動物群) 對應。" },
+
+        // --- 情緒、觀察與對抗 ---
+        { w: "Menacing", p: "/ˈmenəsɪŋ/", d: "有威脅的 / 險惡的", s: "The creature let out a low, menacing growl.", m: "💡 莫菲斯：形容對手或外部環境給予的巨大壓迫感。" },
+        { w: "Terrorizing", p: "/ˈterəraɪzɪŋ/", d: "恐嚇 / 肆虐", s: "Hellish forces are terrorizing the small village.", m: "💡 莫菲斯：描述系統性、持續性的破壞行為。" },
+        { w: "Inconspicuous", p: "/ˌɪnkənˈspɪkjuəs/", d: "不顯眼的 / 平庸的", s: "Lester is an inconspicuous farmer at first glance.", m: "💡 莫菲斯：去賊化關鍵。真正的威脅往往隱藏在平凡的外表下。" },
+        { w: "Seemingly", p: "/ˈsiːmɪŋli/", d: "表面上看起來", s: "The system was seemingly stable before the crash.", m: "💡 莫菲斯：邏輯轉折詞。用於引出真相與表象的斷裂。" },
+        { w: "Cleansed", p: "/klenzd/", d: "淨化 / 清除", s: "The hero cleansed the church of those creatures.", m: "💡 莫菲斯：徹底清理。在開發中指代大規模重構與 Bug 殲滅。" },
+        { w: "Desecration", p: "/ˌdesɪˈkreɪʃn/", d: "褻瀆 / 破壞", s: "Save the catacombs from this dark desecration.", m: "💡 莫菲斯：最高等級的破壞描述，指核心價值被踐踏。" },
+        { w: "Approached", p: "/əˈproʊtʃt/", d: "接近 / 接觸", s: "If approached before reaching level two, he remains silent.", m: "💡 莫菲斯：行為動作。指與實體（Entity）進行通訊嘗試。" },
+        { w: "Seeking", p: "/ˈsiːkɪŋ/", d: "尋找 / 追求", s: "We are seeking a solution to the economic mess.", m: "💡 莫菲斯：比 look for 正式，帶有明確目標的探索。" },
+
+        // --- 生物性噁心與深度描寫 ---
+        { w: "Throbbing", p: "/ˈθrɒbɪŋ/", d: "跳動的 / 悸動的", s: "The Rune Bomb hit the throbbing mass of flesh.", m: "💡 莫菲斯：畫面感極強，形容帶有生命力的「威脅中心」。" },
+        { w: "Gunk", p: "/ɡʌŋk/", d: "黏糊物 / 汙穢物", s: "It exploded in a heap of vile gunk.", m: "💡 莫菲斯：非正式但極常用的詞，形容難以清理的垃圾數據。" },
+        { w: "Ichor", p: "/ˈaɪkɔːr/", d: "膿血 / (神/怪) 的血", s: "Green ichor oozed from the monster's wound.", m: "💡 莫菲斯：史詩級用語。普通的血叫 Blood，高級的怪流 Ichor。" },
+        { w: "Oozing", p: "/ˈuːzɪŋ/", d: "滲出 / 緩緩流出", s: "The walls were dripping and oozing with slime.", m: "💡 莫菲斯：緩慢且持續的洩漏，常用於形容 Memory leak。" },
+
+        // --- 進階邏輯詞 ---
+        { w: "Entity", p: "/ˈentəti/", d: "存在體 / 實體", s: "An unknown entity warns: We shall feed.", m: "💡 莫菲斯：架構師靈魂詞。任何獨立運行的對象皆為 Entity。" },
+        { w: "Trigger", p: "/ˈtrɪɡər/", d: "觸發 / 引起", s: "The environment triggers trypophobia in some players.", m: "💡 莫菲斯：因果邏輯的核心。事件驅動架構（EDA）的基礎。" },
+        
+        // --- A. 任務 / 劇情核心 ---
+        { w: "Deception", p: "/dɪˈsepʃn/", d: "欺騙 / 詭計", s: "The farmer's deception led the hero into a trap.", m: "💡 莫菲斯：在網絡安全中，這常指社交工程（Social Engineering）攻擊。" },
+        { w: "Defiler", p: "/dɪˈfaɪlər/", d: "污染者 / 褻瀆者", s: "The Defiler awaited us at the bottom of the hive.", m: "💡 莫菲斯：形容破壞系統純淨性、植入病毒的實體。" },
+        { w: "Chronicles", p: "/ˈkrɒnɪklz/", d: "編年史 / 記錄", s: "The Hellfire Chronicles document the fall of Tristram.", m: "💡 莫菲斯：按時間順序排列的系統日誌（System Logs）。" },
+        { w: "Survey", p: "/ˈsɜːveɪ/", d: "調查 / 勘查", s: "We must survey the area before deploying the server.", m: "💡 莫菲斯：在採取行動前的「需求評估」或「環境偵測」。" },
+        { w: "Report", p: "/rɪˈpɔːrt/", d: "報告", s: "The survey report showed multiple security vulnerabilities.", m: "💡 莫菲斯：數據輸出的最終形式，架構師的日常產出物。" },
+
+        // --- B. 地圖 / 地點 (場景建模) ---
+        { w: "Shack", p: "/ʃæk/", d: "小破屋", s: "Adria the witch lives in a small shack near the river.", m: "💡 莫菲斯：形容低配置、臨時性的基礎設施（Infrastructure）。" },
+        { w: "Catacombs", p: "/ˈkætəkoʊmz/", d: "地下墓穴", s: "The skeletons rose from the depths of the catacombs.", m: "💡 莫菲斯：在代碼中，指那些深埋底層、陰暗且難以維護的舊代碼區。" },
+        { w: "Orchard", p: "/ˈɔːrtʃərd/", d: "果園", s: "The farmer's orchard was infested with strange flora.", m: "💡 莫菲斯：資源產出地。確保你的『果園』不被 Bug 侵蝕。" },
+        { w: "Cemetery", p: "/ˈseməteri/", d: "墓地", s: "Place the offering in the cemetery to trigger the event.", m: "💡 莫菲|：存放廢棄項目（Deprecated Projects）的終點。" },
+        { w: "Cathedral", p: "/kəˈθiːdrəl/", d: "大教堂", s: "The Cathedral stands as a grim silhouette against the sky.", m: "💡 莫菲斯：指代核心、莊嚴且龐大的中央系統架構。" },
+
+        // --- C. 人物描述 (實體特徵) ---
+        { w: "Farmer", p: "/ˈfɑːrmər/", d: "農夫", s: "Lester is an inconspicuous farmer with a hidden past.", m: "💡 莫菲斯：基礎建設的維護者，底層運算資源的提供者。" },
+        { w: "Straw", p: "/strɔː/", d: "稻草", s: "He wore a straw brim hat to block the sun.", m: "💡 莫菲斯：形容廉價但有效的原始材料。" },
+        { w: "Brim", p: "/brɪm/", d: "帽沿 / 邊緣", s: "His eyes were hidden under the brim of his hat.", m: "💡 莫菲斯：Buffer 的邊界，或數據溢出的臨界點。" },
+        { w: "Overalls", p: "/ˈoʊvərɔːlz/", d: "吊帶褲 / 工作服", s: "The farmer was dressed in blue denim overalls.", m: "💡 莫菲斯：生產環境中的標配裝束，代表「執行狀態」。" },
+
+        // --- D. 任務行為 / 系統邏輯 ---
+        { w: "Impose", p: "/ɪmˈpoʊz/", d: "強加 / 麻煩", s: "I couldn't impose on a perfect stranger for help.", m: "💡 莫菲斯：強制執行策略（Enforce Policy）或增加系統負載。" },
+        { w: "Approach", p: "/əˈproʊtʃ/", d: "接近 / 方法", s: "We need a new approach to clean the catacombs.", m: "💡 莫菲斯：解決問題的「技術路徑」或「接入方式」。" },
+        { w: "Returning", p: "/rɪˈtɜːrnɪŋ/", d: "返回", s: "Returning to town after a long dungeon crawl.", m: "💡 莫菲斯：回調函數（Callback）或狀態重置。" },
+        { w: "Reward", p: "/rɪˈwɔːrd/", d: "獎勵 / 報酬", s: "The Auric Amulet is a valuable reward for the quest.", m: "💡 莫菲斯：系統優化後的預期收益（Return on Investment）。" },
+
+        // --- E. 高級詞彙 (權限與資產) ---
+        { w: "Auric", p: "/ˈɔːrɪk/", d: "黃金的 / 金色的", s: "The Auric Amulet glowed with an ancient power.", m: "💡 莫菲斯：高價值的、VIP 級別的資源標記。" },
+        { w: "Inventory", p: "/ˈɪnvəntɔːri/", d: "背包 / 庫存 / 清單", s: "Check your inventory for the Rune Bomb before leaving.", m: "💡 莫菲斯：系統內存空間的管理，或資產清單審計。" },
+// --- 🧬 A. 生物 / 異形（重點） ---
+    { w: "Entity", p: "/ˈentəti/", d: "存在體 / 實體", s: "An unknown entity warns: 'The time to awaken has come.'", m: "💡 莫菲斯：系統中任何獨立運行的對象或未知生物。" },
+    { w: "Hive", p: "/haɪv/", d: "巢穴 / 蜂巢", s: "The Hive is a disgusting, oozing hole with green dripping walls.", m: "💡 莫菲斯：群集架構，也指代大量威脅聚集的中心。" },
+    { w: "Pods", p: "/pɒdz/", d: "莢艙 / 卵囊", s: "Fleshy pods replace barrels, exploding into gunk when looted.", m: "💡 莫菲斯：容器化技術（K8s）的核心術語，雖然這裡很噁心。" },
+    { w: "Fauna", p: "/ˈfɔːnə/", d: "動物群", s: "The biology of Sanctuary's fauna is alarmingly diverse.", m: "💡 莫菲斯：特定環境下的所有生物類別。" },
+    { w: "Reptilian", p: "/repˈtɪliən/", d: "爬蟲類的", s: "Assaulted by Psychorbs with giant reptilian eyes.", m: "💡 莫菲斯：形容冷血、具有特定生物特徵的敵人。" },
+
+    // --- 🧠 B. 身體 / 結構（超實用） ---
+    { w: "Porous", p: "/ˈpɔːrəs/", d: "多孔的", s: "The environment triggers trypophobia with porous tubes.", m: "💡 莫菲斯：形容防線漏洞百出，有很多洞（Vulnerability）。" },
+    { w: "Fleshy", p: "/ˈfleʃi/", d: "肉質的", s: "The monster had a thick, fleshy hide.", m: "💡 莫菲斯：形容生物性的厚重質感。" },
+    { w: "Ridges", p: "/ˈrɪdʒɪz/", d: "隆起 / 脊狀物", s: "Brain-like ridges covered the floor of the hive.", m: "💡 莫菲斯：表面不平整的突起，也指代數據波動的峰脊。" },
+    { w: "Maw", p: "/mɔː/", d: "大嘴 / 咽喉", s: "Vile gunk oozed from the monster's exposed maw.", m: "💡 莫菲斯：形容貪婪的、巨大的吞噬口。" },
+    { w: "Limbs", p: "/lɪmz/", d: "肢體 / 肢段", s: "The Defiler is an insectoid hybrid with 10 lethal limbs.", m: "💡 莫菲斯：組件或分支，也指怪物的四肢。" },
+
+    // --- ☣️ C. 恐怖 / 噁心描寫（關鍵） ---
+    { w: "Disgusting", p: "/dɪsˈɡʌstɪŋ/", d: "噁心的", s: "The Hive is a disgusting, oozing hole.", m: "💡 莫菲斯：情緒強烈的排斥詞。" },
+    { w: "Dripping", p: "/ˈdrɪpɪŋ/", d: "滴落", s: "Green liquid was dripping from the ceiling.", m: "💡 莫菲斯：持續、緩慢的下墜流動。" },
+    { w: "Oozing", p: "/ˈuːzɪŋ/", d: "滲出", s: "Vile ichor was oozing from the cracked cyst.", m: "💡 莫菲斯：緩慢且黏稠的流出，常用於內存洩漏（Memory Leak）。" },
+    { w: "Vile", p: "/vaɪl/", d: "極度邪惡 / 卑劣", s: "The Rune Bomb exploded in a heap of vile gunk.", m: "💡 莫菲斯：形容本質上的邪惡與令人反感。" },
+    { w: "Swarm", p: "/swɔːrm/", d: "成群湧來", s: "The heroes were surrounded by a swarm of insectoids.", m: "💡 莫菲斯：高併發的流量或成群的威脅。" },
+
+    // --- ⚔️ D. 戰鬥 / 遊戲 ---
+    { w: "Assaulted", p: "/əˈsɔːltɪd/", d: "遭到攻擊", s: "We were assaulted by Psychorbs on the third level.", m: "💡 莫菲斯：遭受強大且突然的衝擊。" },
+    { w: "Knockback", p: "/ˈnɒkbæk/", d: "擊退", s: "Hellbores have massive knockback that pushes you away.", m: "💡 莫菲斯：遊戲術語，指物理位移的負面效果。" },
+    { w: "Slaying", p: "/ˈsleɪɪŋ/", d: "殺死 / 屠殺", s: "After slaying the Defiler, the path was finally clear.", m: "💡 莫菲斯：史詩感的戰勝，通常指消滅 BOSS。" },
+    { w: "Loot", p: "/luːt/", d: "掉落物 / 戰利品", s: "The fleshy pods exploded into gunk when looted.", m: "💡 莫菲斯：在代碼中也指從接口抓取的數據載荷。" },
+    { w: "Boss", p: "/bɒs/", d: "頭目", s: "The Defiler is the final boss of the Hive level.", m: "💡 莫菲斯：除了指上司，也指代最難攻克的技術難關。" },
+
+    // --- 前兩批整合數據 (節選核心) ---
+    { w: "Festering", p: "/ˈfestərɪŋ/", d: "潰爛的", s: "Near Adria's shack, we find a festering nest.", m: "💡 莫菲斯：形容問題久拖不決而惡化。" },
+    { w: "Deception", p: "/dɪˈsepʃn/", d: "欺騙 / 詭計", s: "The farmer's deception led the hero into a trap.", m: "💡 莫菲斯：網路安全中的偽裝攻擊。" },
+    { w: "Inventory", p: "/ˈɪnvəntɔːri/", d: "背包 / 庫存", s: "Check your inventory for the Rune Bomb.", m: "💡 莫菲斯：資產與資源清單。" },
+    { w: "Trigger", p: "/ˈtrɪɡər/", d: "觸發", s: "The environment triggers certain events.", m: "💡 莫菲斯：事件驅動架構的核心。" },
+// --- 🧠 A. 劇情 / 邏輯 (第四批) ---
+        { w: "Clue", p: "/kluː/", d: "線索", s: "This scrawled parchment is our only clue to his location.", m: "💡 莫菲斯：排查 Bug 時最核心的追蹤標籤。" },
+        { w: "Vanished", p: "/ˈvænɪʃt/", d: "消失", s: "Lester has inexplicably vanished from the orchard.", m: "💡 莫菲斯：形容數據或對象在沒有任何錯誤日誌的情況下遺失。" },
+        { w: "Inexplicably", p: "/ˌɪnɪkˈsplɪkəbli/", d: "無法解釋地", s: "The server crashed inexplicably at midnight.", m: "💡 莫菲斯：非邏輯性崩潰，架構師最頭痛的狀態。" },
+        { w: "Altered", p: "/ˈɔːltərd/", d: "被改變", s: "The environment was altered in some strange way.", m: "💡 莫菲斯：狀態變更（State changed），通常指非預期的修改。" },
+        { w: "Objective", p: "/əbˈdʒektɪv/", d: "目標", s: "Our next objective is to find the Cathedral entrance.", m: "💡 莫菲斯：項目開發的里程碑（Milestone）。" },
+
+        // --- 🧠 B. 行為 / 描述 (第四批) ---
+        { w: "Warns", p: "/wɔːrnz/", d: "警告", s: "An unknown entity warns: 'We shall feed.'", m: "💡 莫菲斯：系統拋出的 Warning，代表潛在的崩潰風險。" },
+        { w: "Awaken", p: "/əˈweɪkən/", d: "覺醒", s: "The time to awaken has finally come.", m: "💡 莫菲斯：服務啟動（Start up）或線程被喚醒。" },
+        { w: "Feed", p: "/fiːd/", d: "進食 / 餵養", s: "The monsters seek to feed on the souls of the living.", m: "💡 莫菲斯：數據饋送（Data feed），將原料輸入算法模型。" },
+        { w: "Heading", p: "/ˈhedɪŋ/", d: "前往", s: "We are heading north toward Adria's shack.", m: "💡 莫菲斯：執行流（Execution flow）的走向。" },
+
+        // --- 🧬 C. 環境 / 異常 (第四批高級) ---
+        { w: "Anomaly", p: "/əˈnɒməli/", d: "異常", s: "The survey report identified a biological anomaly.", m: "💡 莫菲斯：數據偏離預期，異常監測（Anomaly Detection）。" },
+        { w: "Environment", p: "/ɪnˈvaɪrənmənt/", d: "環境", s: "The Hive environment triggers fear in the brave.", m: "💡 莫菲斯：開發環境（Dev）或正式環境（Prod）。" },
+        { w: "Trypophobia", p: "/ˌtrɪpəˈfoʊbiə/", d: "密集恐懼症", s: "The porous tubes in the hive triggered his trypophobia.", m: "💡 莫菲斯：形容 UI 界面過於混亂或數據點過於密集的極客黑話。" },
+
+        // --- ⚔️ D. 敵人 / 生物 (第四批補完) ---
+        { w: "Insectoid", p: "/ɪnˈsekˌtɔɪd/", d: "類昆蟲的", s: "The Hive was crawling with insectoid hybrids.", m: "💡 莫菲斯：外殼堅硬、具有群體攻擊特性的威脅實體。" },
+        { w: "Millipede", p: "/ˈmɪlɪpiːd/", d: "馬陸 / 千足蟲", s: "The Defiler looks like a giant, mutated millipede.", m: "💡 莫菲斯：形容長串、難以處理的鏈式依賴（Dependency chain）。" },
+        { w: "Mantis", p: "/ˈmæntɪs/", d: "螳螂", s: "The creature has the sharp limbs of a praying mantis.", m: "💡 莫菲斯：形容精準、致命且快速的截擊。" },
+        { w: "Hybrid", p: "/ˈhaɪbrɪd/", d: "混合體", s: "It was a lethal hybrid of insect and demon.", m: "💡 莫菲斯：混合雲（Hybrid Cloud）或跨平台架構。" },
+
+        // --- 🧾 E. 物品 / 文件 (第四批) ---
+        { w: "Parchment", p: "/ˈpɑːrtʃmənt/", d: "羊皮紙", s: "The map was scrawled on a piece of old parchment.", m: "💡 莫菲斯：原始文檔，代表不可篡改的底層數據記錄。" },
+        { w: "Scrawled", p: "/skrɔːld/", d: "潦草寫下", s: "Someone scrawled 'Put me here' on the map.", m: "💡 莫菲斯：非正式的備註（Quick notes）或代碼註解。" },
+
+        // --- [經典回顧：前三批核心內容] ---
+        { w: "Festering", p: "/ˈfestərɪŋ/", d: "潰爛的", s: "A festering nest bubbles in the center.", m: "💡 莫菲斯：形容問題久拖不決而惡化。" },
+        { w: "Porous", p: "/ˈpɔːrəs/", d: "多孔的", s: "The environment triggers trypophobia with porous tubes.", m: "💡 莫菲斯：形容防線漏洞百出。" },
+        { w: "Inventory", p: "/ˈɪnvəntɔːri/", d: "庫存 / 背包", s: "Check your inventory for the Rune Bomb.", m: "💡 莫菲斯：系統資產清單審計。" },
+        { w: "Trigger", p: "/ˈtrɪɡər/", d: "觸發", s: "The event triggers a massive swarm of enemies.", m: "💡 莫菲斯：事件驅動架構的核心。" },
+        { w: "Deception", p: "/dɪˈsepʃn/", d: "欺騙 / 詭計", s: "The farmer's deception led the hero into a trap.", m: "💡 莫菲斯：網絡安全中的社會工程攻擊。" }
+ 
+    ];
+
+    let currentIndex = 0;
+
+    function updateCard() {
+        const data = masterMatrix[currentIndex];
+        document.getElementById('word').innerText = data.w;
+        document.getElementById('definition').innerText = data.p + '\n' + data.d;
+        document.getElementById('sentence').innerText = data.s;
+        document.getElementById('mnemonic').innerText = data.m;
+        
+        document.getElementById('answer-area').style.display = 'none';
+        document.getElementById('stats').innerText = `SYNC: ${currentIndex + 1}/${masterMatrix.length}`;
+        speak('word');
+    }
+
+    function showAnswer() {
+        document.getElementById('answer-area').style.display = 'block';
+        speak('sentence');
+    }
+
+    function speak(type) {
+        window.speechSynthesis.cancel();
+        const data = masterMatrix[currentIndex];
+        let text = "";
+        let lang = "en-US";
+        let rate = 0.8;
+
+        if (type === 'word') {
+            text = data.w;
+        } else if (type === 'def') {
+            text = data.d;
+            lang = "zh-TW";
+            rate = 1.35;
+        } else {
+            text = data.s;
+            rate = 0.85;
+        }
+
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = lang;
+        msg.rate = rate;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function handleScore(score) {
+        currentIndex = (currentIndex + 1) % masterMatrix.length;
+        updateCard();
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') { e.preventDefault(); showAnswer(); }
+        if (['1','2','3','4'].includes(e.key)) handleScore(e.key);
+    });
+
+    window.onload = updateCard;
+</script>
+</body>
+</html>
