@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>[Morpheus_Protocol] Diablo: Hellfire Archive</title>
+    <style>
+        /* 全局初始化：防止像素溢出 */
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root { 
+            --diablo-red: #660000; 
+            --hellfire-gold: #ffaa00; 
+            --stone-grey: #2c2c2c;
+            --parchment: #d4c4a8;
+            --blood-dark: #330000;
+        }
+        
+        body { 
+            font-family: 'Georgia', serif; 
+            background: #1a1a1a; 
+            background-image: url('https://www.transparenttextures.com/patterns/black-linen.png');
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin: 0; 
+            padding: 10px 0 100px 0; /* 底部預留導航空間 */
+            min-height: 100vh;
+            color: var(--parchment);
+            overflow-x: hidden; /* 徹底禁止左右晃動 */
+        }
+
+        /* 統一容器架構 */
+        .wrapper {
+            width: 95%;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* 莫菲斯風格標頭：對齊修正 */
+        .header-box {
+            width: 100%;
+            background: var(--stone-grey); 
+            border: 4px solid var(--diablo-red);
+            margin-bottom: 25px; 
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+        }
+
+        .header-visual {
+            position: relative; 
+            height: 200px; /* 稍微壓縮高度提升緊湊感 */
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--diablo-red);
+            overflow: hidden;
+        }
+
+        /* 動態法陣：縮小比例以適應容器 */
+        .seal-rotate {
+            position: absolute;
+            width: 160px; height: 160px;
+            border: 4px double #8B0000;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff0000, inset 0 0 20px #ff0000;
+            opacity: 0.5;
+            animation: rotate-seal 20s linear infinite;
+        }
+
+        .pentagram {
+            position: absolute;
+            width: 120px; height: 120px;
+            background: #8B0000;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            box-shadow: 0 0 30px #ff4400;
+            opacity: 0.7;
+        }
+
+        .royal-seal-text {
+            position: relative; z-index: 5; 
+            color: var(--hellfire-gold); 
+            font-size: 1.6rem;
+            text-shadow: 0 0 15px #ff0000, 2px 2px 2px #000;
+            letter-spacing: 4px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .title-en-zone {
+            background: var(--blood-dark); color: var(--hellfire-gold);
+            padding: 15px; font-size: 1.2rem; font-weight: bold;
+            text-align: center; cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .title-zh-zone {
+            background: #111; color: #fff;
+            padding: 10px; font-size: 1rem; text-align: center;
+            cursor: pointer; border-top: 1px solid var(--diablo-red);
+        }
+
+        /* 內容容器：確保與標頭完美等寬 */
+        .container { 
+            width: 100%; 
+            background: rgba(30, 30, 30, 0.95); 
+            padding: 25px; 
+            border-radius: 2px; 
+            border: 1px solid var(--diablo-red);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .speech-block { 
+            margin-bottom: 25px; 
+            border-bottom: 1px solid #444; 
+            padding-bottom: 20px;
+        }
+
+        .tag { 
+            background: var(--diablo-red); color: white; 
+            padding: 2px 10px; font-size: 0.7rem; 
+            letter-spacing: 1px; margin-bottom: 10px; display: inline-block;
+        }
+
+        .en-txt { 
+            font-size: 1.2rem; font-weight: 600; color: var(--hellfire-gold); 
+            cursor: pointer; margin-bottom: 10px; line-height: 1.4;
+        }
+
+        .zh-txt { 
+            font-size: 0.95rem; color: #bbb; cursor: pointer; 
+            border-left: 3px solid var(--diablo-red); padding-left: 15px; 
+            line-height: 1.6;
+        }
+
+        /* 導航欄修正 */
+        .page-nav {
+            position: fixed; bottom: 0; 
+            width: 100%; max-width: 750px;
+            background: rgba(0,0,0,0.9);
+            display: flex; justify-content: space-around;
+            padding: 12px 0; border-top: 3px solid var(--diablo-red);
+            z-index: 100;
+        }
+        .nav-btn {
+            background: transparent; color: #888;
+            border: 1px solid #444; padding: 6px 12px;
+            cursor: pointer; font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .nav-btn.active { 
+            background: var(--diablo-red); color: white; border-color: var(--hellfire-gold);
+        }
+
+        @keyframes rotate-seal {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+/* --- 點擊變色交互增強 --- */
+
+/* 1. 標題區：點擊時產生深紅色的「壓制感」 */
+.title-en-zone:active, .title-zh-zone:active {
+    background-color: #ff0000 !important;
+    color: #ffffff !important;
+    transition: background 0.1s; /* 極速反應 */
+}
+
+/* 2. 內容塊：點擊時產生邊框閃爍效果 */
+.speech-block:active {
+    background-color: rgba(102, 0, 0, 0.3) !important;
+    border-left: 5px solid var(--hellfire-gold) !important;
+}
+
+/* 3. 英文與中文文本：點擊時文字發光，模擬數據讀取 */
+.en-txt:active {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px var(--hellfire-gold) !important;
+}
+
+.zh-txt:active {
+    background-color: rgba(255, 170, 0, 0.1) !important;
+    color: #ffffff !important;
+}
+
+/* 4. 導航按鈕：點擊時產生「縮入」的物理感 */
+.nav-btn:active {
+    transform: scale(0.92);
+    background-color: var(--hellfire-gold) !important;
+    color: var(--diablo-red) !important;
+}
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header-box">
+        <div class="header-visual">
+            <div class="seal-rotate"></div>
+            <div class="pentagram"></div>
+            <div class="royal-seal-text">
+                HELLFIRE<br>
+                <span style="font-size: 0.8rem; letter-spacing: 6px; color: #8B0000;">ARCHIVE</span>
+            </div>
+        </div>
+        <div id="main-title-en" class="title-en-zone" onclick="speak(this.innerText, 'en')">Diablo 1: Hellfire | The Full Story</div>
+        <div id="main-title-zh" class="title-zh-zone" onclick="speak(this.innerText, 'zh')">暗黑破壞神：地獄火 | 完整劇情檔案</div>
+    </div>
+
+    <div class="container" id="content-container"></div>
+</div>
+
+<div class="page-nav" id="page-nav"></div>
+
+<script>
+    const gameData = {
+        title: {
+    en: "Hellfire Chronicles: From the Farmer's Deception to the Defiler's Nest",
+    zh: "地獄火編年史：從農夫的詭計到污染者的異形巢穴"
+},
+        pages: [
+            {
+                id: "Farmer's Deception",
+                content: [
+                    {
+                        tag: "SURVEY_REPORT",
+                        en: "Near Adria's shack, we find a festering nest. Otherworldly tendrils protrude from the ground and a cracked cyst bubbles in its center, composed of unnatural flora.",
+                        zh: "在艾德莉亞的小屋附近，我們發現了一個潰爛的巢穴。異世界的觸手從地下伸出，中心一個裂開的囊腫不斷冒泡，由超自然的植物組成。"
+                    },
+                    {
+                        tag: "THE_PATH_BLOCKED",
+                        en: "We don't exactly understand what it is, if a plant at all, but it seems menacing and blocks our path to the aberration.",
+                        zh: "我們不清楚這究竟是什麼，甚至不確定它是否為植物，但它充滿威脅並阻擋了通往異常點的道路。"
+                    },
+                    {
+                        tag: "NPC_IDENTIFICATION",
+                        en: "Heading north, we find Lester, an inconspicuous farmer in straw brim hat and overalls, seemingly unconcerned about the hell terrorizing Tristram.",
+                        zh: "一路向北，我們找到了萊斯特。他戴著草帽、穿著吊帶工作褲，顯得平庸無奇，彷彿完全不擔心正在恐怖襲擊崔斯特瑞姆的地獄力量。"
+                    },
+                    {
+                        tag: "LEVEL_1_RESTRICTION",
+                        en: "If approached before reaching level two: 'I need something done, but I couldn't impose on a perfect stranger. Perhaps after you've been here a while.'",
+                        zh: "若在進入地牢二層前接近他，他會說：『我有事要辦，但我不能強求一個陌生人。或許等你待久一點後再說。』"
+                    },
+                    {
+                        tag: "LEVEL_2_RETURN",
+                        en: "Returning after level two: 'Oh, such a trouble I have... maybe after you've cleansed the church of some of those creatures, you could help a poor farmer.'",
+                        zh: "地牢二層後返回：『噢，我有大麻煩了……或許等你清理掉教堂裡的一些怪物後，能騰出點時間幫幫我這個窮農夫。』"
+                    },
+                    {
+                        tag: "CATACOMBS_HINT",
+                        en: "Seeking Leicester again after reaching the catacombs: 'I could use your help. But perhaps after you've saved the catacombs from the desecration.'",
+                        zh: "抵達地下墓穴後再次尋找萊斯特：『我需要你的幫助。但或許得等你從這場褻瀆中拯救了墓穴之後。』"
+                    }
+                ]
+            },
+            {
+                id: "The Defiler",
+                content: [
+                    {
+                        tag: "HERO_RECOGNITION",
+                        en: "After reaching level 15, Lester finally seeks our aid: 'So you're the hero everyone's been talking about, perhaps you could help a poor farmer out of a terrible mess at the edge of my orchard.'",
+                        zh: "抵達第 15 層後，萊斯特終於開口求援：『所以你就是大家都在談論的英雄？或許你能幫一個窮農夫解決果園邊緣那個可怕的麻煩。』"
+                    },
+                    {
+                        tag: "THE_RUNE_BOMB",
+                        en: "Lester gives us the Rune Bomb: 'The Witch gave this to me and said it would blast that thing out of my field. I'd do it myself, but someone has to stay here with the cows.'",
+                        zh: "萊斯特給了我們符文炸彈：『女巫把這東西給我，說能把我田裡那玩意炸飛。我本想親自動手，但得有人留在這陪著牛。』"
+                    },
+                    {
+                        tag: "ADRIA_CONFUSION",
+                        en: "If we ask Lester for clues, he laments: 'I knew it couldn't be as simple as that Witch made it sound.' However, Adria doesn't seem to recall the bomb at all.",
+                        zh: "如果向萊斯特尋求線索，他會哀嘆：『我就知道沒那女巫說的那麼簡單。』然而，女巫艾德莉亞似乎完全不記得有炸彈這回事。"
+                    },
+                    {
+                        tag: "DESTRUCTION",
+                        en: "We toss the Rune Bomb at the throbbing mass of tendrils. It explodes in a heap of vile gunk and ichor oozing from its exposed maw.",
+                        zh: "我們將符文炸彈扔向那團抽動的觸手。它在一堆汙穢的黏液中爆炸，膿血從它裂開的口中湧出。"
+                    },
+                    {
+                        tag: "MISSION_COMPLETE",
+                        en: "With the path cleared, the farmer's orchard quest is fulfilled, and we rush back to Lester for his final thanks.",
+                        zh: "路徑清除，果園任務完成，我們趕回萊斯特那裡接受他最後的致謝。"
+                    },
+                    {
+                        tag: "QUEST_REWARD",
+                        en: "Lester rewards us with the Auric Amulet. It allows characters to carry 10,000 gold per slot, doubling the vanilla limit of 5,000.",
+                        zh: "萊斯特獎勵了『黃金護身符』。它讓角色每個格子的金幣攜帶量從原版的 5,000 提升至 10,000。"
+                    },
+                    {
+                        tag: "ECONOMIC_IMPACT",
+                        en: "This enables the purchase of high-tier items like Full Plate Mail (170,000+ gold) which were previously impossible to hold in the inventory.",
+                        zh: "這讓購買高階裝備（如 17 萬金幣以上的全身板甲）成為可能，解決了原版空間不足無法完成交易的系統限制。"
+                    }
+                ]
+            },
+            {
+                id: "Chronicles",
+                content: [
+                    {
+                        tag: "BIO_ANOMALY",
+                        en: "The Hive is a disgusting, oozing hole with green dripping walls. An unknown entity warns: 'The time to awaken has come... we shall feed.'",
+                        zh: "蟲巢是一個令人作嘔、滲出黏液的洞穴。一個未知的存在警告：『覺醒之時已到……我們即將進食。』"
+                    },
+                    {
+                        tag: "XENO_MORPHOLOGY",
+                        en: "The environment triggers trypophobia with porous tubes and brain-like ridges. Fleshy pods replace barrels, exploding into gunk when looted.",
+                        zh: "環境充滿了令人不安的孔洞與腦狀隆起。肉質莢艙取代了木桶，搜刮時會噴濺出汙穢物。"
+                    },
+                    {
+                        tag: "ENEMY_SWARM",
+                        en: "Assaulted by Psychorbs with giant reptilian eyes and 'Hellbores' with massive knockback. The biology of Sanctuary's fauna is alarmingly diverse.",
+                        zh: "遭到擁有巨大爬蟲之眼的『靈能球』與具備極強擊退力的『地獄野豬』襲擊。聖休亞瑞的生物多樣性令人驚悚。"
+                    },
+                    {
+                        tag: "BOSS_ENCOUNTER",
+                        en: "On the fourth level, we face The Defiler: a 10-foot-tall insectoid hybrid of a millipede and a praying mantis with 10 lethal limbs.",
+                        zh: "在第四層，我們遭遇了『污染者』：一隻 10 英尺高、融合了馬陸與螳螂特徵的類昆蟲生物，擁有 10 條致命肢體。"
+                    },
+                    {
+                        tag: "VICTORY_LOOT",
+                        en: "After slaying it, we find the 'Cathedral Map'. Lester has inexplicably vanished, leaving only this scrawled parchment as a clue.",
+                        zh: "擊殺它後，我們發現了『大教堂地圖』。萊斯特莫名失蹤，只留下這張塗鴉般的羊皮紙作為線索。"
+                    },
+                    {
+                        tag: "GILLIAN_VISION",
+                        en: "Gillian the barmaid mentions her grandmother's stories: 'If you leave the proper offering in the cemetery, it would be altered in some strange way.'",
+                        zh: "酒吧女招待吉莉安提到了祖母的傳說：『如果你在墓地留下正確的祭品，它將會以某種奇異的方式發生改變。』"
+                    },
+                    {
+                        tag: "NEXT_OBJECTIVE",
+                        en: "Unmistakable on the map is the Cathedral to the north. 'Put me here,' it scrawls, pointing to a crucifix in the graveyard.",
+                        zh: "地圖上標註了大教堂。上面草草寫著『把我放這』，指向墓地裡的一個十字架。"
+                    }
+                ]
+            }
+        ]
+    };
+
+    function init() {
+        document.getElementById('main-title-en').innerText = gameData.title.en;
+        document.getElementById('main-title-zh').innerText = gameData.title.zh;
+        const nav = document.getElementById('page-nav');
+        gameData.pages.forEach((page, index) => {
+            const btn = document.createElement('button');
+            btn.className = `nav-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerText = page.id;
+            btn.onclick = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderPage(page.id);
+            };
+            nav.appendChild(btn);
+        });
+        renderPage(gameData.pages[0].id);
+    }
+
+    function renderPage(pageId) {
+        const container = document.getElementById('content-container');
+        container.innerHTML = '';
+        const pageData = gameData.pages.find(p => p.id === pageId);
+        pageData.content.forEach(item => {
+            const block = document.createElement('div');
+            block.className = 'speech-block';
+            block.innerHTML = `
+                <span class="tag"># ${item.tag}</span>
+                <div class="en-txt" onclick="speak(this.innerText, 'en')">${item.en}</div>
+                <div class="zh-txt" onclick="speak(this.innerText, 'zh')">${item.zh}</div>
+            `;
+            container.appendChild(block);
+        });
+    }
+
+    function speak(text, lang) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = lang === 'en' ? 'en-US' : 'zh-TW';
+        msg.rate = lang === 'en' ? 0.75 : 1.3;
+        window.speechSynthesis.speak(msg);
+    }
+    window.onload = init;
+</script>
+</body>
+</html>
