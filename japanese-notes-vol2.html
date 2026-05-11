@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日語學習筆記 Vol.2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --ink: #1a1208;
+  --paper: #faf6ee;
+  --paper2: #f3ede0;
+  --rule: #c8b89a;
+  --gold: #b8860b;
+  --gold-l: #d4a017;
+  --red: #8b1a1a;
+  --blue: #1a3a6b;
+  --green: #1a5c2a;
+  --purple: #4a1a6b;
+  --teal: #0a4a4a;
+  --accent: #c44b00;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #1e1810;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 14px 60px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.page-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: clamp(20px, 3.5vw, 32px);
+  font-weight: 800;
+  color: #f5e6c0;
+  letter-spacing: 6px;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 12px rgba(180,140,10,0.4);
+}
+.page-sub {
+  font-size: 11px;
+  color: #907860;
+  letter-spacing: 3px;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: var(--paper);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 900px;
+  padding: 34px 30px 44px;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.6), 0 2px 0 #b8860b;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, var(--rule) 31px, var(--rule) 32px);
+  opacity: 0.3;
+  pointer-events:none;
+}
+.card::after {
+  content:'';
+  position:absolute;
+  left:50px; top:0; bottom:0;
+  width:1.5px;
+  background:rgba(180,40,40,0.2);
+}
+
+.sec {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 32px;
+}
+
+.sec-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 4px;
+  border-bottom: 1.5px solid var(--gold-l);
+  padding-bottom: 5px;
+  margin-bottom: 16px;
+}
+
+/* ── Info box ── */
+.info-box {
+  background: rgba(26,58,107,0.06);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 4px 4px 0;
+  padding: 13px 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--ink);
+}
+.info-box strong { color: var(--blue); }
+.info-box .ja { font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; }
+
+.tip {
+  background: rgba(196,75,0,0.07);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  padding: 11px 16px;
+  font-size: 12.5px;
+  color: var(--ink);
+  line-height: 1.85;
+  margin-bottom: 14px;
+}
+.tip strong { color: var(--accent); }
+
+/* ── Comparison block: 日 vs 曜日 ── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.cmp-box {
+  border-radius: 4px;
+  padding: 14px 16px;
+  border: 1.5px solid;
+}
+.cmp-box.date { background: #eef4ff; border-color: #7fa0d0; }
+.cmp-box.week { background: #eef8f0; border-color: #7fc090; }
+.cmp-box h4 {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.cmp-box.date h4 { color: var(--blue); }
+.cmp-box.week h4 { color: var(--green); }
+.cmp-box p { font-size: 12px; line-height: 1.85; color: #333; }
+.cmp-box .ja { font-family: 'Noto Sans JP', sans-serif; font-size: 13.5px; font-weight: 700; }
+
+/* ── Date number table ── */
+.tbl-wrap {
+  overflow-x: auto;
+  border: 1px solid #d8ccb8;
+  border-radius: 3px;
+  margin-bottom: 12px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+}
+thead tr { background: var(--ink); color: #f5e6c0; }
+thead th {
+  padding: 9px 10px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-align: center;
+  white-space: nowrap;
+}
+tbody tr:nth-child(even) { background: var(--paper2); }
+tbody tr:nth-child(odd)  { background: var(--paper); }
+tbody tr.special { background: #fff8e8; }
+td {
+  padding: 8px 10px;
+  text-align: center;
+  border-right: 1px solid #e0d4bc;
+  font-size: 13px;
+}
+td:last-child { border-right: none; }
+td.n { font-family: 'Shippori Mincho', serif; font-size: 16px; font-weight: 800; }
+td.rd { font-size: 14px; }
+td.rm { font-size: 10.5px; color: #999; font-family: 'Noto Sans TC', sans-serif; }
+td.nt { font-size: 11px; color: var(--accent); font-weight: 700; font-family: 'Noto Sans TC', sans-serif; }
+
+/* ── Weekday table ── */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.day-card {
+  border-radius: 4px;
+  padding: 10px 4px;
+  text-align: center;
+  border: 1.5px solid;
+  transition: transform 0.15s;
+}
+.day-card:hover { transform: translateY(-2px); }
+.day-card .kanji { font-family: 'Shippori Mincho', serif; font-size: 18px; font-weight: 800; }
+.day-card .kana  { font-family: 'Noto Sans JP', sans-serif; font-size: 9px; margin: 3px 0 2px; line-height: 1.4; }
+.day-card .en    { font-size: 9px; color: #888; font-family: 'Noto Sans TC', sans-serif; }
+
+.day-mon { background:#e8f0ff; border-color:#7090d0; color:#1a3a7a; }
+.day-tue { background:#fff0e8; border-color:#d07050; color:#7a2a10; }
+.day-wed { background:#e8f4ff; border-color:#60a0d0; color:#103a6a; }
+.day-thu { background:#eaf0e0; border-color:#70a060; color:#1a4a10; }
+.day-fri { background:#fffae0; border-color:#c0a020; color:#5a4000; }
+.day-sat { background:#e0f0ff; border-color:#5090c0; color:#103060; }
+.day-sun { background:#ffe8e8; border-color:#d06060; color:#7a1010; }
+
+/* ── Verb table ── */
+.verb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.verb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--paper2);
+  border-radius: 3px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--teal);
+}
+.verb-row .vj { font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; color: var(--ink); min-width: 70px; }
+.verb-row .vr { font-size: 10px; color: #aaa; font-family: 'DM Mono', monospace; min-width: 60px; }
+.verb-row .vc { font-size: 13px; color: #444; }
+
+/* ── Adjective conjugation ── */
+.adj-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #d8ccb8;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.rule-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.rpill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 700;
+  border: 1.5px solid;
+}
+.rp-i    { background:#fff0e0; border-color:#d08030; color:#7a3800; }
+.rp-na   { background:#e8ffe8; border-color:#50a050; color:#1a5010; }
+.rp-rule { background:#f0e8ff; border-color:#9070d0; color:#3a1880; font-family:'Noto Sans TC',sans-serif; font-size:11.5px; font-weight:400; }
+
+/* ── IT Vocab ── */
+.it-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.it-card {
+  border-radius: 4px;
+  padding: 10px 12px;
+  border: 1px solid #d0c8b8;
+  background: var(--paper);
+  position: relative;
+}
+.it-card .cat-badge {
+  font-size: 9px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  display: inline-block;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.cat-action { background:#ffe8d8; color:#a03000; }
+.cat-core   { background:#e8e8ff; color:#303080; }
+.cat-comp   { background:#d8f0e8; color:#106040; }
+.cat-net    { background:#e8f4ff; color:#103060; }
+.cat-file   { background:#fff8e0; color:#604000; }
+.cat-state  { background:#f0e8ff; color:#401870; }
+
+.it-card .ja-word {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.it-card .romaji {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 3px;
+}
+.it-card .meaning {
+  font-size: 12px;
+  color: #555;
+}
+
+.card-footer {
+  margin-top: 24px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--rule);
+  font-size: 10.5px;
+  color: #bbb;
+  text-align: center;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.card { animation: fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<div class="page-title">日語學習筆記 Vol.2</div>
+<div class="page-sub">日期・星期・動詞・形容詞・IT詞彙</div>
+
+<div class="card">
+
+<!-- ══ 1. 日 vs 曜日 框架釐清 ══ -->
+<div class="sec">
+  <div class="sec-title">① 「日」與「曜日」— 兩個完全不同的框架</div>
+
+  <div class="compare-grid">
+    <div class="cmp-box date">
+      <h4>📅 日期框架 — 幾號？</h4>
+      <p>用來表達「這個月的第幾天」<br>
+      讀法：<span class="ja">～にち</span> / <span class="ja">～か</span>（特殊）<br>
+      例：<span class="ja">1日＝ついたち</span>（1號）<br>
+      　　<span class="ja">5日＝いつか</span>（5號）<br>
+      　　<span class="ja">20日＝はつか</span>（20號）<br>
+      疑問詞：<span class="ja">何日？（なんにち）</span></p>
+    </div>
+    <div class="cmp-box week">
+      <h4>📆 星期框架 — 星期幾？</h4>
+      <p>用來表達「一週中的第幾天」<br>
+      格式：<span class="ja">〇曜日（ようび）</span><br>
+      例：<span class="ja">月曜日＝げつようび</span>（Monday）<br>
+      　　<span class="ja">日曜日＝にちようび</span>（Sunday）<br>
+      疑問詞：<span class="ja">何曜日？（なんようび）</span></p>
+    </div>
+  </div>
+
+  <div class="tip">
+    💡 <strong>關鍵區別：</strong>「日曜日」裡的「日」唸 <strong>にち</strong>，是「太陽」的意思（源自漢字文化），跟「幾號」的「日（か/にち）」寫法相同但框架完全不同。<br>
+    記憶法：有「曜日」兩字 → 星期；只有數字+日 → 日期幾號
+  </div>
+
+  <!-- 日期特殊讀法表 -->
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>號數</th>
+          <th>讀法</th>
+          <th>羅馬音</th>
+          <th>備註</th>
+          <th>號數</th>
+          <th>讀法</th>
+          <th>羅馬音</th>
+          <th>備註</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="special">
+          <td class="n">1</td>
+          <td class="rd">ついたち</td>
+          <td class="rm">tsuitachi</td>
+          <td class="nt">⚠️完全特殊</td>
+          <td class="n">14</td>
+          <td class="rd">じゅうよっか</td>
+          <td class="rm">jūyokka</td>
+          <td class="nt">⚠️特殊</td>
+        </tr>
+        <tr class="special">
+          <td class="n">2</td>
+          <td class="rd">ふつか</td>
+          <td class="rm">futsuka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">15</td>
+          <td class="rd">じゅうごにち</td>
+          <td class="rm">jūgonichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr class="special">
+          <td class="n">3</td>
+          <td class="rd">みっか</td>
+          <td class="rm">mikka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">16</td>
+          <td class="rd">じゅうろくにち</td>
+          <td class="rm">jūrokunichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr class="special">
+          <td class="n">4</td>
+          <td class="rd">よっか</td>
+          <td class="rm">yokka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">17</td>
+          <td class="rd">じゅうしちにち</td>
+          <td class="rm">jūshichinichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr class="special">
+          <td class="n">5</td>
+          <td class="rd">いつか</td>
+          <td class="rm">itsuka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">18</td>
+          <td class="rd">じゅうはちにち</td>
+          <td class="rm">jūhachinichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr class="special">
+          <td class="n">6</td>
+          <td class="rd">むいか</td>
+          <td class="rm">muika</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">19</td>
+          <td class="rd">じゅうくにち</td>
+          <td class="rm">jūkunichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr class="special">
+          <td class="n">7</td>
+          <td class="rd">なのか</td>
+          <td class="rm">nanoka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">20</td>
+          <td class="rd">はつか</td>
+          <td class="rm">hatsuka</td>
+          <td class="nt">⚠️完全特殊</td>
+        </tr>
+        <tr class="special">
+          <td class="n">8</td>
+          <td class="rd">ようか</td>
+          <td class="rm">yōka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">24</td>
+          <td class="rd">にじゅうよっか</td>
+          <td class="rm">nijūyokka</td>
+          <td class="nt">⚠️4のみ特殊</td>
+        </tr>
+        <tr class="special">
+          <td class="n">9</td>
+          <td class="rd">ここのか</td>
+          <td class="rm">kokonoka</td>
+          <td class="nt">⚠️か系</td>
+          <td class="n">25〜29</td>
+          <td class="rd">にじゅう〇にち</td>
+          <td class="rm">nijū+nichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr class="special">
+          <td class="n">10</td>
+          <td class="rd">とおか</td>
+          <td class="rm">tōka</td>
+          <td class="nt">⚠️完全特殊</td>
+          <td class="n">30</td>
+          <td class="rd">さんじゅうにち</td>
+          <td class="rm">sanjūnichi</td>
+          <td class="nt">規則</td>
+        </tr>
+        <tr>
+          <td class="n">11〜13</td>
+          <td class="rd">じゅう〇にち</td>
+          <td class="rm">jū+nichi</td>
+          <td class="nt">規則</td>
+          <td class="n">？</td>
+          <td class="rd" style="color:var(--gold);font-weight:700;">なんにち</td>
+          <td class="rm">nannichi</td>
+          <td class="nt" style="color:var(--gold);">疑問詞</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    ⚠️ <strong>記憶法：1〜10號</strong>全是特殊讀法（か系），11號起大致規則（+にち），但 <strong>14・20・24</strong> 要特別記！<br>
+    💡 筆記裡「日号:にちだごう」→ 正確應是：<strong>日（にち）</strong>= 號數，<strong>号（ごう）</strong>= 編號/期號，日期只用「日」。
+  </div>
+</div>
+
+<!-- ══ 2. 星期 ══ -->
+<div class="sec">
+  <div class="sec-title">② 七曜日 — 星期完整版</div>
+
+  <div class="week-grid">
+    <div class="day-card day-mon">
+      <div class="kanji">月</div>
+      <div class="kana">げつようび<br>Getsuyōbi</div>
+      <div class="en">Monday</div>
+    </div>
+    <div class="day-card day-tue">
+      <div class="kanji">火</div>
+      <div class="kana">かようび<br>Kayōbi</div>
+      <div class="en">Tuesday</div>
+    </div>
+    <div class="day-card day-wed">
+      <div class="kanji">水</div>
+      <div class="kana">すいようび<br>Suiyōbi</div>
+      <div class="en">Wednesday</div>
+    </div>
+    <div class="day-card day-thu">
+      <div class="kanji">木</div>
+      <div class="kana">もくようび<br>Mokuyōbi</div>
+      <div class="en">Thursday</div>
+    </div>
+    <div class="day-card day-fri">
+      <div class="kanji">金</div>
+      <div class="kana">きんようび<br>Kin'yōbi</div>
+      <div class="en">Friday</div>
+    </div>
+    <div class="day-card day-sat">
+      <div class="kanji">土</div>
+      <div class="kana">どようび<br>Doyōbi</div>
+      <div class="en">Saturday</div>
+    </div>
+    <div class="day-card day-sun">
+      <div class="kanji">日</div>
+      <div class="kana">にちようび<br>Nichiyōbi</div>
+      <div class="en">Sunday</div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    💡 <strong>漢字對應記憶：</strong>月＝月亮、火＝火星、水＝水星、木＝木星、金＝金星、土＝土星、日＝太陽。七曜源自古代天文，英文 Saturday=土星(Saturn)、Sunday=太陽(Sun)、Monday=月亮(Moon) 完全對應！
+  </div>
+</div>
+
+<!-- ══ 3. 日常動詞 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 日常活動常用動詞（ます形）</div>
+
+  <div class="verb-grid">
+    <div class="verb-row"><span class="vj">起きます</span><span class="vr">okimasu</span><span class="vc">起床</span></div>
+    <div class="verb-row"><span class="vj">働きます</span><span class="vr">hatarakimasu</span><span class="vc">工作</span></div>
+    <div class="verb-row"><span class="vj">寝ます</span><span class="vr">nemasu</span><span class="vc">睡覺</span></div>
+    <div class="verb-row"><span class="vj">休みます</span><span class="vr">yasumimasu</span><span class="vc">休息</span></div>
+    <div class="verb-row"><span class="vj">食べます</span><span class="vr">tabemasu</span><span class="vc">吃</span></div>
+    <div class="verb-row"><span class="vj">帰ります</span><span class="vr">kaerimasu</span><span class="vc">回家</span></div>
+    <div class="verb-row"><span class="vj">飲みます</span><span class="vr">nomimasu</span><span class="vc">喝</span></div>
+    <div class="verb-row"><span class="vj">勉強します</span><span class="vr">benkyōshimasu</span><span class="vc">學習</span></div>
+    <div class="verb-row"><span class="vj">行きます</span><span class="vr">ikimasu</span><span class="vc">去</span></div>
+    <div class="verb-row"><span class="vj">見ます</span><span class="vr">mimasu</span><span class="vc">看</span></div>
+  </div>
+</div>
+
+<!-- ══ 4. 形容詞 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 形容詞與事物描述 — い形 vs な形</div>
+
+  <div class="rule-pills">
+    <span class="rpill rp-i">い形容詞：詞尾是「い」→ 形容詞</span>
+    <span class="rpill rp-na">な形容詞：詞尾無「い」→ 形容動詞，修飾名詞時加「な」</span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>時態/形式</th>
+          <th colspan="2">い形容詞「高い」（高）</th>
+          <th colspan="2">な形容詞「静か」（安靜）</th>
+        </tr>
+        <tr style="background:#2d2416;">
+          <th></th>
+          <th style="color:#f5e6c0;">肯定</th>
+          <th style="color:#f5e6c0;">否定</th>
+          <th style="color:#f5e6c0;">肯定</th>
+          <th style="color:#f5e6c0;">否定</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;font-family:'Shippori Mincho',serif;font-size:13px;">非過去<br><small style="color:#999;font-size:10px;">現在/未來</small></td>
+          <td class="rd">高いです<br><small class="rm">takai desu</small></td>
+          <td class="rd" style="color:var(--red);">高くないです<br><small class="rm">takaku nai desu</small></td>
+          <td class="rd">静かです<br><small class="rm">shizuka desu</small></td>
+          <td class="rd" style="color:var(--red);">静かじゃないです<br><small class="rm">shizuka ja nai</small></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;font-family:'Shippori Mincho',serif;font-size:13px;">過去</td>
+          <td class="rd">高かったです<br><small class="rm">takakatta desu</small></td>
+          <td class="rd" style="color:var(--red);">高くなかったです<br><small class="rm">takaku nakatta</small></td>
+          <td class="rd">静かでした<br><small class="rm">shizuka deshita</small></td>
+          <td class="rd" style="color:var(--red);">静かじゃなかった<br><small class="rm">shizuka ja nakatta</small></td>
+        </tr>
+        <tr style="background:#f0f8f0;">
+          <td style="font-weight:700;font-family:'Shippori Mincho',serif;font-size:13px;">修飾名詞</td>
+          <td class="rd" colspan="2">高いビル（高的大樓）<br><small class="rm">takai biru → 直接加名詞</small></td>
+          <td class="rd" colspan="2">静か<strong style="color:var(--green);">な</strong>部屋（安靜的房間）<br><small class="rm">shizuka<strong>na</strong> heya → 加な再接名詞</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rule-pills" style="margin-top:10px;">
+    <span class="rpill rp-rule">い形否定：去い ＋ くない</span>
+    <span class="rpill rp-rule">い形過去：去い ＋ かった</span>
+    <span class="rpill rp-rule">い形過去否定：去い ＋ くなかった</span>
+  </div>
+</div>
+
+<!-- ══ 5. IT詞彙 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ IT / 技術詞彙（融合補充）</div>
+
+  <div class="it-grid">
+    <div class="it-card">
+      <span class="cat-badge cat-action">動作</span>
+      <div class="ja-word">開始（かいし）</div>
+      <div class="romaji">Kaishi</div>
+      <div class="meaning">Start / 開始</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-action">動作</span>
+      <div class="ja-word">停止（ていし）</div>
+      <div class="romaji">Teishi</div>
+      <div class="meaning">Stop / 停止</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-action">動作</span>
+      <div class="ja-word">再起動（さいきどう）</div>
+      <div class="romaji">Saikidō</div>
+      <div class="meaning">Restart / 重啟</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-core">核心</span>
+      <div class="ja-word">設定（せってい）</div>
+      <div class="romaji">Settei</div>
+      <div class="meaning">Settings / 設置</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-core">核心</span>
+      <div class="ja-word">ルート</div>
+      <div class="romaji">Rūto</div>
+      <div class="meaning">Root / 根目錄・路由</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-core">核心</span>
+      <div class="ja-word">ウェブ</div>
+      <div class="romaji">Uebu</div>
+      <div class="meaning">Web / 網頁</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-comp">組件</span>
+      <div class="ja-word">データベース</div>
+      <div class="romaji">Dētabēsu</div>
+      <div class="meaning">Database / 數據庫</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-comp">組件</span>
+      <div class="ja-word">ターミナル</div>
+      <div class="romaji">Tāminaru</div>
+      <div class="meaning">Terminal / 終端</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-comp">組件</span>
+      <div class="ja-word">仮想ホスト</div>
+      <div class="romaji">Kasō Hosuto</div>
+      <div class="meaning">Virtual Hosts / 虛擬主機</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-net">網絡</span>
+      <div class="ja-word">ポート</div>
+      <div class="romaji">Pōto</div>
+      <div class="meaning">Port / 端口 (80, 3306…)</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-net">網絡</span>
+      <div class="ja-word">ドメイン</div>
+      <div class="romaji">Domein</div>
+      <div class="meaning">Domain / 域名</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-file">文件</span>
+      <div class="ja-word">フォルダ</div>
+      <div class="romaji">Foruda</div>
+      <div class="meaning">Folder / 文件夾</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-file">文件</span>
+      <div class="ja-word">ファイル</div>
+      <div class="romaji">Fairu</div>
+      <div class="meaning">File / 文件</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-state">狀態</span>
+      <div class="ja-word">有効（ゆうこう）</div>
+      <div class="romaji">Yūkō</div>
+      <div class="meaning">Enable / 啟用</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-state">狀態</span>
+      <div class="ja-word">無効（むこう）</div>
+      <div class="romaji">Mukō</div>
+      <div class="meaning">Disable / 禁用</div>
+    </div>
+    <div class="it-card">
+      <span class="cat-badge cat-state">狀態</span>
+      <div class="ja-word">実行中（じっこうちゅう）</div>
+      <div class="romaji">Jikkōchū</div>
+      <div class="meaning">Running / 運行中</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    💡 <strong>片假名規律：</strong>IT外來語幾乎都用片假名，發音按英文音節切開再日語化。<br>
+    ター（ta）・ミ（mi）・ナ（na）・ル（ru）= Terminal → タ<strong>ー</strong>ミナル（長音符「ー」代替英文長母音）
+  </div>
+</div>
+
+<div class="card-footer">
+  日期・星期・動詞・形容詞・IT詞彙 完整版 · おにひめ學習筆記 Vol.2
+</div>
+
+</div>
+</body>
+</html>
