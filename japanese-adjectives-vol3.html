@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>い形容詞 vs な形容詞</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+
+:root {
+  --ink: #1a1208;
+  --paper: #faf6ee;
+  --paper2: #f3ede0;
+  --rule: #c8b89a;
+  --gold: #b8860b;
+  --i-col: #1a3a6b;      /* い形 = 藍 */
+  --i-bg:  #e8f0ff;
+  --i-mid: #4a6faa;
+  --na-col: #1a5c2a;     /* な形 = 綠 */
+  --na-bg:  #e8f8ee;
+  --na-mid: #4a9060;
+  --red: #8b1a1a;
+  --accent: #c44b00;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #1a140e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 14px 60px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.page-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: clamp(18px, 3.5vw, 30px);
+  font-weight: 800;
+  color: #f5e6c0;
+  letter-spacing: 5px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.page-sub { font-size: 11px; color: #907860; letter-spacing: 3px; margin-bottom: 26px; text-align:center; }
+
+.card {
+  background: var(--paper);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 920px;
+  padding: 32px 28px 44px;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.6), 0 2px 0 #b8860b;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image: repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);
+  opacity:0.28; pointer-events:none;
+}
+.card::after {
+  content:'';
+  position:absolute; left:48px; top:0; bottom:0;
+  width:1.5px; background:rgba(180,40,40,0.18);
+}
+
+.sec { position:relative; z-index:1; margin-bottom:30px; }
+.sec-title {
+  font-family:'Shippori Mincho',serif;
+  font-size:14px; font-weight:600;
+  color:var(--gold); letter-spacing:4px;
+  border-bottom:1.5px solid var(--gold);
+  padding-bottom:5px; margin-bottom:14px;
+}
+
+/* ── 1. DNA 識別卡 ── */
+.dna-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  gap: 10px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+.dna-box {
+  border-radius:6px;
+  padding:16px 18px;
+  border:2px solid;
+}
+.dna-box.i-box { background:var(--i-bg); border-color:var(--i-col); }
+.dna-box.na-box { background:var(--na-bg); border-color:var(--na-col); }
+.dna-box h3 {
+  font-family:'Shippori Mincho',serif;
+  font-size:20px; font-weight:800;
+  margin-bottom:8px;
+}
+.dna-box.i-box h3  { color:var(--i-col); }
+.dna-box.na-box h3 { color:var(--na-col); }
+.dna-box p { font-size:12.5px; line-height:1.85; color:#333; }
+.dna-box .big-rule {
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:17px; font-weight:700;
+  margin:8px 0 4px;
+  padding:6px 10px;
+  border-radius:4px;
+  display:inline-block;
+}
+.i-box  .big-rule { background:#c8d8f8; color:var(--i-col); }
+.na-box .big-rule { background:#b8e0c8; color:var(--na-col); }
+.dna-box .sub { font-size:11px; color:#888; }
+
+.vs-circle {
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Shippori Mincho',serif;
+  font-size:22px; font-weight:800;
+  color:var(--gold);
+  background:#2d2416;
+  border-radius:50%;
+  width:52px; height:52px;
+  align-self:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+  flex-shrink:0;
+}
+
+/* ── 2. 大對照表 ── */
+.big-table-wrap {
+  overflow-x:auto;
+  border:1px solid #d8ccb8;
+  border-radius:4px;
+  margin-bottom:12px;
+}
+table { border-collapse:collapse; width:100%; font-family:'Noto Sans JP',sans-serif; }
+thead tr { background:var(--ink); }
+thead th {
+  padding:9px 10px;
+  font-family:'Shippori Mincho',serif;
+  font-size:12px; letter-spacing:2px;
+  color:#f5e6c0; text-align:center;
+}
+thead th.i-head  { background:#1a3a6b; }
+thead th.na-head { background:#1a5c2a; }
+thead th.form-head { background:#2d2416; width:120px; }
+
+tbody tr:nth-child(even) { background:var(--paper2); }
+tbody tr:nth-child(odd)  { background:var(--paper); }
+
+td {
+  padding:9px 10px;
+  text-align:center;
+  border-right:1px solid #e0d4bc;
+  font-size:13.5px; vertical-align:middle; line-height:1.5;
+}
+td:last-child { border-right:none; }
+td.form-cell {
+  font-family:'Shippori Mincho',serif;
+  font-size:12px; font-weight:600;
+  color:#555; text-align:left;
+  padding-left:12px; white-space:nowrap;
+  background:var(--paper2) !important;
+  border-right:2px solid #c8b89a;
+}
+td.i-cell  { color:var(--i-col);  font-weight:700; }
+td.na-cell { color:var(--na-col); font-weight:700; }
+td.neg     { color:var(--red); }
+td small   { display:block; font-size:10px; color:#aaa; font-family:'Noto Sans TC',sans-serif; font-weight:300; }
+
+/* ── 3. 活用公式 ── */
+.formula-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+.formula-box {
+  border-radius:4px;
+  padding:13px 15px;
+  border:1.5px solid;
+}
+.formula-box.fi { background:var(--i-bg);  border-color:var(--i-col); }
+.formula-box.fn { background:var(--na-bg); border-color:var(--na-col); }
+.formula-box h4 {
+  font-size:12px; font-weight:700;
+  letter-spacing:2px; margin-bottom:8px;
+  font-family:'Shippori Mincho',serif;
+}
+.fi h4 { color:var(--i-col); }
+.fn h4 { color:var(--na-col); }
+.formula-line {
+  display:flex; align-items:center; gap:6px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:12.5px; margin-bottom:5px; flex-wrap:wrap;
+}
+.formula-line .label {
+  font-size:10px; color:#888;
+  font-family:'Noto Sans TC',sans-serif;
+  min-width:60px;
+}
+.f-base { background:#ddd; padding:2px 7px; border-radius:3px; font-weight:700; }
+.f-cut  { background:#ffd8d8; padding:2px 7px; border-radius:3px; color:var(--red); font-weight:700; text-decoration:line-through; }
+.f-add  { background:#d0f0d8; padding:2px 7px; border-radius:3px; color:var(--na-col); font-weight:700; }
+.f-add-i{ background:#d0d8f8; padding:2px 7px; border-radius:3px; color:var(--i-col); font-weight:700; }
+.f-arrow { color:#aaa; font-size:14px; }
+.f-result{ font-weight:700; font-size:13px; }
+
+/* ── 4. 詞彙表 ── */
+.vocab-cols {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:12px;
+}
+.vocab-col h4 {
+  font-family:'Shippori Mincho',serif;
+  font-size:13px; font-weight:600;
+  padding:6px 10px; border-radius:3px 3px 0 0;
+  margin-bottom:0;
+}
+.vocab-col.vc-i  h4 { background:var(--i-col);  color:white; }
+.vocab-col.vc-na h4 { background:var(--na-col); color:white; }
+
+.vocab-list {
+  border:1px solid #d8ccb8;
+  border-top:none;
+  border-radius:0 0 3px 3px;
+  overflow:hidden;
+}
+.vocab-item {
+  display:grid;
+  grid-template-columns:80px 80px 1fr;
+  gap:6px;
+  padding:7px 10px;
+  align-items:center;
+  border-bottom:1px solid #e8dfc8;
+  font-size:12.5px;
+}
+.vocab-item:last-child { border-bottom:none; }
+.vocab-item:nth-child(even) { background:var(--paper2); }
+.vi-ja  { font-family:'Noto Sans JP',sans-serif; font-size:15px; font-weight:700; }
+.vi-kana{ font-size:11px; color:#999; font-family:'Noto Sans JP',sans-serif; }
+.vi-zh  { color:#444; }
+.vc-i  .vi-ja { color:var(--i-col); }
+.vc-na .vi-ja { color:var(--na-col); }
+
+/* ── 5. 例句 ── */
+.example-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:10px;
+}
+.ex-box {
+  border-radius:4px;
+  padding:12px 14px;
+  border:1px solid #d8ccb8;
+  background:var(--paper);
+}
+.ex-box .tag {
+  font-size:9px; letter-spacing:2px; font-weight:700;
+  padding:2px 7px; border-radius:10px; margin-bottom:6px;
+  display:inline-block; font-family:'Noto Sans TC',sans-serif;
+}
+.tag-i  { background:var(--i-bg);  color:var(--i-col);  border:1px solid var(--i-mid); }
+.tag-na { background:var(--na-bg); color:var(--na-col); border:1px solid var(--na-mid); }
+.ex-box .ja-sent {
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:14.5px; font-weight:700;
+  color:var(--ink); margin-bottom:3px;
+}
+.ex-box .zh-sent { font-size:12px; color:#666; margin-bottom:4px; }
+.ex-box .note    { font-size:10.5px; color:var(--accent); font-weight:700; }
+
+/* ── 6. 記憶口訣 ── */
+.mnemonic {
+  background:linear-gradient(135deg, #fffbe8, #fff5d0);
+  border:2px solid var(--gold);
+  border-radius:6px;
+  padding:16px 20px;
+  margin-bottom:12px;
+  position:relative;
+}
+.mnemonic::before {
+  content:'💡';
+  position:absolute; top:-12px; left:16px;
+  font-size:20px;
+}
+.mnemonic h4 {
+  font-family:'Shippori Mincho',serif;
+  font-size:13px; color:var(--gold); letter-spacing:3px; margin-bottom:10px;
+}
+.mn-row { display:flex; gap:20px; flex-wrap:wrap; }
+.mn-item {
+  flex:1; min-width:180px;
+  background:white;
+  border-radius:4px;
+  padding:10px 12px;
+  border:1px solid #e8d890;
+}
+.mn-item h5 { font-size:12px; font-weight:700; margin-bottom:5px; }
+.mn-item.mi h5 { color:var(--i-col); }
+.mn-item.mn h5 { color:var(--na-col); }
+.mn-item p { font-size:11.5px; line-height:1.8; color:#444; }
+.mn-item .big { font-family:'Noto Sans JP',sans-serif; font-size:20px; font-weight:800; }
+
+.tip {
+  background:rgba(196,75,0,0.07);
+  border-left:3px solid var(--accent);
+  border-radius:0 4px 4px 0;
+  padding:11px 16px;
+  font-size:12.5px; color:var(--ink);
+  line-height:1.85; margin-bottom:12px;
+}
+.tip strong { color:var(--accent); }
+
+.card-footer {
+  margin-top:24px; padding-top:12px;
+  border-top:1px dashed var(--rule);
+  font-size:10px; color:#bbb; text-align:center; letter-spacing:1px;
+  position:relative; z-index:1;
+}
+
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.card { animation:fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<div class="page-title">い形容詞 vs な形容詞</div>
+<div class="page-sub">完整對比・活用公式・詞彙・例句</div>
+
+<div class="card">
+
+<!-- ══ 1. DNA識別 ══ -->
+<div class="sec">
+  <div class="sec-title">① 最根本的差異 — 如何識別？</div>
+
+  <div class="dna-row">
+    <div class="dna-box i-box">
+      <h3>い形容詞</h3>
+      <p>詞典形（原形）<strong>詞尾一定是「い」</strong></p>
+      <div class="big-rule">たか<strong style="font-size:22px;color:#c00;">い</strong>　おお<strong style="font-size:22px;color:#c00;">き</strong>い　さむ<strong style="font-size:22px;color:#c00;">い</strong></div>
+      <p class="sub">▸ 修飾名詞：直接放在名詞前<br>
+      高い山（高的山）→ い不需要加任何東西<br>
+      ▸ 本身就是形容詞，可直接變化</p>
+    </div>
+
+    <div class="vs-circle">VS</div>
+
+    <div class="dna-box na-box">
+      <h3>な形容詞</h3>
+      <p>詞典形<strong>詞尾沒有「い」</strong>（或有い但屬特例）</p>
+      <div class="big-rule">しずか　きれい　げんき　すき</div>
+      <p class="sub">▸ 修飾名詞：詞幹後加「な」再接名詞<br>
+      静か<strong>な</strong>公園（安靜的公園）→ 必須加な<br>
+      ▸ 本身是名詞性質，用「です」連接</p>
+    </div>
+  </div>
+
+  <div class="tip">
+    ⚠️ <strong>陷阱：</strong>「きれい（綺麗）」詞尾看起來有「い」，但它是<strong>な形容詞</strong>！因為這個「い」是漢字「麗」的讀音，不是形容詞語尾。遇到這類詞要靠記憶，不能只看詞尾。<br>
+    同樣是な形：好き（すき）、嫌い（きらい）— 表示感情的詞大多是な形。
+  </div>
+</div>
+
+<!-- ══ 2. 完整活用對照表 ══ -->
+<div class="sec">
+  <div class="sec-title">② 完整活用對照表 — 一眼看清所有變化</div>
+
+  <div class="big-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="form-head">時態 / 形式</th>
+          <th class="i-head" colspan="2">🔵 い形容詞「高い」（高）</th>
+          <th class="na-head" colspan="2">🟢 な形容詞「静か」（安靜）</th>
+        </tr>
+        <tr>
+          <th class="form-head" style="background:#2d2416;"></th>
+          <th class="i-head">✅ 肯定</th>
+          <th class="i-head" style="background:#2a3a5a;">❌ 否定</th>
+          <th class="na-head">✅ 肯定</th>
+          <th class="na-head" style="background:#2a4a3a;">❌ 否定</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="form-cell">非過去<br><small>現在 / 未來</small></td>
+          <td class="i-cell">高いです<small>takai desu</small></td>
+          <td class="i-cell neg">高くないです<small>takaku nai desu</small></td>
+          <td class="na-cell">静かです<small>shizuka desu</small></td>
+          <td class="na-cell neg">静かではありません<small>shizuka dewa arimasen</small></td>
+        </tr>
+        <tr>
+          <td class="form-cell">過去</td>
+          <td class="i-cell">高かったです<small>takakatta desu</small></td>
+          <td class="i-cell neg">高くなかったです<small>takaku nakatta desu</small></td>
+          <td class="na-cell">静かでした<small>shizuka deshita</small></td>
+          <td class="na-cell neg">静かではありませんでした<small>shizuka dewa arimasen deshita</small></td>
+        </tr>
+        <tr style="background:#f5f8f0;">
+          <td class="form-cell">修飾名詞<br><small>（連體形）</small></td>
+          <td class="i-cell" colspan="2">高いビル<small>takai biru ／ 高的大樓</small><br><span style="font-size:11px;color:var(--i-col);">▸ 直接加名詞，い不變</span></td>
+          <td class="na-cell" colspan="2">静か<strong>な</strong>公園<small>shizukana kōen ／ 安靜的公園</small><br><span style="font-size:11px;color:var(--na-col);">▸ 詞幹+な+名詞</span></td>
+        </tr>
+        <tr>
+          <td class="form-cell">口語否定<br><small>（較常用）</small></td>
+          <td class="i-cell" colspan="2" style="color:#666;">高くない<small>takaku nai（省略です）</small></td>
+          <td class="na-cell" colspan="2" style="color:#666;">静かじゃない<small>shizuka ja nai（じゃ=では縮寫）</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 3. 活用公式 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 活用公式 — 記住這些就能造所有形式</div>
+
+  <div class="formula-grid">
+    <!-- い形公式 -->
+    <div class="formula-box fi">
+      <h4>🔵 い形容詞變化規則</h4>
+
+      <div class="formula-line">
+        <span class="label">否定</span>
+        <span class="f-base">高</span><span class="f-cut">い</span>
+        <span class="f-arrow">→</span>
+        <span class="f-add-i">く＋ない</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--i-col)">高くない</span>
+      </div>
+
+      <div class="formula-line">
+        <span class="label">過去</span>
+        <span class="f-base">高</span><span class="f-cut">い</span>
+        <span class="f-arrow">→</span>
+        <span class="f-add-i">かった</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--i-col)">高かった</span>
+      </div>
+
+      <div class="formula-line">
+        <span class="label">過去否定</span>
+        <span class="f-base">高</span><span class="f-cut">い</span>
+        <span class="f-arrow">→</span>
+        <span class="f-add-i">くなかった</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--i-col)">高くなかった</span>
+      </div>
+
+      <div class="formula-line">
+        <span class="label">修飾名詞</span>
+        <span class="f-base">高い</span>
+        <span class="f-arrow">＋</span>
+        <span class="f-base">名詞</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--i-col)">高いビル</span>
+      </div>
+    </div>
+
+    <!-- な形公式 -->
+    <div class="formula-box fn">
+      <h4>🟢 な形容詞變化規則</h4>
+
+      <div class="formula-line">
+        <span class="label">否定</span>
+        <span class="f-base">静か</span>
+        <span class="f-arrow">＋</span>
+        <span class="f-add">ではありません</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--na-col)">静かではありません</span>
+      </div>
+
+      <div class="formula-line">
+        <span class="label">過去</span>
+        <span class="f-base">静か</span>
+        <span class="f-arrow">＋</span>
+        <span class="f-add">でした</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--na-col)">静かでした</span>
+      </div>
+
+      <div class="formula-line">
+        <span class="label">過去否定</span>
+        <span class="f-base">静か</span>
+        <span class="f-arrow">＋</span>
+        <span class="f-add">ではありませんでした</span>
+      </div>
+
+      <div class="formula-line">
+        <span class="label">修飾名詞</span>
+        <span class="f-base">静か</span>
+        <span class="f-add">な</span>
+        <span class="f-arrow">＋</span>
+        <span class="f-base">名詞</span>
+        <span class="f-arrow">＝</span>
+        <span class="f-result" style="color:var(--na-col)">静かな公園</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    💡 <strong>核心記憶：</strong>い形容詞自己變化（去い換字尾）；な形容詞詞幹不動，靠後面「です」系列來表達時態，修飾名詞時加「な」。<br>
+    簡單說：<strong>い形 → 尾巴動 ／ な形 → 詞幹不動，後面接する</strong>
+  </div>
+</div>
+
+<!-- ══ 4. 詞彙表 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 常用詞彙表（筆記整合版）</div>
+
+  <div class="vocab-cols">
+    <div class="vocab-col vc-i">
+      <h4>🔵 い形容詞</h4>
+      <div class="vocab-list">
+        <div class="vocab-item"><span class="vi-ja">大きい</span><span class="vi-kana">おおきい</span><span class="vi-zh">大的</span></div>
+        <div class="vocab-item"><span class="vi-ja">小さい</span><span class="vi-kana">ちいさい</span><span class="vi-zh">小的</span></div>
+        <div class="vocab-item"><span class="vi-ja">高い</span><span class="vi-kana">たかい</span><span class="vi-zh">高的・貴的</span></div>
+        <div class="vocab-item"><span class="vi-ja">低い</span><span class="vi-kana">ひくい</span><span class="vi-zh">低的・矮的</span></div>
+        <div class="vocab-item"><span class="vi-ja">安い</span><span class="vi-kana">やすい</span><span class="vi-zh">便宜的</span></div>
+        <div class="vocab-item"><span class="vi-ja">暑い</span><span class="vi-kana">あつい</span><span class="vi-zh">（天氣）熱的</span></div>
+        <div class="vocab-item"><span class="vi-ja">寒い</span><span class="vi-kana">さむい</span><span class="vi-zh">（天氣）冷的</span></div>
+        <div class="vocab-item"><span class="vi-ja">面白い</span><span class="vi-kana">おもしろい</span><span class="vi-zh">有趣的</span></div>
+        <div class="vocab-item"><span class="vi-ja">新しい</span><span class="vi-kana">あたらしい</span><span class="vi-zh">新的</span></div>
+        <div class="vocab-item"><span class="vi-ja">古い</span><span class="vi-kana">ふるい</span><span class="vi-zh">舊的・古老的</span></div>
+        <div class="vocab-item"><span class="vi-ja">いい／良い</span><span class="vi-kana">いい／よい</span><span class="vi-zh">好的 ⚠️特殊</span></div>
+      </div>
+    </div>
+    <div class="vocab-col vc-na">
+      <h4>🟢 な形容詞</h4>
+      <div class="vocab-list">
+        <div class="vocab-item"><span class="vi-ja">綺麗</span><span class="vi-kana">きれい</span><span class="vi-zh">漂亮・乾淨 ⚠️</span></div>
+        <div class="vocab-item"><span class="vi-ja">静か</span><span class="vi-kana">しずか</span><span class="vi-zh">安靜的</span></div>
+        <div class="vocab-item"><span class="vi-ja">元気</span><span class="vi-kana">げんき</span><span class="vi-zh">有精神・健康</span></div>
+        <div class="vocab-item"><span class="vi-ja">好き</span><span class="vi-kana">すき</span><span class="vi-zh">喜歡的</span></div>
+        <div class="vocab-item"><span class="vi-ja">嫌い</span><span class="vi-kana">きらい</span><span class="vi-zh">討厭的 ⚠️</span></div>
+        <div class="vocab-item"><span class="vi-ja">便利</span><span class="vi-kana">べんり</span><span class="vi-zh">方便的</span></div>
+        <div class="vocab-item"><span class="vi-ja">有名</span><span class="vi-kana">ゆうめい</span><span class="vi-zh">有名的</span></div>
+        <div class="vocab-item"><span class="vi-ja">親切</span><span class="vi-kana">しんせつ</span><span class="vi-zh">親切的</span></div>
+        <div class="vocab-item"><span class="vi-ja">丁寧</span><span class="vi-kana">ていねい</span><span class="vi-zh">仔細・有禮貌</span></div>
+        <div class="vocab-item"><span class="vi-ja">大丈夫</span><span class="vi-kana">だいじょうぶ</span><span class="vi-zh">沒問題</span></div>
+        <div class="vocab-item"><span class="vi-ja">上手</span><span class="vi-kana">じょうず</span><span class="vi-zh">擅長的</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tip">⚠️ <strong>「いい」的特殊變化：</strong>否定→<strong>よくない</strong>、過去→<strong>よかった</strong>、過去否定→<strong>よくなかった</strong>。「いい」只有原形用いい，其他變化全用「よ」開頭！</div>
+</div>
+
+<!-- ══ 5. 例句 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 例句對比（筆記例句 ＋ 補充）</div>
+
+  <div class="example-grid">
+    <div class="ex-box">
+      <span class="tag tag-i">い形・現在肯定</span>
+      <div class="ja-sent">この本は面白いです。</div>
+      <div class="zh-sent">這本書很有趣。</div>
+      <div class="note">面白い → 直接＋です</div>
+    </div>
+    <div class="ex-box">
+      <span class="tag tag-na">な形・現在肯定</span>
+      <div class="ja-sent">ここは静かです。</div>
+      <div class="zh-sent">這裡很安靜。</div>
+      <div class="note">静か → 詞幹＋です</div>
+    </div>
+    <div class="ex-box">
+      <span class="tag tag-i">い形・過去否定</span>
+      <div class="ja-sent">そのカメラは高くなかったです。</div>
+      <div class="zh-sent">那台相機不貴。</div>
+      <div class="note">高い → 去い ＋ くなかった</div>
+    </div>
+    <div class="ex-box">
+      <span class="tag tag-na">な形・過去肯定</span>
+      <div class="ja-sent">昨日は静かでした。</div>
+      <div class="zh-sent">昨天很安靜。</div>
+      <div class="note">静か ＋ でした（不動詞幹）</div>
+    </div>
+    <div class="ex-box">
+      <span class="tag tag-i">い形・修飾名詞</span>
+      <div class="ja-sent">大きい犬が好きです。</div>
+      <div class="zh-sent">我喜歡大狗。</div>
+      <div class="note">大きい → 直接放名詞前，い不加任何東西</div>
+    </div>
+    <div class="ex-box">
+      <span class="tag tag-na">な形・修飾名詞</span>
+      <div class="ja-sent">ここは静か<strong style="color:var(--na-col);font-size:16px;">な</strong>公園です。</div>
+      <div class="zh-sent">這裡是個安靜的公園。</div>
+      <div class="note">静か → 必須加「な」才能接名詞</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 6. 記憶口訣 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 記憶口訣</div>
+  <div class="mnemonic">
+    <h4>終極記憶法</h4>
+    <div class="mn-row">
+      <div class="mn-item mi">
+        <h5>🔵 い形容詞</h5>
+        <div class="big">い</div>
+        <p>「<strong>い</strong>自己會變」<br>
+        否定去い換<strong>くない</strong><br>
+        過去去い換<strong>かった</strong><br>
+        接名詞直接放前面<br>
+        → <strong>尾巴自己動</strong></p>
+      </div>
+      <div class="mn-item mn">
+        <h5>🟢 な形容詞</h5>
+        <div class="big">な</div>
+        <p>「<strong>な</strong>自己不動」<br>
+        時態靠後面です變化<br>
+        接名詞加<strong>な</strong>再接<br>
+        詞幹永遠保持原樣<br>
+        → <strong>本體不動，後面說話</strong></p>
+      </div>
+      <div class="mn-item" style="border-color:#d8c890;">
+        <h5 style="color:#806000;">⚠️ 特殊注意</h5>
+        <p>・きれい看似い形<br>
+        　→ 其實是<strong>な形</strong><br>
+        ・きらい詞尾有い<br>
+        　→ 其實是<strong>な形</strong><br>
+        ・いい變化全用<strong>よ</strong>開頭<br>
+        　→ よくない/よかった</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  い形容詞 vs な形容詞 完整對比版 · おにひめ學習筆記 Vol.3
+</div>
+</div>
+</body>
+</html>
