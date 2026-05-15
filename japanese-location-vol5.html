@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>場所與方位 Vol.5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{--ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;--koko:#1a3a6b;--koko-bg:#e8f0ff;--soko:#6b4a1a;--soko-bg:#fff4e0;--asoko:#1a5c1a;--asoko-bg:#e8f8e8;--ari:#5c1a5c;--ari-bg:#f5e8ff;--iru:#1a4a5c;--iru-bg:#e0f4ff;--accent:#c44b00;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,30px);font-weight:800;color:#f5e6c0;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:940px;padding:32px 28px 44px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.28;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.18);}
+.sec{position:relative;z-index:1;margin-bottom:30px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+
+/* 三卡 */
+.three-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.loc-card{border-radius:6px;padding:16px 14px;border:2px solid;text-align:center;}
+.lc-koko{background:var(--koko-bg);border-color:var(--koko);}
+.lc-soko{background:var(--soko-bg);border-color:var(--soko);}
+.lc-asoko{background:var(--asoko-bg);border-color:var(--asoko);}
+.loc-card .kana{font-family:'Noto Sans JP',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px;}
+.lc-koko .kana{color:var(--koko);}.lc-soko .kana{color:var(--soko);}.lc-asoko .kana{color:var(--asoko);}
+.loc-card .romaji{font-size:11px;color:#999;margin-bottom:8px;}
+.loc-card .meaning{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.loc-card .usage{font-size:11.5px;color:#555;line-height:1.7;text-align:left;}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;margin-bottom:6px;font-family:'Noto Sans TC',sans-serif;}
+.badge-koko{background:#c0d8ff;color:var(--koko);}
+.badge-soko{background:#ffe0b0;color:var(--soko);}
+.badge-asoko{background:#b8f0b8;color:var(--asoko);}
+
+/* 距離スペクトル */
+.spectrum{display:flex;align-items:center;gap:0;margin-bottom:18px;border-radius:6px;overflow:hidden;border:1px solid #ddd;}
+.sp-item{flex:1;padding:12px 8px;text-align:center;}
+.sp-ko{background:linear-gradient(135deg,#c8deff,#e8f0ff);}
+.sp-so{background:linear-gradient(135deg,#ffe8c0,#fff4e0);}
+.sp-as{background:linear-gradient(135deg,#c0f0c0,#e8f8e8);}
+.sp-item .sp-word{font-family:'Noto Sans JP',sans-serif;font-size:20px;font-weight:800;}
+.sp-ko .sp-word{color:var(--koko);}.sp-so .sp-word{color:var(--soko);}.sp-as .sp-word{color:var(--asoko);}
+.sp-item .sp-who{font-size:10px;color:#888;margin-top:3px;}
+.sp-arrow{padding:0 6px;font-size:20px;color:#ccc;align-self:center;}
+
+/* こそあど全表 */
+.tbl-wrap{overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:12px;}
+table{border-collapse:collapse;width:100%;font-family:'Noto Sans JP',sans-serif;}
+thead tr{background:var(--ink);}
+thead th{padding:9px 10px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;color:#f5e6c0;text-align:center;}
+.th-ko{background:#1a3a6b!important;}.th-so{background:#6b4a1a!important;}.th-a{background:#1a5c1a!important;}.th-do{background:#5c1a1a!important;}
+tbody tr:nth-child(even){background:var(--paper2);}tbody tr:nth-child(odd){background:var(--paper);}
+td{padding:8px 10px;text-align:center;border-right:1px solid #e0d4bc;font-size:13px;vertical-align:middle;}
+td:last-child{border-right:none;}
+td.row-label{font-family:'Shippori Mincho',serif;font-size:12px;font-weight:600;color:#666;text-align:left;padding-left:12px;background:var(--paper2)!important;border-right:2px solid #c8b89a;white-space:nowrap;}
+td.ko{color:var(--koko);font-weight:700;}td.so{color:var(--soko);font-weight:700;}td.ao{color:var(--asoko);font-weight:700;}td.dq{color:#8b1a1a;font-weight:700;}
+td small{display:block;font-size:10px;color:#aaa;font-family:'Noto Sans TC',sans-serif;font-weight:300;}
+
+/* あります vs います */
+.exist-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.ex-v-box{border-radius:6px;padding:18px 16px;border:2px solid;}
+.ev-ari{background:var(--ari-bg);border-color:var(--ari);}
+.ev-iru{background:var(--iru-bg);border-color:var(--iru);}
+.ex-v-box h3{font-family:'Noto Sans JP',sans-serif;font-size:24px;font-weight:800;margin-bottom:4px;}
+.ev-ari h3{color:var(--ari);}.ev-iru h3{color:var(--iru);}
+.ex-v-box .sub{font-size:11px;color:#999;margin-bottom:10px;}
+.ex-v-box .rule{font-size:13px;font-weight:700;margin-bottom:8px;padding:6px 10px;border-radius:4px;}
+.ev-ari .rule{background:#e8c8ff;color:var(--ari);}.ev-iru .rule{background:#b8e8ff;color:var(--iru);}
+.ex-v-box ul{list-style:none;padding:0;}
+.ex-v-box li{font-size:12.5px;color:#333;padding:4px 0;border-bottom:1px dashed #ddd;display:flex;align-items:center;gap:6px;}
+.ex-v-box li:last-child{border-bottom:none;}
+
+/* 記憶ボックス */
+.memory-box{background:linear-gradient(135deg,#fffbe8,#fff5d0);border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;position:relative;}
+.memory-box::before{content:'💡';position:absolute;top:-12px;left:16px;font-size:20px;}
+.memory-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;}
+.memory-box p{font-size:13px;line-height:1.9;color:#333;}
+.memory-box strong{color:var(--accent);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* 句型 */
+.pattern-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.pat-box{border-radius:4px;padding:14px 16px;border:2px solid;}
+.pat-a{background:var(--koko-bg);border-color:var(--koko);}
+.pat-b{background:var(--soko-bg);border-color:var(--soko);}
+.pat-box h4{font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:2px;margin-bottom:10px;}
+.pat-a h4{color:var(--koko);}.pat-b h4{color:var(--soko);}
+.formula{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+.f-slot{padding:5px 10px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;border:1.5px solid;}
+.fs-topic{background:#dde8ff;border-color:#7090c0;color:var(--koko);}
+.fs-place{background:#ffe8cc;border-color:#c09050;color:#7a4000;}
+.fs-ga{background:#e8f8e8;border-color:#50a050;color:#1a5c2a;}
+.fs-ni{background:#f0e8ff;border-color:#9070c0;color:#4a1870;}
+.fs-v{background:#fff0e0;border-color:#c09040;color:#604000;}
+.pat-note{font-size:12px;line-height:1.8;color:#444;}
+
+/* 例句 */
+.ex-list{display:flex;flex-direction:column;gap:9px;margin-bottom:12px;}
+.ex-item{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;background:var(--paper);border:1px solid #d8ccb8;border-radius:4px;padding:11px 14px;}
+.ex-num{font-family:'Shippori Mincho',serif;font-size:18px;font-weight:800;color:var(--gold);}
+.ex-ja{font-family:'Noto Sans JP',sans-serif;font-size:15.5px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.6;}
+.hl-ni{color:#7020c0;}.hl-ga{color:#1a5c2a;}.hl-wa{color:var(--koko);}.hl-ari{color:var(--ari);}.hl-iru{color:var(--iru);}
+.ex-zh{font-size:12.5px;color:#666;margin-bottom:3px;}
+.ex-note{font-size:11px;color:var(--accent);font-weight:700;}
+
+/* 方位語彙 */
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;}
+.v-item{border-radius:4px;padding:8px 10px;background:var(--paper2);border:1px solid #d8ccb8;text-align:center;}
+.v-item .vj{font-family:'Noto Sans JP',sans-serif;font-size:16px;font-weight:700;color:var(--ink);}
+.v-item .vk{font-size:10px;color:#aaa;font-family:'Noto Sans JP',sans-serif;margin:2px 0;}
+.v-item .vz{font-size:12px;color:#555;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">場所與方位的表達</div>
+<div class="page-sub">ここ・そこ・あそこ · あります・います · 存在句型</div>
+<div class="card">
+
+<!-- 1. ここそこあそこ -->
+<div class="sec">
+  <div class="sec-title">① ここ・そこ・あそこ — 距離決定用哪個</div>
+
+  <!-- スペクトル -->
+  <div class="spectrum">
+    <div class="sp-item sp-ko">
+      <div class="sp-word">ここ</div>
+      <div class="sp-who">說話者（你）附近<br>koko</div>
+    </div>
+    <div class="sp-arrow">→</div>
+    <div class="sp-item sp-so">
+      <div class="sp-word">そこ</div>
+      <div class="sp-who">聽話者（對方）附近<br>soko</div>
+    </div>
+    <div class="sp-arrow">→</div>
+    <div class="sp-item sp-as">
+      <div class="sp-word">あそこ</div>
+      <div class="sp-who">雙方都遠的地方<br>asoko</div>
+    </div>
+  </div>
+
+  <div class="three-cards">
+    <div class="loc-card lc-koko">
+      <span class="badge badge-koko">說話者近</span>
+      <div class="kana">ここ</div>
+      <div class="romaji">koko</div>
+      <div class="meaning">這裡・這邊</div>
+      <div class="usage">
+        指說話者所在或靠近的場所<br><br>
+        例：ここは図書館です<br>
+        （這裡是圖書館）<br><br>
+        例：ここに座ってください<br>
+        （請坐這裡）
+      </div>
+    </div>
+    <div class="loc-card lc-soko">
+      <span class="badge badge-soko">聽話者近</span>
+      <div class="kana">そこ</div>
+      <div class="romaji">soko</div>
+      <div class="meaning">那裡・你那邊</div>
+      <div class="usage">
+        指聽話者所在或靠近的場所<br><br>
+        例：そこに本があります<br>
+        （那裡有書）<br><br>
+        例：そこは危ないです<br>
+        （那裡很危險）
+      </div>
+    </div>
+    <div class="loc-card lc-asoko">
+      <span class="badge badge-asoko">雙方都遠</span>
+      <div class="kana">あそこ</div>
+      <div class="romaji">asoko</div>
+      <div class="meaning">那裡・遠處</div>
+      <div class="usage">
+        說話者和聽話者都遠的地方<br><br>
+        例：あそこが駅です<br>
+        （那邊是車站）<br><br>
+        例：あそこに山があります<br>
+        （那遠處有山）
+      </div>
+    </div>
+  </div>
+
+  <!-- こそあど全表 -->
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="background:#2d2416;width:90px;">類別</th>
+          <th class="th-ko">こ系<br><small style="font-size:9px;color:#aaf;font-weight:300;">說話者近</small></th>
+          <th class="th-so">そ系<br><small style="font-size:9px;color:#fda;font-weight:300;">聽話者近</small></th>
+          <th class="th-a">あ系<br><small style="font-size:9px;color:#afa;font-weight:300;">雙方都遠</small></th>
+          <th class="th-do">ど系<br><small style="font-size:9px;color:#faa;font-weight:300;">疑問</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">場所<small>地點</small></td>
+          <td class="ko">ここ<small>koko／這裡</small></td>
+          <td class="so">そこ<small>soko／那裡</small></td>
+          <td class="ao">あそこ<small>asoko／那裡遠</small></td>
+          <td class="dq">どこ<small>doko／哪裡</small></td>
+        </tr>
+        <tr>
+          <td class="row-label">方向<small>方向（禮貌）</small></td>
+          <td class="ko">こちら<small>kochira／這邊</small></td>
+          <td class="so">そちら<small>sochira／那邊</small></td>
+          <td class="ao">あちら<small>achira／那邊遠</small></td>
+          <td class="dq">どちら<small>dochira／哪邊</small></td>
+        </tr>
+        <tr>
+          <td class="row-label">事物<small>物品</small></td>
+          <td class="ko">これ<small>kore／這個</small></td>
+          <td class="so">それ<small>sore／那個</small></td>
+          <td class="ao">あれ<small>are／那個遠</small></td>
+          <td class="dq">どれ<small>dore／哪個</small></td>
+        </tr>
+        <tr>
+          <td class="row-label">修飾語<small>＋名詞</small></td>
+          <td class="ko">この<small>kono／這〇〇</small></td>
+          <td class="so">その<small>sono／那〇〇</small></td>
+          <td class="ao">あの<small>ano／那〇〇遠</small></td>
+          <td class="dq">どの<small>dono／哪〇〇</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    💡 <strong>こそあど規律：</strong>日語所有指示詞全按「こ近・そ中・あ遠・ど問」四段變化。記住這個，學了ここ就等於同時知道これ・この・こちら！<br>
+    <strong>口訣：こ近 そ中 あ遠 ど問</strong>
+  </div>
+</div>
+
+<!-- 2. あります vs います -->
+<div class="sec">
+  <div class="sec-title">② あります vs います — 你筆記的口訣完全正確！</div>
+
+  <div class="exist-compare">
+    <div class="ex-v-box ev-ari">
+      <h3>あります</h3>
+      <div class="sub">arimasu（ある禮貌形）</div>
+      <div class="rule">🪨 無生命 · 植物</div>
+      <ul>
+        <li><span>📚</span>書・本・雜誌</li>
+        <li><span>🪑</span>椅子・桌子・家具</li>
+        <li><span>🏢</span>建築物・學校・醫院</li>
+        <li><span>🌸</span>植物・花・樹木 ⚠️</li>
+        <li><span>💰</span>錢・物品・商品</li>
+        <li><span>🚗</span>車・機械（靜止的）</li>
+        <li><span>📅</span>事情・活動・考試</li>
+      </ul>
+    </div>
+    <div class="ex-v-box ev-iru">
+      <h3>います</h3>
+      <div class="sub">imasu（いる禮貌形）</div>
+      <div class="rule">🦋 有生命 · 自主移動</div>
+      <ul>
+        <li><span>👨</span>人・人類（全部）</li>
+        <li><span>🐱</span>貓狗・寵物</li>
+        <li><span>🐟</span>魚・昆蟲・鳥類</li>
+        <li><span>👶</span>嬰兒・小孩</li>
+        <li><span>👩‍🏫</span>老師・朋友・家人</li>
+        <li><span>🤖</span>機器人（自主移動）⚠️</li>
+        <li><span>🐛</span>任何「活的生命體」</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="memory-box">
+    <h4>你筆記的口訣 ✅ 完全正確！</h4>
+    <p>
+      「<strong>有腿的用います</strong>，<strong>沒腿的用あります</strong>」<br>
+      ▸ 能自主移動（腿/翅膀/鰭）的生命體 → <span class="ja" style="color:var(--iru);font-size:16px;">います</span><br>
+      ▸ 不會自主移動的東西 → <span class="ja" style="color:var(--ari);font-size:16px;">あります</span><br><br>
+      ⚠️ <strong>植物（花・木）</strong>：有生命但不動 → <span class="ja">あります</span><br>
+      ⚠️ <strong>ロボット（機器人）</strong>：能自主移動 → <span class="ja">います</span><br>
+      ⚠️ <strong>人形（玩偶）</strong>：雖像人但不是生命 → <span class="ja">あります</span>
+    </p>
+  </div>
+</div>
+
+<!-- 3. 兩種存在句型 -->
+<div class="sec">
+  <div class="sec-title">③ 兩種存在句型 — 問什麼就用哪種</div>
+
+  <div class="pattern-row">
+    <div class="pat-box pat-a">
+      <h4>句型A：「某物在哪裡？」→ 〜は〜にあります</h4>
+      <div class="formula">
+        <div class="f-slot fs-topic">〔主題〕は</div>
+        <div class="f-slot fs-place">〔場所〕に</div>
+        <div class="f-slot fs-v">あります／います</div>
+      </div>
+      <div class="pat-note">
+        ・は：提示主題（已知的那個東西）<br>
+        ・に：存在的具體地點<br>
+        ・用於回答「書在哪裡？」<br>
+        例：本は机の上にあります
+      </div>
+    </div>
+    <div class="pat-box pat-b">
+      <h4>句型B：「某地有什麼？」→ 〜に〜があります</h4>
+      <div class="formula">
+        <div class="f-slot fs-place">〔場所〕に</div>
+        <div class="f-slot fs-ga">〔事物〕が</div>
+        <div class="f-slot fs-v">あります／います</div>
+      </div>
+      <div class="pat-note">
+        ・に：先說地點（強調地點）<br>
+        ・が：登場的新資訊（事物）<br>
+        ・用於回答「桌上有什麼？」<br>
+        例：机の上に本があります
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    💡 <strong>は vs が の差別：</strong><br>
+    「本<strong>は</strong>机の上にあります」→ 書是已知話題，地點是新資訊<br>
+    「机の上に本<strong>が</strong>あります」→ 地點是已知，書是新登場的資訊<br>
+    <strong>は＝已知話題 ／ が＝新資訊登場</strong>
+  </div>
+
+  <div class="ex-list">
+    <div class="ex-item">
+      <div class="ex-num">1</div>
+      <div class="ex-content">
+        <div class="ex-ja">本<span class="hl-wa">は</span>机の上<span class="hl-ni">に</span><span class="hl-ari">あります</span>。</div>
+        <div class="ex-zh">書在桌子上面。</div>
+        <div class="ex-note">句型A：書（無生命）→ あります</div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-num">2</div>
+      <div class="ex-content">
+        <div class="ex-ja">猫<span class="hl-wa">は</span>いすの下<span class="hl-ni">に</span><span class="hl-iru">います</span>。</div>
+        <div class="ex-zh">貓在椅子下面。</div>
+        <div class="ex-note">句型A：貓（動物）→ います</div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-num">3</div>
+      <div class="ex-content">
+        <div class="ex-ja">先生<span class="hl-wa">は</span>教室<span class="hl-ni">に</span><span class="hl-iru">います</span>。</div>
+        <div class="ex-zh">老師在教室裡。</div>
+        <div class="ex-note">句型A：人 → 一定用います</div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-num">4</div>
+      <div class="ex-content">
+        <div class="ex-ja">机の上<span class="hl-ni">に</span>本<span class="hl-ga">が</span><span class="hl-ari">あります</span>。</div>
+        <div class="ex-zh">桌子上面有書。</div>
+        <div class="ex-note">句型B：先說地點，が引出新資訊</div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-num">5</div>
+      <div class="ex-content">
+        <div class="ex-ja">公園<span class="hl-ni">に</span>子供<span class="hl-ga">が</span><span class="hl-iru">います</span>。</div>
+        <div class="ex-zh">公園裡有小孩。</div>
+        <div class="ex-note">句型B：先說公園，が引出新資訊（小孩）</div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-num">6</div>
+      <div class="ex-content">
+        <div class="ex-ja"><span class="hl-wa">ここ</span>はどこですか？　—　<span class="hl-wa">ここ</span>は渋谷です。</div>
+        <div class="ex-zh">這裡是哪裡？ — 這裡是澀谷。</div>
+        <div class="ex-note">ここ作主語使用，接はです</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 方位語彙 -->
+<div class="sec">
+  <div class="sec-title">④ 方位名詞詞彙表</div>
+  <div class="vocab-grid">
+    <div class="v-item"><div class="vj">上</div><div class="vk">うえ</div><div class="vz">上面</div></div>
+    <div class="v-item"><div class="vj">下</div><div class="vk">した</div><div class="vz">下面</div></div>
+    <div class="v-item"><div class="vj">前</div><div class="vk">まえ</div><div class="vz">前面</div></div>
+    <div class="v-item"><div class="vj">後ろ</div><div class="vk">うしろ</div><div class="vz">後面</div></div>
+    <div class="v-item"><div class="vj">中</div><div class="vk">なか</div><div class="vz">裡面</div></div>
+    <div class="v-item"><div class="vj">外</div><div class="vk">そと</div><div class="vz">外面</div></div>
+    <div class="v-item"><div class="vj">隣</div><div class="vk">となり</div><div class="vz">隔壁</div></div>
+    <div class="v-item"><div class="vj">近く</div><div class="vk">ちかく</div><div class="vz">附近</div></div>
+    <div class="v-item"><div class="vj">右</div><div class="vk">みぎ</div><div class="vz">右邊</div></div>
+    <div class="v-item"><div class="vj">左</div><div class="vk">ひだり</div><div class="vz">左邊</div></div>
+    <div class="v-item"><div class="vj">間</div><div class="vk">あいだ</div><div class="vz">之間</div></div>
+    <div class="v-item"><div class="vj">向こう</div><div class="vk">むこう</div><div class="vz">對面</div></div>
+    <div class="v-item"><div class="vj">トイレ</div><div class="vk">といれ</div><div class="vz">廁所</div></div>
+    <div class="v-item"><div class="vj">受付</div><div class="vk">うけつけ</div><div class="vz">接待處</div></div>
+    <div class="v-item"><div class="vj">部屋</div><div class="vk">へや</div><div class="vz">房間</div></div>
+    <div class="v-item"><div class="vj">庭</div><div class="vk">にわ</div><div class="vz">庭院</div></div>
+    <div class="v-item"><div class="vj">店</div><div class="vk">みせ</div><div class="vz">商店</div></div>
+    <div class="v-item"><div class="vj">図書館</div><div class="vk">としょかん</div><div class="vz">圖書館</div></div>
+    <div class="v-item"><div class="vj">駅</div><div class="vk">えき</div><div class="vz">車站</div></div>
+    <div class="v-item"><div class="vj">病院</div><div class="vk">びょういん</div><div class="vz">醫院</div></div>
+  </div>
+</div>
+
+<div class="card-footer">場所・方位・存在動詞 完整版 · おにひめ學習筆記 Vol.5</div>
+</div>
+</body>
+</html>
