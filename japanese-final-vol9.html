@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核心語法體系總覽 Vol.9</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;--gold-l:#d4a017;
+  --c1:#1a3a6b;--c1bg:#e8f0ff;  /* 判斷存在 藍 */
+  --c2:#6b3a00;--c2bg:#fff4e0;  /* 指稱 橙 */
+  --c3:#1a5c2a;--c3bg:#e8f8ee;  /* 描述 綠 */
+  --c4:#5c1a5c;--c4bg:#f8e8ff;  /* 日常時間 紫 */
+  --c5:#8b1a1a;--c5bg:#ffe8e8;  /* 比較願望 紅 */
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,34px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:10px;text-align:center;}
+.page-note{font-size:12px;color:#c8a060;letter-spacing:2px;margin-bottom:28px;text-align:center;font-family:'Shippori Mincho',serif;}
+
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 30px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.18);}
+.sec{position:relative;z-index:1;margin-bottom:36px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:18px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* ══ たい 表達 ══ */
+.tai-hero{background:linear-gradient(135deg,var(--c5bg),#fff0f0);border:2px solid var(--c5);border-radius:8px;padding:20px 22px;margin-bottom:16px;}
+.tai-hero h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--c5);letter-spacing:3px;margin-bottom:14px;}
+.tai-formula{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.tf-slot{padding:8px 14px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;border:1.5px solid;text-align:center;}
+.tfs-s{background:#dde8ff;border-color:#7090c0;color:var(--c1);}
+.tfs-v{background:#ffe8cc;border-color:#c09050;color:#7a4000;}
+.tfs-tai{background:#ffc8c8;border-color:var(--c5);color:var(--c5);font-size:16px;}
+.tfs-d{background:#f8f0d8;border-color:#b09040;color:#604000;}
+.tf-arrow{font-size:18px;color:#bbb;padding:0 2px;}
+.tf-note{font-size:12px;color:#555;line-height:1.85;}
+
+/* たい 活用 */
+.tai-conj{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.tc-box{border-radius:4px;padding:10px 12px;border:1.5px solid;text-align:center;}
+.tc-pos{background:var(--c3bg);border-color:var(--c3);}
+.tc-neg{background:#ffe8e8;border-color:var(--c5);}
+.tc-past{background:#fff4e0;border-color:#c09050;}
+.tc-pneg{background:#f8e8ff;border-color:#9070c0;}
+.tc-box .label{font-size:10px;color:#888;margin-bottom:4px;font-family:'Noto Sans TC',sans-serif;}
+.tc-box .form{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.tc-box .rom{font-size:10px;color:#aaa;}
+
+/* 欲しい vs たい */
+.vs-box{display:grid;grid-template-columns:1fr 60px 1fr;gap:10px;align-items:stretch;margin-bottom:14px;}
+.vs-left{background:var(--c3bg);border:2px solid var(--c3);border-radius:6px;padding:14px 16px;}
+.vs-right{background:var(--c5bg);border:2px solid var(--c5);border-radius:6px;padding:14px 16px;}
+.vs-mid{display:flex;align-items:center;justify-content:center;font-family:'Shippori Mincho',serif;font-size:18px;font-weight:800;color:var(--gold);}
+.vs-box h5{font-family:'Noto Sans JP',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;}
+.vs-left h5{color:var(--c3);}.vs-right h5{color:var(--c5);}
+.vs-box p{font-size:12.5px;line-height:1.8;color:#333;margin-bottom:8px;}
+.vs-box .eg{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;padding:6px 9px;background:white;border-radius:3px;}
+.vs-box .eg-zh{font-size:11px;color:#888;margin-top:3px;}
+
+/* ══ 五大系統總覽 ══ */
+.system-intro{background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold);border-radius:8px;padding:20px 22px;margin-bottom:20px;text-align:center;}
+.system-intro p{font-size:13px;color:#d4b870;line-height:2;font-family:'Shippori Mincho',serif;letter-spacing:2px;}
+
+.five-systems{display:flex;flex-direction:column;gap:14px;margin-bottom:14px;}
+.sys-row{border-radius:6px;padding:16px 18px;border:2px solid;display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:start;}
+.sr1{background:var(--c1bg);border-color:var(--c1);}
+.sr2{background:var(--c2bg);border-color:var(--c2);}
+.sr3{background:var(--c3bg);border-color:var(--c3);}
+.sr4{background:var(--c4bg);border-color:var(--c4);}
+.sr5{background:var(--c5bg);border-color:var(--c5);}
+
+.sys-left{}
+.sys-num{font-family:'Shippori Mincho',serif;font-size:22px;font-weight:800;margin-bottom:2px;}
+.sr1 .sys-num{color:var(--c1);}.sr2 .sys-num{color:var(--c2);}
+.sr3 .sys-num{color:var(--c3);}.sr4 .sys-num{color:var(--c4);}
+.sr5 .sys-num{color:var(--c5);}
+.sys-name{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;margin-bottom:6px;letter-spacing:2px;color:var(--ink);}
+.sys-key{font-size:11px;color:#888;line-height:1.7;}
+
+.sys-right{}
+.pattern-list{display:flex;flex-direction:column;gap:6px;}
+.pl-item{background:white;border-radius:4px;padding:8px 12px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;}
+.pl-ja{font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ink);}
+.pl-zh{font-size:11.5px;color:#666;}
+.pl-particle{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;}
+.pp1{background:#c0d8ff;color:var(--c1);}.pp2{background:#ffd8a0;color:var(--c2);}
+.pp3{background:#b8e8c8;color:var(--c3);}.pp4{background:#e8c0ff;color:var(--c4);}
+.pp5{background:#ffc0c0;color:var(--c5);}
+
+/* 全句型一覧表 */
+.master-table{overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:14px;}
+table{border-collapse:collapse;width:100%;font-family:'Noto Sans JP',sans-serif;}
+thead tr{background:var(--ink);}
+thead th{padding:9px 10px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;color:#f5e6c0;text-align:center;}
+tbody tr:nth-child(even){background:var(--paper2);}
+tbody tr:nth-child(odd){background:var(--paper);}
+td{padding:9px 10px;border-right:1px solid #e0d4bc;font-size:13px;vertical-align:middle;line-height:1.5;}
+td:last-child{border-right:none;}
+td.cat{font-family:'Shippori Mincho',serif;font-size:12px;font-weight:600;text-align:center;width:80px;}
+td.pattern-ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+td.eg-ja{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;}
+td small{display:block;font-size:10px;color:#aaa;font-family:'Noto Sans TC',sans-serif;font-weight:300;}
+
+/* 助詞まとめ */
+.particle-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;}
+.ps-item{border-radius:4px;padding:10px 8px;border:1.5px solid;text-align:center;}
+.ps-item .pk{font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.ps-item .pr{font-size:10px;color:#aaa;margin-bottom:4px;}
+.ps-item .pf{font-size:11px;line-height:1.6;}
+.psi-wa{background:var(--c1bg);border-color:var(--c1);}.psi-wa .pk{color:var(--c1);}
+.psi-ga{background:var(--c3bg);border-color:var(--c3);}.psi-ga .pk{color:var(--c3);}
+.psi-wo{background:#ffe8e8;border-color:#c05050;}.psi-wo .pk{color:#8b1a1a;}
+.psi-ni{background:var(--c4bg);border-color:var(--c4);}.psi-ni .pk{color:var(--c4);}
+.psi-de{background:var(--c2bg);border-color:var(--c2);}.psi-de .pk{color:var(--c2);}
+.psi-no{background:var(--c1bg);border-color:#6090b0;}.psi-no .pk{color:#1a4a6b;}
+.psi-he{background:var(--c3bg);border-color:#508060;}.psi-he .pk{color:#1a4a2a;}
+.psi-to{background:var(--c4bg);border-color:#7050a0;}.psi-to .pk{color:#3a1a6b;}
+.psi-mo{background:#f8f8e0;border-color:#a0a020;}.psi-mo .pk{color:#5c5c00;}
+.psi-yo{background:#fff0e0;border-color:#c08040;}.psi-yo .pk{color:#7a4000;}
+
+/* 學習旅程タイムライン */
+.journey{background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold-l);border-radius:8px;padding:22px 24px;margin-bottom:14px;}
+.journey h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold-l);letter-spacing:3px;margin-bottom:18px;text-align:center;}
+.vol-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.vol-item{background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,60,0.3);border-radius:4px;padding:10px 12px;}
+.vol-item .vol-num{font-family:'Shippori Mincho',serif;font-size:11px;color:var(--gold-l);letter-spacing:2px;margin-bottom:4px;}
+.vol-item .vol-title{font-size:12px;color:#d4c090;line-height:1.6;}
+
+.card-footer{margin-top:28px;padding-top:14px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">核心語法體系總覽</div>
+<div class="page-sub">Vol.1〜9 完整知識地圖</div>
+<div class="page-note">〜たいです · 五大語法系統 · 全句型一覽</div>
+
+<div class="card">
+
+<!-- ══ 1. 〜たいです ══ -->
+<div class="sec">
+  <div class="sec-title">① 〜たいです — 表達「想做某事」（動詞願望形）</div>
+
+  <div class="tai-hero">
+    <h4>句型結構 · 變化規則</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div style="font-size:12px;color:#888;margin-bottom:8px;letter-spacing:1px;">公式</div>
+        <div class="tai-formula">
+          <div class="tf-slot tfs-s">〔私は〕</div>
+          <div class="tf-slot tfs-v">動詞ます形<br><small style="font-size:9px;color:#aaa;">去掉ます</small></div>
+          <div class="tf-slot tfs-tai">たい</div>
+          <div class="tf-slot tfs-d">です</div>
+        </div>
+        <div class="tf-note">
+          變化規則：動詞ます形 → 去掉「ます」→ 直接加「たい」<br>
+          食べ<s>ます</s> → 食べ + たい = <strong>食べたい</strong><br>
+          行き<s>ます</s> → 行き + たい = <strong>行きたい</strong><br>
+          見<s>ます</s> → 見 + たい = <strong>見たい</strong>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:#888;margin-bottom:8px;letter-spacing:1px;">たい本身是い形容詞 → 可以活用！</div>
+        <div class="tai-conj">
+          <div class="tc-box tc-pos">
+            <div class="label">現在肯定</div>
+            <div class="form">〜たいです</div>
+            <div class="rom">想做</div>
+          </div>
+          <div class="tc-box tc-neg">
+            <div class="label">現在否定</div>
+            <div class="form">〜たくないです</div>
+            <div class="rom">不想做</div>
+          </div>
+          <div class="tc-box tc-past">
+            <div class="label">過去肯定</div>
+            <div class="form">〜たかったです</div>
+            <div class="rom">之前想做</div>
+          </div>
+          <div class="tc-box tc-pneg">
+            <div class="label">過去否定</div>
+            <div class="form">〜たくなかったです</div>
+            <div class="rom">之前不想做</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 例文 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div style="background:var(--paper);border:1px solid #d8ccb8;border-radius:4px;padding:11px 14px;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">私は日本料理を<strong style="color:var(--c5);">食べたい</strong>です。</div>
+      <div style="font-size:12px;color:#666;margin-bottom:3px;">我想吃日本料理。</div>
+      <div style="font-size:10.5px;color:var(--accent);font-weight:700;">を＝受詞 ／ 食べます→食べたい</div>
+    </div>
+    <div style="background:var(--paper);border:1px solid #d8ccb8;border-radius:4px;padding:11px 14px;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">彼は京都へ<strong style="color:var(--c5);">行きたい</strong>です。</div>
+      <div style="font-size:12px;color:#666;margin-bottom:3px;">他想去京都。</div>
+      <div style="font-size:10.5px;color:var(--accent);font-weight:700;">⚠️ 第三人稱用たい要注意自然度</div>
+    </div>
+    <div style="background:var(--paper);border:1px solid #d8ccb8;border-radius:4px;padding:11px 14px;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">日本語を<strong style="color:var(--c5);">勉強したい</strong>です。</div>
+      <div style="font-size:12px;color:#666;margin-bottom:3px;">我想學日語。</div>
+      <div style="font-size:10.5px;color:var(--accent);font-weight:700;">します→したい</div>
+    </div>
+    <div style="background:var(--paper);border:1px solid #d8ccb8;border-radius:4px;padding:11px 14px;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">映画を<strong style="color:var(--c5);">見たく</strong>ないです。</div>
+      <div style="font-size:12px;color:#666;margin-bottom:3px;">我不想看電影。</div>
+      <div style="font-size:10.5px;color:var(--accent);font-weight:700;">否定：たい→去い→たくない</div>
+    </div>
+  </div>
+
+  <!-- 欲しい vs たい -->
+  <div class="vs-box">
+    <div class="vs-left">
+      <h5>〜が欲しい</h5>
+      <p>想要「<strong>物品（名詞）</strong>」<br>
+      對象是<strong>東西</strong><br>
+      後面用「が」</p>
+      <div class="eg">パソコンが欲しいです</div>
+      <div class="eg-zh">我想要電腦</div>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-right">
+      <h5>〜たい</h5>
+      <p>想要「<strong>做某事（動作）</strong>」<br>
+      對象是<strong>動作</strong><br>
+      動詞ます形去ます加たい</p>
+      <div class="eg">パソコンを買いたいです</div>
+      <div class="eg-zh">我想買電腦</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    💡 <strong>一句話記住：欲しい＝想要物，たい＝想做事</strong><br>
+    「電腦<strong>が</strong>欲しい」（電腦是我想要的東西）<br>
+    「電腦<strong>を</strong>買いたい」（買電腦是我想做的動作）
+  </div>
+</div>
+
+<!-- ══ 2. 五大系統總覽 ══ -->
+<div class="sec">
+  <div class="sec-title">② 核心語法體系總覽 — 五大系統</div>
+
+  <div class="system-intro">
+    <p>日語初級語法的全部骨架，可以歸納為五個系統<br>
+    掌握這五個，就掌握了日語初級的核心</p>
+  </div>
+
+  <div class="five-systems">
+
+    <!-- 系統1 -->
+    <div class="sys-row sr1">
+      <div class="sys-left">
+        <div class="sys-num">① 判斷與存在</div>
+        <div class="sys-name">「是什麼」「在哪裡」</div>
+        <div class="sys-key">
+          核心助詞：は・が・に<br>
+          核心詞：です・あります・います
+        </div>
+      </div>
+      <div class="sys-right">
+        <div class="pattern-list">
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜は〜です</div>
+              <div class="pl-zh">〜是〜（判斷・身份）</div>
+            </div>
+            <span class="pl-particle pp1">は</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜は〜にあります／います</div>
+              <div class="pl-zh">〜在〜（存在地點）</div>
+            </div>
+            <span class="pl-particle pp1">は・に</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜に〜があります／います</div>
+              <div class="pl-zh">〜有〜（某地存在）</div>
+            </div>
+            <span class="pl-particle pp1">に・が</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系統2 -->
+    <div class="sys-row sr2">
+      <div class="sys-left">
+        <div class="sys-num">② 指稱事物與場所</div>
+        <div class="sys-name">「哪個」「哪裡」</div>
+        <div class="sys-key">
+          核心詞：こそあど系列<br>
+          これ/それ/あれ<br>
+          ここ/そこ/あそこ
+        </div>
+      </div>
+      <div class="sys-right">
+        <div class="pattern-list">
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">これ／それ／あれは何ですか</div>
+              <div class="pl-zh">這個／那個是什麼？</div>
+            </div>
+            <span class="pl-particle pp2">は・何</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">ここ／そこ／あそこは〜です</div>
+              <div class="pl-zh">這裡／那裡是〜</div>
+            </div>
+            <span class="pl-particle pp2">こそあ</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">この／その／あの〔名詞〕</div>
+              <div class="pl-zh">這個／那個〔名詞〕</div>
+            </div>
+            <span class="pl-particle pp2">修飾語</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系統3 -->
+    <div class="sys-row sr3">
+      <div class="sys-left">
+        <div class="sys-num">③ 描述性質與狀態</div>
+        <div class="sys-name">「怎麼樣」</div>
+        <div class="sys-key">
+          核心：い形・な形容詞<br>
+          活用：否定/過去/修飾<br>
+          助詞：な（修飾名詞時）
+        </div>
+      </div>
+      <div class="sys-right">
+        <div class="pattern-list">
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜は〔い形〕いです／くないです</div>
+              <div class="pl-zh">〜是〔形〕的／不〔形〕</div>
+            </div>
+            <span class="pl-particle pp3">い形</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜は〔な形〕です／ではありません</div>
+              <div class="pl-zh">〜是〔形〕的／不〔形〕</div>
+            </div>
+            <span class="pl-particle pp3">な形</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〔い形〕＋名詞 ／ 〔な形〕な＋名詞</div>
+              <div class="pl-zh">形容詞修飾名詞</div>
+            </div>
+            <span class="pl-particle pp3">修飾</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系統4 -->
+    <div class="sys-row sr4">
+      <div class="sys-left">
+        <div class="sys-num">④ 日常動作與時間</div>
+        <div class="sys-name">「做什麼」「何時做」</div>
+        <div class="sys-key">
+          核心：動詞ます形<br>
+          時態：ます／ました<br>
+          助詞：を・に・で・へ
+        </div>
+      </div>
+      <div class="sys-right">
+        <div class="pattern-list">
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜は〜を〔動詞〕ます／ました</div>
+              <div class="pl-zh">〜做〜（現在/過去）</div>
+            </div>
+            <span class="pl-particle pp4">を・ます</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〔時間〕に〔動詞〕ます</div>
+              <div class="pl-zh">在〔幾點〕做〜</div>
+            </div>
+            <span class="pl-particle pp4">に（時間）</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〔場所〕で〔動詞〕ます</div>
+              <div class="pl-zh">在〔地點〕做〜</div>
+            </div>
+            <span class="pl-particle pp4">で（動作地）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系統5 -->
+    <div class="sys-row sr5">
+      <div class="sys-left">
+        <div class="sys-num">⑤ 比較與願望</div>
+        <div class="sys-name">「哪個更好」「想要/想做」</div>
+        <div class="sys-key">
+          核心：より・一番<br>
+          欲しい・たい<br>
+          助詞：が・より
+        </div>
+      </div>
+      <div class="sys-right">
+        <div class="pattern-list">
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">AはBより〜です</div>
+              <div class="pl-zh">A比B更〜（兩者比較）</div>
+            </div>
+            <span class="pl-particle pp5">より</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">Aが〔範囲〕で一番〜です</div>
+              <div class="pl-zh">A是〔範圍〕最〜（最高級）</div>
+            </div>
+            <span class="pl-particle pp5">が・一番</span>
+          </div>
+          <div class="pl-item">
+            <div>
+              <div class="pl-ja">〜が欲しいです ／ 〜たいです</div>
+              <div class="pl-zh">想要〜物品 ／ 想做〜動作</div>
+            </div>
+            <span class="pl-particle pp5">欲しい・たい</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. 全句型一覧表 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 全句型一覽表 — Vol.1〜9 完整收錄</div>
+  <div class="master-table">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:80px;">系統</th>
+          <th style="width:180px;">句型</th>
+          <th>例句</th>
+          <th style="width:100px;">中文</th>
+          <th style="width:60px;">Vol.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cat" style="color:var(--c1);">①判斷</td>
+          <td class="pattern-ja">〜は〜です</td>
+          <td class="eg-ja">私は学生です<small>肯定</small></td>
+          <td>我是學生</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.7</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c1);">①判斷</td>
+          <td class="pattern-ja">〜は〜ではありません</td>
+          <td class="eg-ja">学生ではありません<small>否定</small></td>
+          <td>不是學生</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.7</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c1);">①存在</td>
+          <td class="pattern-ja">〜は〜にあります</td>
+          <td class="eg-ja">本は机の上にあります</td>
+          <td>書在桌上</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.5</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c1);">①存在</td>
+          <td class="pattern-ja">〜に〜があります</td>
+          <td class="eg-ja">公園に子供がいます</td>
+          <td>公園有小孩</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.5</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c2);">②指稱</td>
+          <td class="pattern-ja">これ/それ/あれは何ですか</td>
+          <td class="eg-ja">これは何ですか</td>
+          <td>這是什麼？</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.6</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c2);">②場所</td>
+          <td class="pattern-ja">ここ/そこ/あそこは〜です</td>
+          <td class="eg-ja">ここは図書館です</td>
+          <td>這裡是圖書館</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.5</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c3);">③い形</td>
+          <td class="pattern-ja">〜は〔い形〕いです</td>
+          <td class="eg-ja">この本は面白いです</td>
+          <td>這本書有趣</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.3</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c3);">③な形</td>
+          <td class="pattern-ja">〜は〔な形〕です</td>
+          <td class="eg-ja">ここは静かです</td>
+          <td>這裡安靜</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.3</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c4);">④動作</td>
+          <td class="pattern-ja">〜は〜を〔動詞〕ます</td>
+          <td class="eg-ja">私は本を読みます</td>
+          <td>我讀書</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.7</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c4);">④時間</td>
+          <td class="pattern-ja">〔時間〕に〔動詞〕ます</td>
+          <td class="eg-ja">7時に起きます</td>
+          <td>7點起床</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.1</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c5);">⑤比較</td>
+          <td class="pattern-ja">AはBより〜です</td>
+          <td class="eg-ja">東京は大阪より大きい</td>
+          <td>東京比大阪大</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.4</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c5);">⑤最高</td>
+          <td class="pattern-ja">Aが〔範囲〕で一番〜</td>
+          <td class="eg-ja">富士山が日本で一番高い</td>
+          <td>富士山最高</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.4</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c5);">⑤願望</td>
+          <td class="pattern-ja">〜が欲しいです</td>
+          <td class="eg-ja">パソコンが欲しいです</td>
+          <td>想要電腦</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.4</td>
+        </tr>
+        <tr>
+          <td class="cat" style="color:var(--c5);">⑤願望</td>
+          <td class="pattern-ja">〜たいです</td>
+          <td class="eg-ja">日本料理を食べたいです</td>
+          <td>想吃日料</td>
+          <td style="text-align:center;font-size:11px;color:#aaa;">Vol.9</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 4. 助詞まとめ ══ -->
+<div class="sec">
+  <div class="sec-title">④ 核心助詞速查</div>
+  <div class="particle-strip">
+    <div class="ps-item psi-wa"><div class="pk">は</div><div class="pr">wa</div><div class="pf">話題提示<br>「說到〜」</div></div>
+    <div class="ps-item psi-ga"><div class="pk">が</div><div class="pr">ga</div><div class="pf">主語標示<br>強調・新資訊</div></div>
+    <div class="ps-item psi-wo"><div class="pk">を</div><div class="pr">o</div><div class="pf">賓語（受詞）<br>動作對象</div></div>
+    <div class="ps-item psi-ni"><div class="pk">に</div><div class="pr">ni</div><div class="pf">時間/存在地點<br>移動目的地</div></div>
+    <div class="ps-item psi-de"><div class="pk">で</div><div class="pr">de</div><div class="pf">動作地點<br>手段・方式</div></div>
+    <div class="ps-item psi-no"><div class="pk">の</div><div class="pr">no</div><div class="pf">所屬・的<br>A的B</div></div>
+    <div class="ps-item psi-he"><div class="pk">へ</div><div class="pr">e</div><div class="pf">方向<br>朝〜而去</div></div>
+    <div class="ps-item psi-to"><div class="pk">と</div><div class="pr">to</div><div class="pf">並列・一起<br>和・與</div></div>
+    <div class="ps-item psi-mo"><div class="pk">も</div><div class="pr">mo</div><div class="pf">也<br>替換は/が</div></div>
+    <div class="ps-item psi-yo"><div class="pk">より</div><div class="pr">yori</div><div class="pf">比較基準<br>比〜更〜</div></div>
+  </div>
+</div>
+
+<!-- ══ 5. 學習旅程 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 你的學習旅程 — Vol.1〜9</div>
+  <div class="journey">
+    <h4>📚 九張學習卡覆蓋的知識地圖</h4>
+    <div class="vol-list">
+      <div class="vol-item">
+        <div class="vol-num">Vol.1</div>
+        <div class="vol-title">時間助詞に<br>動詞ます・ました時態</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.2</div>
+        <div class="vol-title">日期・星期<br>日常動詞・IT詞彙</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.3</div>
+        <div class="vol-title">い形容詞 vs な形容詞<br>活用公式完整對比</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.4</div>
+        <div class="vol-title">より比較・一番最高級<br>〜が欲しいです</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.5</div>
+        <div class="vol-title">ここそこあそこ<br>あります・います 存在句</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.6</div>
+        <div class="vol-title">これそれあれ<br>何ですか 問答</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.7</div>
+        <div class="vol-title">自我介紹・語序<br>全助詞完整解說</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.8</div>
+        <div class="vol-title">促音っ完全解說<br>ン・ソ・ツ・シ辨別法</div>
+      </div>
+      <div class="vol-item">
+        <div class="vol-num">Vol.9</div>
+        <div class="vol-title">〜たいです<br>五大系統總覽★</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  核心語法體系總覽 · Vol.1〜9 完整收錄 · おにひめ學習筆記 Vol.9 Final ·  2025.05.19 → 2026.05.10
+</div>
+</div>
+</body>
+</html>
