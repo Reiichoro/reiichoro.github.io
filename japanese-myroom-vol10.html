@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私の部屋 — 實戰練習 Vol.10</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --c1:#1a3a6b;--c1bg:#e8f0ff;
+  --c2:#6b3a00;--c2bg:#fff4e0;
+  --c3:#1a5c2a;--c3bg:#e8f8ee;
+  --c4:#5c1a5c;--c4bg:#f8e8ff;
+  --c5:#8b1a1a;--c5bg:#ffe8e8;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,34px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 30px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.18);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* ── 笔記解説 ── */
+.note-explain{background:linear-gradient(135deg,#f8f4ee,#f0f8f4);border:2px solid #a0b890;border-radius:8px;padding:18px 20px;margin-bottom:16px;}
+.note-explain h4{font-family:'Shippori Mincho',serif;font-size:13px;color:#2a6a3a;letter-spacing:3px;margin-bottom:14px;}
+
+/* ── 文章 全文 ── */
+.full-text{background:linear-gradient(135deg,#fffdf8,#f8f4e8);border:2px solid var(--gold);border-radius:8px;padding:24px 28px;margin-bottom:20px;}
+.full-text h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold);letter-spacing:3px;margin-bottom:18px;}
+.ft-title{font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:800;color:var(--ink);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #e0d0a0;}
+.ft-line{margin-bottom:14px;padding:12px 14px;background:white;border-radius:4px;border-left:3px solid;}
+
+.tl-1{border-color:var(--c1);}
+.tl-2{border-color:var(--c3);}
+.tl-3{border-color:var(--c1);}
+.tl-4{border-color:var(--c2);}
+.tl-5{border-color:var(--c4);}
+.tl-6{border-color:var(--c1);}
+.tl-7{border-color:var(--c5);}
+.tl-8{border-color:var(--c3);}
+.tl-9{border-color:var(--c5);}
+
+.ft-line .ja-text{font-family:'Noto Sans JP',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.7;}
+.ft-line .zh-text{font-size:13px;color:#666;margin-bottom:6px;}
+.ft-line .grammar-badge{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.gb{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;font-family:'Noto Sans TC',sans-serif;}
+.gb1{background:var(--c1bg);color:var(--c1);}
+.gb2{background:var(--c2bg);color:var(--c2);}
+.gb3{background:var(--c3bg);color:var(--c3);}
+.gb4{background:var(--c4bg);color:var(--c4);}
+.gb5{background:var(--c5bg);color:var(--c5);}
+
+/* highlight */
+.hl1{color:var(--c1);font-weight:800;}  /* 判断 */
+.hl2{color:var(--c2);font-weight:800;}  /* 存在 */
+.hl3{color:var(--c3);font-weight:800;}  /* 形容 */
+.hl4{color:var(--c4);font-weight:800;}  /* 指示+形 */
+.hl5{color:var(--c5);font-weight:800;}  /* 比較・願望 */
+.hl6{color:#5c3a00;font-weight:800;}    /* 時間 */
+
+/* ── 句型解剖 ── */
+.dissect-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.ds-item{border-radius:4px;padding:13px 16px;border:1.5px solid;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;}
+.ds1{background:var(--c1bg);border-color:var(--c1);}
+.ds2{background:var(--c3bg);border-color:var(--c3);}
+.ds3{background:var(--c2bg);border-color:var(--c2);}
+.ds4{background:var(--c4bg);border-color:var(--c4);}
+.ds5{background:var(--c5bg);border-color:var(--c5);}
+.ds6{background:var(--c1bg);border-color:var(--c1);}
+.ds7{background:var(--c5bg);border-color:var(--c5);}
+.ds8{background:var(--c3bg);border-color:var(--c3);}
+.ds9{background:var(--c5bg);border-color:var(--c5);}
+.ds-num{font-family:'Shippori Mincho',serif;font-size:18px;font-weight:800;}
+.ds1 .ds-num{color:var(--c1);}.ds2 .ds-num{color:var(--c3);}.ds3 .ds-num{color:var(--c2);}
+.ds4 .ds-num{color:var(--c4);}.ds5 .ds-num{color:var(--c5);}.ds6 .ds-num{color:var(--c1);}
+.ds7 .ds-num{color:var(--c5);}.ds8 .ds-num{color:var(--c3);}.ds9 .ds-num{color:var(--c5);}
+.ds-body{}
+.ds-ja{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.ds-type{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:8px;margin-bottom:5px;display:inline-block;font-family:'Noto Sans TC',sans-serif;}
+.ds-explain{font-size:12px;color:#444;line-height:1.8;}
+.ds-explain strong{color:var(--accent);}
+.ds-note{font-size:11px;color:#888;margin-top:4px;font-style:italic;}
+
+/* ── 房間描述詞彙 ── */
+.room-vocab{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.rv-item{border-radius:4px;padding:8px 10px;background:var(--paper2);border:1px solid #d8ccb8;text-align:center;}
+.rv-item .vj{font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ink);}
+.rv-item .vk{font-size:10px;color:#aaa;margin:2px 0;}
+.rv-item .vz{font-size:11.5px;color:#555;}
+
+/* ── 你的補充練習 ── */
+.practice-box{background:linear-gradient(135deg,#f0f8f0,#e8f4e8);border:2px solid var(--c3);border-radius:8px;padding:20px 22px;margin-bottom:14px;}
+.practice-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--c3);letter-spacing:3px;margin-bottom:14px;}
+.blank-line{background:white;border-radius:4px;padding:12px 16px;margin-bottom:8px;border:1.5px dashed #a0c0a0;min-height:48px;display:flex;align-items:center;gap:10px;}
+.bl-hint{font-size:11px;color:#aaa;font-family:'Noto Sans TC',sans-serif;}
+.bl-num{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;color:var(--c3);min-width:20px;}
+
+/* ── 補充問題 ── */
+.correction-box{background:#fff8e8;border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;}
+.correction-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold);letter-spacing:3px;margin-bottom:12px;}
+.corr-item{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed #e0d0a0;}
+.corr-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.ci-wrong{background:#ffe8e8;border-radius:4px;padding:8px 12px;border:1px solid #d09090;}
+.ci-right{background:var(--c3bg);border-radius:4px;padding:8px 12px;border:1px solid #80b890;}
+.ci-label{font-size:10px;font-weight:700;margin-bottom:4px;font-family:'Noto Sans TC',sans-serif;}
+.ci-wrong .ci-label{color:var(--c5);}.ci-right .ci-label{color:var(--c3);}
+.ci-text{font-family:'Noto Sans JP',sans-serif;font-size:13.5px;font-weight:700;color:var(--ink);}
+.ci-zh{font-size:11px;color:#888;margin-top:3px;}
+.ci-note{font-size:11px;color:var(--accent);font-weight:700;margin-top:4px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">私の部屋</div>
+<div class="page-sub">實戰練習 — 用真實房間練習所有句型 · Vol.10</div>
+
+<div class="card">
+
+<!-- ══ 0. 筆記解答 ══ -->
+<div class="sec">
+  <div class="sec-title">① 你的問題解答 — 這兩頁筆記在幹什麼？</div>
+  <div class="note-explain">
+    <h4>📝 答案：既要又要，而且做得很好</h4>
+    <div style="font-size:13px;color:#333;line-height:2;">
+      Image 1（左頁）：是一篇<strong>完整的作文</strong>——「向新朋友介紹我的房間和生活」<br>
+      你一年前用了9個句子，把之前學的所有句型全部串在一起使用。<br><br>
+      Image 2（右頁）：是這篇作文的<strong>寫作大綱</strong>——列出了5個步驟：<br>
+      1. 用は〜です開頭 &nbsp; 2. 形容詞描述 &nbsp; 3. 說時間地點 &nbsp; 4. 用より比較 &nbsp; 5. 表達願望<br><br>
+      <strong>→ 所以這是你一年前出給自己的作業，而且完成了！</strong><br>
+      現在我幫你把這篇作文拆解清楚，再結合你的真實房間照片。
+    </div>
+  </div>
+</div>
+
+<!-- ══ 1. 全文 ══ -->
+<div class="sec">
+  <div class="sec-title">② 你的作文全文 — 逐句標注句型</div>
+
+  <div class="full-text">
+    <h4>「私の部屋」— 向新朋友介紹我的房間和生活</h4>
+    <div class="ft-title">私の部屋</div>
+
+    <div class="ft-line tl-1">
+      <div class="ja-text">これ<span class="hl1">は</span>私の部屋<span class="hl1">です</span>。</div>
+      <div class="zh-text">這裡是我的房間。</div>
+      <div class="grammar-badge"><span class="gb gb1">①判斷句</span><span class="gb gb1">は〜です</span></div>
+    </div>
+
+    <div class="ft-line tl-2">
+      <div class="ja-text">部屋は広く<span class="hl3">ない</span>ですが、<span class="hl3">きれい</span>です。</div>
+      <div class="zh-text">房間不大，但很乾淨漂亮。</div>
+      <div class="grammar-badge"><span class="gb gb3">③い形否定</span><span class="gb gb3">な形肯定</span><span class="gb gb2">が＝但是</span></div>
+    </div>
+
+    <div class="ft-line tl-3">
+      <div class="ja-text">机の上<span class="hl2">に</span>パソコン<span class="hl2">が</span>あります。</div>
+      <div class="zh-text">桌子上有電腦。</div>
+      <div class="grammar-badge"><span class="gb gb1">①存在句B型</span><span class="gb gb1">〜に〜があります</span></div>
+    </div>
+
+    <div class="ft-line tl-4">
+      <div class="ja-text"><span class="hl4">その</span>パソコンは<span class="hl4">新しい</span>ので、とても<span class="hl4">高かった</span>です。</div>
+      <div class="zh-text">那台電腦是新的，所以非常貴。</div>
+      <div class="grammar-badge"><span class="gb gb4">指示詞その＋形容詞</span><span class="gb gb4">過去形：高かった</span><span class="gb gb2">ので＝因為</span></div>
+    </div>
+
+    <div class="ft-line tl-5">
+      <div class="ja-text">本棚には日本語の本が<span class="hl4">たくさん</span>あります。</div>
+      <div class="zh-text">書架上有很多日語書。</div>
+      <div class="grammar-badge"><span class="gb gb4">には＝強調地點</span><span class="gb gb1">存在句</span></div>
+    </div>
+
+    <div class="ft-line tl-6">
+      <div class="ja-text">英語の本<span class="hl5">より</span>日本語の本の方が多いです。</div>
+      <div class="zh-text">日語的書比英語的書更多。</div>
+      <div class="grammar-badge"><span class="gb gb5">⑤比較句</span><span class="gb gb5">より〜のほうが</span></div>
+    </div>
+
+    <div class="ft-line tl-7">
+      <div class="ja-text">毎晩8時<span class="hl6">から</span>、ここ<span class="hl6">で</span>日本語を勉強します。</div>
+      <div class="zh-text">每晚從8點開始，在這裡學日語。</div>
+      <div class="grammar-badge"><span class="gb gb2">時間から＝從幾點起</span><span class="gb gb2">で＝動作地點</span><span class="gb gb1">④日常動作</span></div>
+    </div>
+
+    <div class="ft-line tl-8">
+      <div class="ja-text">将来、日本へ<span class="hl5">行きたい</span>です。</div>
+      <div class="zh-text">將來，我想去日本。</div>
+      <div class="grammar-badge"><span class="gb gb5">⑤願望形たい</span><span class="gb gb5">へ＝方向</span></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    💡 <strong>你一年前這篇作文用了幾乎所有學過的句型：</strong><br>
+    判斷句 → 形容詞（い形否定＋な形肯定）→ 存在句 → 指示詞＋過去形 → 比較句 → 時間＋動作 → 願望形<br>
+    <strong>這不是普通的初學者作文，這是有意識地把所有語法串起來的練習。</strong>
+  </div>
+</div>
+
+<!-- ══ 2. 逐句解剖 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 逐句解剖 — 每句在用什麼語法、為什麼這樣寫</div>
+  <div class="dissect-list">
+
+    <div class="ds-item ds1">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-ja">これは私の部屋です。</div>
+        <span class="ds-type gb1">判斷句：〜は〜です</span>
+        <div class="ds-explain">
+          「これ」指眼前的房間（説話者身邊），「の」表所屬（私の＝我的）。<br>
+          <strong>是〜です的標準開頭句</strong>，引出話題。
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-item ds2">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-ja">部屋は広くないですが、きれいです。</div>
+        <span class="ds-type gb3">い形否定 ＋ な形肯定</span>
+        <div class="ds-explain">
+          広い（寬大）→ <strong>去い → 広く＋ない</strong>（い形否定公式）<br>
+          きれい是な形容詞 → きれいです（直接加です）<br>
+          <strong>が＝但是</strong>，連接兩個相反的描述。
+        </div>
+        <div class="ds-note">⚠️ きれい雖然結尾有い，是な形容詞！記得Vol.3的陷阱</div>
+      </div>
+    </div>
+
+    <div class="ds-item ds3">
+      <div class="ds-num">3</div>
+      <div class="ds-body">
+        <div class="ds-ja">机の上にパソコンがあります。</div>
+        <span class="ds-type gb1">存在句B型：〜に〜があります</span>
+        <div class="ds-explain">
+          先說地點「机の上に」，再用が引出新資訊「パソコン」。<br>
+          <strong>「桌上有什麼？」→ 用句型B（地點在前）</strong><br>
+          パソコン是無生命物 → あります（不是います）
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-item ds4">
+      <div class="ds-num">4</div>
+      <div class="ds-body">
+        <div class="ds-ja">そのパソコンは新しいので、とても高かったです。</div>
+        <span class="ds-type gb4">指示詞その ＋ い形容詞過去形</span>
+        <div class="ds-explain">
+          「その」指對方那邊或之前提到的電腦（承接上句）<br>
+          高い（貴）→ <strong>去い → 高かった</strong>（い形過去公式）<br>
+          <strong>ので＝因為（原因）</strong>，比から語氣更柔和
+        </div>
+        <div class="ds-note">筆記注記「過去式，此處為省略，正確應為高かった」→ 完全正確！</div>
+      </div>
+    </div>
+
+    <div class="ds-item ds5">
+      <div class="ds-num">5</div>
+      <div class="ds-body">
+        <div class="ds-ja">本棚にはたくさんあります。</div>
+        <span class="ds-type gb1">存在句 ＋ 強調助詞には</span>
+        <div class="ds-explain">
+          「には」＝に＋は，強調「書架這個地點」作為話題<br>
+          <strong>たくさん</strong>＝很多（副詞，放在動詞前修飾）<br>
+          日本語の本が＝日語的書（が標示存在主體）
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-item ds6">
+      <div class="ds-num">6</div>
+      <div class="ds-body">
+        <div class="ds-ja">英語の本より日本語の本の方が多いです。</div>
+        <span class="ds-type gb5">比較句：BよりAのほうが〜</span>
+        <div class="ds-explain">
+          より前面是「輸家」（英語の本），のほうが後面是「贏家」（日本語の本）<br>
+          <strong>這是Vol.4學的「強調版比較句」</strong>：B比A更〜
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-item ds8">
+      <div class="ds-num">7</div>
+      <div class="ds-body">
+        <div class="ds-ja">毎晩8時から、ここで日本語を勉強します。</div>
+        <span class="ds-type gb2">時間から ＋ 場所で ＋ 動詞</span>
+        <div class="ds-explain">
+          <strong>毎晩</strong>＝每晚（時間副詞）<br>
+          <strong>8時から</strong>＝從8點開始（から＝起點）<br>
+          <strong>ここで</strong>＝在這裡（で＝動作地點，有動作！）<br>
+          勉強します＝學習（する動詞的禮貌形）
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-item ds9">
+      <div class="ds-num">8</div>
+      <div class="ds-body">
+        <div class="ds-ja">将来、日本へ行きたいです。</div>
+        <span class="ds-type gb5">願望形：〜たい</span>
+        <div class="ds-explain">
+          <strong>将来</strong>＝將來（時間副詞）<br>
+          <strong>へ</strong>＝方向（朝日本去）<br>
+          行きます → <strong>去ます → 行き＋たい</strong>＝想去<br>
+          這句話完美收尾，從「介紹房間」升華到「對日本的嚮往」
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. 根據你的真實房間 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 根據你的真實房間照片 — 補充更多句子</div>
+
+  <div style="background:var(--c1bg);border:2px solid var(--c1);border-radius:8px;padding:18px 20px;margin-bottom:14px;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:13px;color:var(--c1);letter-spacing:3px;margin-bottom:14px;">📸 看了你的房間照片，我幫你補充這些句子</div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div style="background:white;border-radius:4px;padding:11px 14px;border-left:3px solid var(--c1);">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">
+          部屋は<span style="color:var(--c3);font-weight:800;">広い</span>です。とても<span style="color:var(--c3);">広く</span>て<span style="color:var(--c3);">きれい</span>です。
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px;">房間很大，非常寬敞乾淨。</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;">→ 你的房間其實很大！原來的筆記說「広くない」但照片來看是広い！</div>
+      </div>
+
+      <div style="background:white;border-radius:4px;padding:11px 14px;border-left:3px solid var(--c2);">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">
+          部屋<span style="color:#5c3a00;">に</span>エアコン<span style="color:#5c3a00;">が</span>あります。
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px;">房間裡有冷氣。</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;">→ 照片中看到牆上有冷氣機</div>
+      </div>
+
+      <div style="background:white;border-radius:4px;padding:11px 14px;border-left:3px solid var(--c4);">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">
+          机の上<span style="color:var(--c4);">に</span>ノートや本<span style="color:var(--c4);">が</span>あります。
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px;">桌子上有筆記本和書（等東西）。</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;">→ 桌上看到有綠色筆記本和書 ／ や＝列舉（部分）</div>
+      </div>
+
+      <div style="background:white;border-radius:4px;padding:11px 14px;border-left:3px solid var(--c2);">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">
+          部屋<span style="color:#5c3a00;">に</span>ベッド<span style="color:#5c3a00;">と</span>机<span style="color:#5c3a00;">と</span>本棚<span style="color:#5c3a00;">が</span>あります。
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px;">房間裡有床、桌子和書架。</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;">→ と＝完全列舉（和） ／ 照片中都看到了</div>
+      </div>
+
+      <div style="background:white;border-radius:4px;padding:11px 14px;border-left:3px solid var(--c5);">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">
+          床は<span style="color:var(--c5);">白くて</span>、タイル<span style="color:var(--c5);">です</span>。
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px;">地板是白色的磁磚。</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;">→ 照片中看到白色光潔磁磚地板</div>
+      </div>
+
+      <div style="background:white;border-radius:4px;padding:11px 14px;border-left:3px solid var(--c3);">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;">
+          椅子は<span style="color:var(--c3);">木でできていて</span>、<span style="color:var(--c3);">古い</span>ですが<span style="color:var(--c3);">丈夫</span>です。
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px;">椅子是木製的，雖然舊但很結實。</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;">→ 照片中看到藤編/木製椅子</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ 4. 一個小訂正 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 筆記一個地方值得注意</div>
+  <div class="correction-box">
+    <h4>⚠️ 一個小細節</h4>
+    <div class="corr-item">
+      <div class="ci-wrong">
+        <div class="ci-label">❌ 筆記原文</div>
+        <div class="ci-text">そのパソコンは新しいので、とても高いでした</div>
+        <div class="ci-zh">（你筆記標注：地處為省略）</div>
+      </div>
+      <div class="ci-right">
+        <div class="ci-label">✅ 正確形式</div>
+        <div class="ci-text">そのパソコンは新しいので、とても高かったです</div>
+        <div class="ci-zh">那台電腦是新的，所以非常貴</div>
+        <div class="ci-note">高い（い形）過去：去い→高かった＋です</div>
+      </div>
+    </div>
+    <div style="font-size:12.5px;color:#555;margin-top:6px;line-height:1.85;">
+      你一年前自己標注「正確應為高かったです」——<strong>完全正確！</strong><br>
+      「高いでした」在日語中不自然，い形容詞過去式要把詞尾い→かった，不是直接加でした。<br>
+      這說明你當時雖然寫錯了，但你知道是錯的，這已經很厲害了。
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 房間詞彙補充 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 房間常用詞彙補充</div>
+  <div class="room-vocab">
+    <div class="rv-item"><div class="vj">部屋</div><div class="vk">へや</div><div class="vz">房間</div></div>
+    <div class="rv-item"><div class="vj">机</div><div class="vk">つくえ</div><div class="vz">桌子</div></div>
+    <div class="rv-item"><div class="vj">椅子</div><div class="vk">いす</div><div class="vz">椅子</div></div>
+    <div class="rv-item"><div class="vj">ベッド</div><div class="vk">べっど</div><div class="vz">床</div></div>
+    <div class="rv-item"><div class="vj">本棚</div><div class="vk">ほんだな</div><div class="vz">書架</div></div>
+    <div class="rv-item"><div class="vj">窓</div><div class="vk">まど</div><div class="vz">窗戶</div></div>
+    <div class="rv-item"><div class="vj">床</div><div class="vk">ゆか</div><div class="vz">地板</div></div>
+    <div class="rv-item"><div class="vj">天井</div><div class="vk">てんじょう</div><div class="vz">天花板</div></div>
+    <div class="rv-item"><div class="vj">扇風機</div><div class="vk">せんぷうき</div><div class="vz">電風扇</div></div>
+    <div class="rv-item"><div class="vj">エアコン</div><div class="vk">えあこん</div><div class="vz">冷氣</div></div>
+    <div class="rv-item"><div class="vj">電気</div><div class="vk">でんき</div><div class="vz">電燈</div></div>
+    <div class="rv-item"><div class="vj">カーテン</div><div class="vk">かーてん</div><div class="vz">窗簾</div></div>
+    <div class="rv-item"><div class="vj">広い</div><div class="vk">ひろい</div><div class="vz">寬大的</div></div>
+    <div class="rv-item"><div class="vj">狭い</div><div class="vk">せまい</div><div class="vz">狹小的</div></div>
+    <div class="rv-item"><div class="vj">明るい</div><div class="vk">あかるい</div><div class="vz">明亮的</div></div>
+    <div class="rv-item"><div class="vj">静か</div><div class="vk">しずか</div><div class="vz">安靜的</div></div>
+  </div>
+</div>
+
+<div class="card-footer">
+  私の部屋 · 實戰練習 · 九大句型完整應用 · おにひめ學習筆記 Vol.10 Final
+</div>
+</div>
+</body>
+</html>
