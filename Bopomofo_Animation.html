@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>注音覺醒：全頻率聲圖矩陣</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1a1a1a; /* 深色背景，保護提督視力 */
+            --accent: #c9a063;
+            --text: #e0e0e0;
+        }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Noto Serif TC', serif;
+            overflow: hidden; touch-action: manipulation;
+        }
+        /* 主容器：自適應手機螢幕 */
+        #stage {
+            width: 100vw; height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            cursor: pointer;
+        }
+        /* 超大注音符號 */
+        .symbol {
+            font-size: 60vw; /* 隨螢幕寬度自動縮放，極大化 */
+            color: var(--accent);
+            margin: 0; line-height: 1;
+            text-shadow: 0 0 30px rgba(201, 160, 99, 0.3);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* 輔助標籤 */
+        .info {
+            font-size: 5vh;
+            color: var(--text);
+            opacity: 0.6;
+            margin-top: 20px;
+            letter-spacing: 5px;
+        }
+        /* 進度條 */
+        .progress {
+            position: absolute; bottom: 0; left: 0;
+            height: 6px; background-color: var(--accent);
+            width: 0%; transition: width 0.3s ease;
+        }
+        /* 操作提示 */
+        .hint {
+            position: absolute; top: 5%; font-size: 14px;
+            color: #666; letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body onclick="handleInteraction()">
+
+    <div id="stage">
+        <div class="hint">點擊螢幕切換下一個符號</div>
+        <div id="symbol-display" class="symbol">ㄅ</div>
+        <div id="info-display" class="info">B O</div>
+        <div id="progress-bar" class="progress"></div>
+    </div>
+
+    <script>
+        // 完整的 37 個注音符號代碼庫
+        const bopomofo = [
+            {s:'ㄅ', l:'b'}, {s:'ㄆ', l:'p'}, {s:'ㄇ', l:'m'}, {s:'ㄈ', l:'f'},
+            {s:'ㄉ', l:'d'}, {s:'ㄊ', l:'t'}, {s:'ㄋ', l:'n'}, {s:'ㄌ', l:'l'},
+            {s:'ㄍ', l:'g'}, {s:'ㄎ', l:'k'}, {s:'ㄏ', l:'h'},
+            {s:'ㄐ', l:'j'}, {s:'ㄑ', l:'q'}, {s:'ㄒ', l:'x'},
+            {s:'ㄓ', l:'zh'}, {s:'ㄔ', l:'ch'}, {s:'ㄕ', l:'sh'}, {s:'ㄖ', l:'r'},
+            {s:'ㄗ', l:'z'}, {s:'ㄘ', l:'c'}, {s:'ㄙ', l:'s'},
+            {s:'ㄚ', l:'a'}, {s:'ㄛ', l:'o'}, {s:'ㄜ', l:'e'}, {s:'ㄝ', l:'ie'},
+            {s:'ㄞ', l:'ai'}, {s:'ㄟ', l:'ei'}, {s:'ㄠ', l:'ao'}, {s:'ㄡ', l:'ou'},
+            {s:'ㄢ', l:'an'}, {s:'ㄣ', l:'en'}, {s:'ㄤ', l:'ang'}, {s:'ㄥ', l:'eng'}, {s:'ㄦ', l:'er'},
+            {s:'ㄧ', l:'i'}, {s:'ㄨ', l:'u'}, {s:'ㄩ', l:'v'}
+        ];
+
+        let index = 0;
+        const synth = window.speechSynthesis;
+
+        function speak(text) {
+            // 取消之前的所有朗讀，避免堆疊
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'zh-TW'; // 強制指定台灣口音
+            utter.rate = 0.8;    // 稍微減慢速度，模仿 Teresa 老師的節奏
+            utter.pitch = 1.1;   // 稍微提高音調，增加清晰度
+            synth.speak(utter);
+        }
+
+        function handleInteraction() {
+            const current = bopomofo[index];
+            
+            // 更新視覺
+            const symEl = document.getElementById('symbol-display');
+            symEl.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                symEl.innerText = current.s;
+                document.getElementById('info-display').innerText = current.l.toUpperCase();
+                symEl.style.transform = 'scale(1)';
+            }, 100);
+
+            // 更新進度
+            document.getElementById('progress-bar').style.width = ((index + 1) / bopomofo.length * 100) + '%';
+
+            // 觸發音頻系統
+            speak(current.s);
+
+            // 循環索引
+            index = (index + 1) % bopomofo.length;
+        }
+
+        // 初始化第一次朗讀
+        window.onload = () => {
+            console.log("System Ready. Waiting for Admiral's touch.");
+        };
+    </script>
+</body>
+</html>
