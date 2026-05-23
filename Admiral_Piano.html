@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>矩陣聲學鋼琴 (Morpheus Edition)</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --white-key: #1a1a1a;
+            --black-key: #000;
+            --accent: #c9a063; /* 霧金 */
+            --glow: #0f0;    /* 矩陣綠 */
+            --text: #fff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            overflow: hidden;
+            font-family: monospace;
+            display: flex; justify-content: center; align-items: flex-end;
+            touch-action: none; /* 禁用預設觸控行為（如捲動） */
+        }
+
+        /* 鋼琴容器：優化手機橫屏 */
+        #piano-container {
+            display: flex;
+            width: 100%;
+            height: 90vh; /* 佔據大部分高度 */
+            position: relative;
+            border-top: 2px solid var(--accent);
+            box-shadow: 0 -10px 30px rgba(201, 160, 99, 0.2);
+        }
+
+        /* 白鍵樣式 */
+        .key {
+            flex: 1;
+            background-color: var(--white-key);
+            border: 1px solid rgba(201, 160, 99, 0.3);
+            position: relative;
+            cursor: pointer;
+            border-radius: 0 0 10px 10px;
+            transition: background-color 0.1s, box-shadow 0.1s;
+            -webkit-tap-highlight-color: transparent; /* 禁用行動端點擊高亮 */
+        }
+
+        /* 白鍵按下效果 */
+        .key.active {
+            background-color: var(--accent);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 15px var(--glow);
+            z-index: 1;
+        }
+
+        /* 黑鍵樣式 */
+        .key.black {
+            background-color: var(--black-key);
+            border: 1px solid var(--accent);
+            position: absolute;
+            width: 7%; /* 寬度相對於容器 */
+            height: 60%; /* 長度比白鍵短 */
+            z-index: 2;
+            border-radius: 0 0 5px 5px;
+            transform: translateX(-50%); /* 居中於白鍵之間 */
+        }
+
+        /* 黑鍵按下效果 */
+        .key.black.active {
+            background-color: #fff; /* 按下時變白，視覺反差大 */
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        /* 手機方向提示 */
+        #portrait-hint {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            color: var(--accent);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        /* 在橫屏時隱藏提示 */
+        @media (orientation: landscape) {
+            #portrait-hint { display: none; }
+        }
+
+        .label {
+            position: absolute; bottom: 10px; left: 50%;
+            transform: translateX(-50%);
+            color: #666; font-size: 12px;
+            pointer-events: none; /* 防止干擾觸控 */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="portrait-hint">
+        <p>助けてください</p>
+        <p>請將手機旋轉為横屏 (Landscape)</p>
+        <p style="font-size: 40px; margin-top: 20px;">🔄</p>
+    </div>
+
+    <div id="piano-container">
+        <div class="key white" data-note="C4" style="left: 0%;"><span class="label">C4</span></div>
+        <div class="key white" data-note="D4" style="left: 14.28%;"><span class="label">D4</span></div>
+        <div class="key white" data-note="E4" style="left: 28.56%;"><span class="label">E4</span></div>
+        <div class="key white" data-note="F4" style="left: 42.84%;"><span class="label">F4</span></div>
+        <div class="key white" data-note="G4" style="left: 57.12%;"><span class="label">G4</span></div>
+        <div class="key white" data-note="A4" style="left: 71.4%;"><span class="label">A4</span></div>
+        <div class="key white" data-note="B4" style="left: 85.68%;"><span class="label">B4</span></div>
+        <div class="key white" data-note="C5" style="left: 100%; width: 14.28%;"><span class="label">C5</span></div>
+
+        <div class="key black" data-note="Db4" style="left: 14.28%;"></div>
+        <div class="key black" data-note="Eb4" style="left: 28.56%;"></div>
+        <div class="key black" data-note="Gb4" style="left: 57.12%;"></div>
+        <div class="key black" data-note="Ab4" style="left: 71.4%;"></div>
+        <div class="key black" data-note="Bb4" style="left: 85.68%;"></div>
+    </div>
+
+    <script>
+        // 頻率代碼映射表 (標準音 A4 = 440Hz)
+        const noteFrequencies = {
+            'C4': 261.63, 'Db4': 277.18, 'D4': 293.66, 'Eb4': 311.13, 'E4': 329.63,
+            'F4': 349.23, 'Gb4': 369.99, 'G4': 392.00, 'Ab4': 415.30, 'A4': 440.00,
+            'Bb4': 466.16, 'B4': 493.88, 'C5': 523.25
+        };
+
+        let audioCtx = null;
+        const activeOscillators = {}; // 追蹤正在播放的聲音，防止疊加
+
+        // 初始化聲學環境（需要用戶第一次互動）
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // 播放合成音色（模仿鋼琴的高級感音色）
+        function startNote(note) {
+            initAudio();
+            if (!noteFrequencies[note] || activeOscillators[note]) return;
+
+            // 1. 創建振盪器（生成波形）
+            const oscillator = audioCtx.createOscillator();
+            // 使用三角波 (Triangle) 比正弦波更有厚度，比方波更柔和，適合模仿舊電鋼琴
+            oscillator.type = 'triangle'; 
+            oscillator.frequency.setValueAtTime(noteFrequencies[note], audioCtx.currentTime);
+
+            // 2. 創建增益器（控制音量包絡，防止點擊爆音）
+            const gainNode = audioCtx.createGain();
+            
+            // 聲音包絡 (ADSR - Attack, Decay, Sustain, Release) 簡化版
+            const now = audioCtx.currentTime;
+            gainNode.gain.setValueAtTime(0, now);
+            // Attack: 快速淡入
+            gainNode.gain.linearRampToValueAtTime(0.5, now + 0.01); 
+            // Decay/Sustain: 緩慢淡出，模仿琴弦振動衰減
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 1.0); 
+
+            // 3. 連接矩陣
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            // 4. 啟動與記錄
+            oscillator.start();
+            activeOscillators[note] = { osc: oscillator, gain: gainNode };
+        }
+
+        // 停止聲音（釋放琴鍵時）
+        function stopNote(note) {
+            if (activeOscillators[note]) {
+                const { osc, gain } = activeOscillators[note];
+                const now = audioCtx.currentTime;
+                
+                // Release: 釋放琴鍵時快速淡出，防止咔噠聲
+                gain.gain.cancelScheduledValues(now);
+                gain.gain.setValueAtTime(gain.gain.value, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                
+                osc.stop(now + 0.1);
+                delete activeOscillators[note];
+            }
+        }
+
+        // --- 觸控/滑鼠事件處理 ---
+        const keys = document.querySelectorAll('.key');
+
+        function handleStart(e) {
+            e.preventDefault(); // 阻止頁面捲動
+            const keyEl = e.target.closest('.key');
+            if (!keyEl) return;
+            const note = keyEl.getAttribute('data-note');
+            
+            keyEl.classList.add('active');
+            startNote(note);
+        }
+
+        function handleEnd(e) {
+            const keyEl = e.target.closest('.key');
+            if (!keyEl) return;
+            const note = keyEl.getAttribute('data-note');
+            
+            keyEl.classList.add('active'); // 多點觸控優化，確保抬起時能找到對應的鍵
+            setTimeout(()=>keyEl.classList.remove('active'), 50); // 視覺反饋短暫保留
+            stopNote(note);
+        }
+        
+        // 用戶滑動離開按鍵時也停止聲音
+        function handleOut(e) {
+             const keyEl = e.target.closest('.key');
+             if (keyEl) {
+                 keyEl.classList.remove('active');
+                 const note = keyEl.getAttribute('data-note');
+                 stopNote(note);
+             }
+        }
+
+        // 手機多點觸控支持 (Multi-touch)
+        pianoContainer = document.getElementById('piano-container');
+        
+        // Web Audio 需要用戶在 DOM 上有明確的觸發行為
+        keys.forEach(key => {
+            // 滑鼠事件 (用於電腦測試)
+            key.addEventListener('mousedown', handleStart);
+            key.addEventListener('mouseup', handleEnd);
+            key.addEventListener('mouseleave', handleOut);
+
+            // 觸控事件 (用於手機)
+            key.addEventListener('touchstart', handleStart);
+            key.addEventListener('touchend', handleEnd);
+            key.addEventListener('touchcancel', handleOut);
+        });
+
+    </script>
+</body>
+</html>
