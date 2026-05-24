@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日語數字完全版 Vol.11</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap');
+:root{--ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;--ja:#1a3a6b;--ja-bg:#e8f0ff;--en:#1a5c2a;--en-bg:#e8f8ee;--zh:#6b3a00;--zh-bg:#fff4e0;--red:#8b1a1a;--red-bg:#ffe8e8;--accent:#c44b00;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,32px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 30px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.18);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* 基礎カード */
+.base-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;}
+.bc{border-radius:6px;padding:10px 8px;border:1.5px solid var(--ja);background:var(--ja-bg);text-align:center;}
+.bc .n{font-family:'Shippori Mincho',serif;font-size:20px;font-weight:800;color:var(--ink);}
+.bc .jr{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--ja);margin:3px 0;}
+.bc .rm{font-size:10px;color:#aaa;font-family:'DM Mono',monospace;}
+.bc .er{font-size:11px;color:var(--en);}
+
+/* 大表 */
+.tbl-wrap{overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:12px;}
+table{border-collapse:collapse;width:100%;}
+thead tr{background:var(--ink);}
+thead th{padding:9px 10px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;color:#f5e6c0;text-align:center;}
+.th-ja{background:#1a3a6b!important;}.th-en{background:#1a5c2a!important;}
+tbody tr:nth-child(even){background:var(--paper2);}tbody tr:nth-child(odd){background:var(--paper);}
+tbody tr.sp{background:#fff8e8!important;}
+td{padding:8px 10px;text-align:center;border-right:1px solid #e0d4bc;font-size:13px;vertical-align:middle;}
+td:last-child{border-right:none;}
+td.nc{font-family:'Shippori Mincho',serif;font-size:15px;font-weight:800;color:var(--ink);text-align:right;padding-right:12px;}
+td.jc{font-family:'Noto Sans JP',sans-serif;font-weight:700;color:var(--ja);}
+td.rc{font-family:'DM Mono',monospace;font-size:11px;color:#aaa;}
+td.ec{color:var(--en);font-family:'Noto Sans TC',sans-serif;}
+td.nt{font-size:11px;color:var(--accent);font-family:'Noto Sans TC',sans-serif;text-align:left;padding-left:10px;}
+
+/* 差異比較 */
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.dg{border-radius:6px;padding:14px 16px;border:2px solid;}
+.dg-ja{background:var(--ja-bg);border-color:var(--ja);}
+.dg-en{background:var(--en-bg);border-color:var(--en);}
+.dg h5{font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.dg-ja h5{color:var(--ja);}.dg-en h5{color:var(--en);}
+.dg-row{font-size:12.5px;color:#333;line-height:1.9;}
+.dg-row .k{font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:14px;}
+
+/* 単位 */
+.unit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.ug{border-radius:6px;padding:14px;border:2px solid;text-align:center;}
+.ug-ja{background:var(--ja-bg);border-color:var(--ja);}
+.ug-en{background:var(--en-bg);border-color:var(--en);}
+.ug-zh{background:var(--zh-bg);border-color:var(--zh);}
+.ug h4{font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.ug-ja h4{color:var(--ja);}.ug-en h4{color:var(--en);}.ug-zh h4{color:var(--zh);}
+.ur{display:flex;justify-content:space-between;padding:4px 6px;background:white;border-radius:3px;margin-bottom:4px;}
+.un{font-family:'DM Mono',monospace;font-size:11px;color:#888;}
+.uw{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;}
+.ug-ja .uw{color:var(--ja);}.ug-en .uw{color:var(--en);}.ug-zh .uw{color:var(--zh);}
+
+/* 大数字スケール */
+.man-box{background:var(--red-bg);border:2px solid var(--red);border-radius:8px;padding:18px 20px;margin-bottom:14px;}
+.man-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--red);letter-spacing:3px;margin-bottom:14px;}
+.ms{display:grid;grid-template-columns:110px 1fr 1fr auto;gap:6px;align-items:center;padding:6px 8px;border-radius:3px;margin-bottom:6px;}
+.ms.bg1{background:#f0f8ff;}.ms.bg2{background:#fff8e8;}.ms.bg3{background:#ffe8e8;}
+.ms-num{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--ink);text-align:right;}
+.ms-ja{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--ja);}
+.ms-en{font-size:12px;color:var(--en);}
+.ms-note{font-size:10px;color:var(--accent);font-weight:700;}
+
+/* 小数 */
+.dec-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.dec{border-radius:6px;padding:14px 16px;border:2px solid;}
+.dec-ja{background:var(--ja-bg);border-color:var(--ja);}
+.dec-en{background:var(--en-bg);border-color:var(--en);}
+.dec h4{font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.dec-ja h4{color:var(--ja);}.dec-en h4{color:var(--en);}
+.de{background:white;border-radius:4px;padding:8px 11px;margin-bottom:7px;}
+.de-n{font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.de-r{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;margin-bottom:2px;}
+.dec-ja .de-r{color:var(--ja);}.dec-en .de-r{color:var(--en);}
+.de-z{font-size:11px;color:#888;}
+.dec-rule{font-size:12px;color:#444;line-height:1.8;margin-top:6px;padding:7px 10px;background:#f8f4ee;border-radius:3px;}
+
+/* 金額 */
+.money-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.mg{border-radius:4px;padding:10px 12px;background:white;border:1.5px solid #d0c8b8;}
+.mg-n{font-family:'DM Mono',monospace;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.mg-ja{font-family:'Noto Sans JP',sans-serif;font-size:12.5px;font-weight:700;color:var(--ja);margin-bottom:2px;}
+.mg-en{font-size:11px;color:var(--en);margin-bottom:2px;}
+.mg-zh{font-size:11px;color:#888;}
+
+/* まとめ */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sg{background:white;border-radius:4px;padding:10px 12px;border:1px solid #e8d890;}
+.sg h5{font-size:11px;font-weight:700;margin-bottom:4px;}
+.sg p{font-size:12px;line-height:1.8;color:#333;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">日語數字完全版</div>
+<div class="page-sub">1〜100 · 萬億 · 小數點 · 金額 · 日英中三語對照</div>
+<div class="card">
+
+<!-- 1. 基礎1〜10 -->
+<div class="sec">
+  <div class="sec-title">① 基礎 1〜10 — 後面全靠它，必須背熟</div>
+  <div class="base-grid">
+    <div class="bc"><div class="n">1</div><div class="jr">いち</div><div class="rm">ichi</div><div class="er">one</div></div>
+    <div class="bc"><div class="n">2</div><div class="jr">に</div><div class="rm">ni</div><div class="er">two</div></div>
+    <div class="bc"><div class="n">3</div><div class="jr">さん</div><div class="rm">san</div><div class="er">three</div></div>
+    <div class="bc"><div class="n">4</div><div class="jr">し／よん</div><div class="rm">shi/yon</div><div class="er">four</div></div>
+    <div class="bc"><div class="n">5</div><div class="jr">ご</div><div class="rm">go</div><div class="er">five</div></div>
+    <div class="bc"><div class="n">6</div><div class="jr">ろく</div><div class="rm">roku</div><div class="er">six</div></div>
+    <div class="bc"><div class="n">7</div><div class="jr">しち／なな</div><div class="rm">shichi/nana</div><div class="er">seven</div></div>
+    <div class="bc"><div class="n">8</div><div class="jr">はち</div><div class="rm">hachi</div><div class="er">eight</div></div>
+    <div class="bc"><div class="n">9</div><div class="jr">く／きゅう</div><div class="rm">ku/kyū</div><div class="er">nine</div></div>
+    <div class="bc"><div class="n">10</div><div class="jr">じゅう</div><div class="rm">jū</div><div class="er">ten</div></div>
+  </div>
+  <div class="tip">
+    ⚠️ <strong>兩讀音：</strong> 4=よん（時間・量詞）/ 7=なな（時間・量詞）/ 9=く（9時=くじ）<br>
+    <strong>日語1〜99完全規律：〔十位〕じゅう〔個位〕，比英語簡單太多了！</strong>
+  </div>
+</div>
+
+<!-- 2. 11〜100 -->
+<div class="sec">
+  <div class="sec-title">② 11〜100規律表 — 日語完全規律，英語充滿例外</div>
+  <div class="diff-grid">
+    <div class="dg dg-ja">
+      <h5>🔵 日語：完全規律</h5>
+      <div class="dg-row"><span class="k">11</span> = じゅう＋いち = じゅういち</div>
+      <div class="dg-row"><span class="k">20</span> = に＋じゅう = にじゅう</div>
+      <div class="dg-row"><span class="k">25</span> = にじゅう＋ご = にじゅうご</div>
+      <div class="dg-row"><span class="k">99</span> = きゅうじゅうきゅう</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--ja);font-weight:700;">公式：〔十位〕じゅう〔個位〕完全規律！</div>
+    </div>
+    <div class="dg dg-en">
+      <h5>🟢 英語：充滿例外</h5>
+      <div class="dg-row"><span class="k">11</span> = eleven（特殊！）</div>
+      <div class="dg-row"><span class="k">12</span> = twelve（特殊！）</div>
+      <div class="dg-row"><span class="k">13</span> = thirteen（-teen系）</div>
+      <div class="dg-row"><span class="k">20</span> = twenty（-ty系）</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--en);font-weight:700;">11・12特殊，13-19用-teen，20-90用-ty</div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>數字</th><th class="th-ja">日語</th><th>羅馬音</th><th class="th-en">英語</th><th>規律</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="nc">11</td><td class="jc">じゅういち</td><td class="rc">jū-ichi</td><td class="ec">eleven ⚠️</td><td class="nt">じゅう＋いち</td></tr>
+        <tr><td class="nc">12</td><td class="jc">じゅうに</td><td class="rc">jū-ni</td><td class="ec">twelve ⚠️</td><td class="nt">じゅう＋に</td></tr>
+        <tr><td class="nc">13</td><td class="jc">じゅうさん</td><td class="rc">jū-san</td><td class="ec">thirteen</td><td class="nt">じゅう＋さん</td></tr>
+        <tr><td class="nc">20</td><td class="jc">にじゅう</td><td class="rc">ni-jū</td><td class="ec">twenty</td><td class="nt">に＋じゅう</td></tr>
+        <tr><td class="nc">30</td><td class="jc">さんじゅう</td><td class="rc">san-jū</td><td class="ec">thirty</td><td class="nt">さん＋じゅう</td></tr>
+        <tr><td class="nc">40</td><td class="jc">よんじゅう</td><td class="rc">yon-jū</td><td class="ec">forty</td><td class="nt">よん＋じゅう</td></tr>
+        <tr><td class="nc">50</td><td class="jc">ごじゅう</td><td class="rc">go-jū</td><td class="ec">fifty</td><td class="nt">ご＋じゅう</td></tr>
+        <tr><td class="nc">60</td><td class="jc">ろくじゅう</td><td class="rc">roku-jū</td><td class="ec">sixty</td><td class="nt">ろく＋じゅう</td></tr>
+        <tr><td class="nc">70</td><td class="jc">ななじゅう</td><td class="rc">nana-jū</td><td class="ec">seventy</td><td class="nt">なな＋じゅう</td></tr>
+        <tr><td class="nc">80</td><td class="jc">はちじゅう</td><td class="rc">hachi-jū</td><td class="ec">eighty</td><td class="nt">はち＋じゅう</td></tr>
+        <tr><td class="nc">90</td><td class="jc">きゅうじゅう</td><td class="rc">kyū-jū</td><td class="ec">ninety</td><td class="nt">きゅう＋じゅう</td></tr>
+        <tr class="sp"><td class="nc">100</td><td class="jc">ひゃく</td><td class="rc">hyaku</td><td class="ec">one hundred</td><td class="nt">⚠️ 新單位！</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 3. 百千万億 -->
+<div class="sec">
+  <div class="sec-title">③ 百・千・万・億 — 最核心差異：英語三位切，日語四位切</div>
+
+  <div class="unit-grid">
+    <div class="ug ug-ja">
+      <h4>🔵 日語單位</h4>
+      <div class="ur"><span class="un">10²</span><span class="uw">百（ひゃく）</span></div>
+      <div class="ur"><span class="un">10³</span><span class="uw">千（せん）</span></div>
+      <div class="ur"><span class="un">10⁴</span><span class="uw" style="color:#8b1a1a;font-size:16px;">万（まん）★</span></div>
+      <div class="ur"><span class="un">10⁸</span><span class="uw">億（おく）</span></div>
+      <div class="ur"><span class="un">10¹²</span><span class="uw">兆（ちょう）</span></div>
+      <div style="font-size:11px;color:var(--ja);margin-top:6px;">以<strong>萬</strong>為界，每四位切一次</div>
+    </div>
+    <div class="ug ug-en">
+      <h4>🟢 英語單位</h4>
+      <div class="ur"><span class="un">10²</span><span class="uw">hundred</span></div>
+      <div class="ur"><span class="un">10³</span><span class="uw" style="color:#8b1a1a;font-size:15px;">thousand ★</span></div>
+      <div class="ur"><span class="un">10⁴</span><span class="uw">ten thousand</span></div>
+      <div class="ur"><span class="un">10⁶</span><span class="uw">million</span></div>
+      <div class="ur"><span class="un">10⁹</span><span class="uw">billion</span></div>
+      <div style="font-size:11px;color:var(--en);margin-top:6px;">以<strong>千</strong>為界，每三位切一次</div>
+    </div>
+    <div class="ug ug-zh">
+      <h4>🟠 中文單位（參考）</h4>
+      <div class="ur"><span class="un">10²</span><span class="uw">百</span></div>
+      <div class="ur"><span class="un">10³</span><span class="uw">千</span></div>
+      <div class="ur"><span class="un">10⁴</span><span class="uw" style="color:#8b1a1a;font-size:16px;">萬 ★</span></div>
+      <div class="ur"><span class="un">10⁸</span><span class="uw">億</span></div>
+      <div class="ur"><span class="un">10¹²</span><span class="uw">兆</span></div>
+      <div style="font-size:11px;color:var(--zh);margin-top:6px;font-weight:700;">與日語完全相同！你的優勢 😊</div>
+    </div>
+  </div>
+
+  <div class="man-box">
+    <h4>⚠️ 核心差異實例對照</h4>
+    <div class="ms bg1"><span class="ms-num">1,000</span><span class="ms-ja">千（せん）</span><span class="ms-en">one thousand</span><span class="ms-note">三語相同</span></div>
+    <div class="ms bg2"><span class="ms-num">10,000</span><span class="ms-ja" style="color:#8b1a1a;font-size:15px;">一万（いちまん）</span><span class="ms-en">ten thousand</span><span class="ms-note">★日語有万！英語沒有</span></div>
+    <div class="ms bg1"><span class="ms-num">100,000</span><span class="ms-ja">十万（じゅうまん）</span><span class="ms-en">one hundred thousand</span><span class="ms-note">日語更簡潔</span></div>
+    <div class="ms bg1"><span class="ms-num">1,000,000</span><span class="ms-ja">百万（ひゃくまん）</span><span class="ms-en">one million</span><span class="ms-note">日語＝百個萬</span></div>
+    <div class="ms bg3"><span class="ms-num">100,000,000</span><span class="ms-ja" style="color:#8b1a1a;font-size:15px;">一億（いちおく）</span><span class="ms-en">one hundred million</span><span class="ms-note">★日語有億！英語沒有</span></div>
+    <div class="ms bg1"><span class="ms-num">1,000,000,000</span><span class="ms-ja">十億（じゅうおく）</span><span class="ms-en">one billion</span><span class="ms-note">日語＝十個億</span></div>
+
+    <div style="background:white;border-radius:4px;padding:12px 14px;margin-top:10px;border:1px solid #f0d0d0;">
+      <div style="font-size:12.5px;color:#333;line-height:1.9;">
+        <strong style="color:#8b1a1a;">筆記中的 30,367 如何讀：</strong><br>
+        日語：<span style="font-family:'Noto Sans JP',sans-serif;font-weight:700;color:var(--ja);">さんまんさんびゃくろくじゅうなな</span>（3万3百6十7）<br>
+        英語：thirty thousand, three hundred sixty-seven<br>
+        中文：三萬零三百六十七<br><br>
+        <strong style="color:#8b1a1a;">💡 你的中文數字邏輯和日語完全一樣！中文怎麼說，日語就怎麼說，只是換成日語單詞。</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 小数点 -->
+<div class="sec">
+  <div class="sec-title">④ 小數點 — 日語「てん」＝英語「point」，邏輯完全相同</div>
+  <div class="dec-grid">
+    <div class="dec dec-ja">
+      <h4>🔵 日語小數點</h4>
+      <div class="de"><div class="de-n">2.7</div><div class="de-r">に てん なな</div><div class="de-z">「.」讀作てん（點）</div></div>
+      <div class="de"><div class="de-n">3.14</div><div class="de-r">さん てん いち よん</div><div class="de-z">小數點後每個數字單獨讀</div></div>
+      <div class="de"><div class="de-n">2.7%</div><div class="de-r">に てん なな パーセント</div><div class="de-z">百分比＝パーセント</div></div>
+      <div class="dec-rule">規律：數字 ＋ <strong>てん</strong> ＋ 逐個讀小數位</div>
+    </div>
+    <div class="dec dec-en">
+      <h4>🟢 英語小數點</h4>
+      <div class="de"><div class="de-n">2.7</div><div class="de-r">two point seven</div><div class="de-z">「.」讀作point</div></div>
+      <div class="de"><div class="de-n">3.14</div><div class="de-r">three point one four</div><div class="de-z">小數點後每個數字單獨讀</div></div>
+      <div class="de"><div class="de-n">2.7%</div><div class="de-r">two point seven percent</div><div class="de-z">和日語邏輯一樣</div></div>
+      <div class="dec-rule">規律：數字 ＋ <strong>point</strong> ＋ 逐個讀<br>與日語完全相同！</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. 金額 -->
+<div class="sec">
+  <div class="sec-title">⑤ 金額讀法 — 日圓・美元・cent</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+    <div style="background:var(--ja-bg);border:2px solid var(--ja);border-radius:6px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--ja);letter-spacing:2px;margin-bottom:10px;">🔵 日圓（円・えん）</div>
+      <div style="font-size:12.5px;color:#333;line-height:1.95;">
+        <span class="ja">500円 = ごひゃくえん</span><br>
+        <span class="ja">1,200円 = せんにひゃくえん</span><br>
+        <span class="ja">10,000円 = いちまんえん</span><br><br>
+        日圓無小數，直接數字＋えん<br>
+        <strong>中文「元」≈ 日語「えん」</strong>
+      </div>
+    </div>
+    <div style="background:var(--en-bg);border:2px solid var(--en);border-radius:6px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--en);letter-spacing:2px;margin-bottom:10px;">🟢 美元（ドル）</div>
+      <div style="font-size:12.5px;color:#333;line-height:1.95;">
+        <span class="ja">$2.50 = にドルごじゅうセント</span><br>
+        <span class="ja">$2.75 = にドルななじゅうごセント</span><br>
+        <span class="ja">$5.00 = ごドル（整數省略セント）</span><br><br>
+        英語：two dollars <strong>and</strong> fifty cents<br>
+        日語：にドルごじゅうセント（<strong>去掉and</strong>）
+      </div>
+    </div>
+  </div>
+
+  <div class="money-grid">
+    <div class="mg"><div class="mg-n">$2.50</div><div class="mg-ja">にドルごじゅうセント</div><div class="mg-en">two dollars and fifty cents</div><div class="mg-zh">兩元五角（筆記例）</div></div>
+    <div class="mg"><div class="mg-n">$2.75</div><div class="mg-ja">にドルななじゅうごセント</div><div class="mg-en">two dollars and seventy-five cents</div><div class="mg-zh">兩元七角五（筆記例）</div></div>
+    <div class="mg"><div class="mg-n">$3.00/gal</div><div class="mg-ja">さんドル（いちガロン）</div><div class="mg-en">three dollars per gallon</div><div class="mg-zh">每加侖三美元（筆記例）</div></div>
+    <div class="mg"><div class="mg-n">¥1,200</div><div class="mg-ja">せんにひゃくえん</div><div class="mg-en">twelve hundred yen</div><div class="mg-zh">一千兩百日圓</div></div>
+    <div class="mg"><div class="mg-n">¥10,000</div><div class="mg-ja">いちまんえん</div><div class="mg-en">ten thousand yen</div><div class="mg-zh">一萬日圓</div></div>
+    <div class="mg"><div class="mg-n">30,367</div><div class="mg-ja">さんまんさんびゃくろくじゅうなな</div><div class="mg-en">thirty thousand, three hundred sixty-seven</div><div class="mg-zh">三萬三百六十七（筆記例）</div></div>
+  </div>
+</div>
+
+<!-- 6. まとめ -->
+<div class="sec">
+  <div class="sec-title">⑥ 四句話總結</div>
+  <div style="background:linear-gradient(135deg,#fffbe8,#fff5d0);border:2px solid var(--gold);border-radius:6px;padding:18px 20px;">
+    <div class="summary-grid">
+      <div class="sg"><h5 style="color:var(--ja);">① 1〜99規律</h5><p>日語完全規律：〔十位〕じゅう〔個位〕<br>英語11・12特殊，日語沒有例外</p></div>
+      <div class="sg"><h5 style="color:#8b1a1a;">② 大數字切分★</h5><p>日語（中文）以<strong>萬</strong>切，英語以<strong>千</strong>切<br>你的中文邏輯直接用於日語！</p></div>
+      <div class="sg"><h5 style="color:var(--en);">③ 小數點</h5><p>日語「てん」＝英語「point」<br>邏輯完全相同，只換一個詞</p></div>
+      <div class="sg"><h5 style="color:var(--zh);">④ 金額</h5><p>日圓：數字＋えん（簡單）<br>美元：〇ドル〇〇セント（去掉and）</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">日語數字完全版 · 1〜億 · 小數點 · 金額 · 日英中對照 · おにひめ學習筆記 Vol.11</div>
+</div>
+</body>
+</html>
