@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>歌詞逐行解析</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --blue:#1a3a6b;--blue-bg:#e8f0ff;
+  --green:#1a5c2a;--green-bg:#e8f8ee;
+  --purple:#4a1a6b;--purple-bg:#f0e8ff;
+  --red:#7a1a1a;--red-bg:#ffe8e8;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,32px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:960px;padding:36px 30px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.22;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.15);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:18px;}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+
+/* ── 歌詞逐行對照 ── */
+.lyric-block{margin-bottom:24px;}
+.lyric-section-label{font-family:'Shippori Mincho',serif;font-size:12px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;padding:4px 10px;background:#2d2416;border-radius:3px;display:inline-block;}
+
+.lyric-row{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:3px;border-radius:3px;overflow:hidden;}
+.lyric-row:nth-child(odd) .lr-ja{background:#f5f0e8;}
+.lyric-row:nth-child(odd) .lr-zh{background:#eef5e8;}
+.lyric-row:nth-child(even) .lr-ja{background:#ede8df;}
+.lyric-row:nth-child(even) .lr-zh{background:#e4eedc;}
+
+.lr-ja{padding:10px 14px;font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.6;border-right:2px solid var(--rule);}
+.lr-zh{padding:10px 14px;font-size:13.5px;color:#3a3a3a;line-height:1.6;}
+
+.lyric-row.gap-row{height:10px;background:transparent;}
+.lyric-row.gap-row .lr-ja,.lyric-row.gap-row .lr-zh{background:transparent;}
+
+/* 段落ヘッダー */
+.para-header{background:var(--blue);color:#f5e6c0;font-family:'Shippori Mincho',serif;font-size:11px;letter-spacing:3px;padding:5px 14px;border-radius:3px;margin-bottom:3px;display:inline-block;}
+
+/* ── 漢字解析 ── */
+.kanji-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.kj-card{border-radius:6px;padding:14px 14px;border:1.5px solid;background:white;}
+.kj-card.k-blue{border-color:var(--blue);background:var(--blue-bg);}
+.kj-card.k-green{border-color:var(--green);background:var(--green-bg);}
+.kj-card.k-purple{border-color:var(--purple);background:var(--purple-bg);}
+.kj-card.k-red{border-color:var(--red);background:var(--red-bg);}
+.kj-card.k-gold{border-color:var(--gold);background:#fff8e0;}
+
+.kj-char{font-family:'Noto Sans JP',sans-serif;font-size:44px;font-weight:700;line-height:1;margin-bottom:6px;}
+.k-blue .kj-char{color:var(--blue);}.k-green .kj-char{color:var(--green);}
+.k-purple .kj-char{color:var(--purple);}.k-red .kj-char{color:var(--red);}
+.k-gold .kj-char{color:var(--gold);}
+
+.kj-read{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;}
+.k-blue .kj-read{color:var(--blue);}.k-green .kj-read{color:var(--green);}
+.k-purple .kj-read{color:var(--purple);}.k-red .kj-read{color:var(--red);}
+.k-gold .kj-read{color:var(--gold);}
+
+.kj-zh{font-size:12px;color:#444;margin-bottom:6px;font-weight:700;}
+.kj-in{font-size:11.5px;color:#666;line-height:1.75;padding-top:5px;border-top:1px dashed #ccc;}
+
+/* ── 難解語句 ── */
+.phrase-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.ph-item{border-radius:4px;padding:12px 14px;border:1.5px solid #d0c8b8;background:white;}
+.ph-ja{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.ph-read{font-size:12px;color:#aaa;margin-bottom:4px;}
+.ph-zh{font-size:13px;color:#444;margin-bottom:4px;}
+.ph-note{font-size:11.5px;color:var(--accent);font-weight:700;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">歌詞逐行解析</div>
+<div class="page-sub">中文大意逐行對照 · 難讀漢字拆解</div>
+
+<div class="card">
+
+<!-- ══ 背景說明 ══ -->
+<div class="sec">
+  <div class="sec-title">① 這是什麼歌？</div>
+  <div style="background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;color:#f5e6c0;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;letter-spacing:4px;margin-bottom:8px;">
+      「おかいものまち」ではなく——
+    </div>
+    <div style="font-size:13px;line-height:1.95;color:#d4c090;">
+      筆記Page 11的標題「今はいいんだよ」、Page 12右上的「おきいのかまど」のような文字、
+      そしてメリーゴーランドの詩句から判断すると、<br><br>
+      これはYOASOBIの楽曲ではなく、<strong style="color:#f5d87a;">Aimerの「眩いばかり」</strong>もしくは
+      <strong style="color:#f5d87a;">ヨルシカ「だから僕は音楽を辞めた」</strong>系統の、
+      切ない失恋・自己肯定をテーマにした歌詞です。<br><br>
+      <strong style="color:#f5a070;">⚠️ 著作権のため歌詞全文は掲載できません。</strong>
+      でも書き写した歌詞を逐行で解説します！
+    </div>
+  </div>
+  <div class="tip">
+    💡 <strong>あなたが選んだ歌詞のテーマ：</strong><br>
+    「泣いてもいい、弱くていい、それでも前に進もう」という自己肯定と優しい別れの物語。<br>
+    日語學習に歌詞を使うのは非常に効果的！感情と言語が結びつく。
+  </div>
+</div>
+
+<!-- ══ 逐行翻譯 Page 11 ══ -->
+<div class="sec">
+  <div class="sec-title">② 逐行中文對照 — Page 11〜14</div>
+
+  <!-- Page 11 -->
+  <div class="lyric-block">
+    <div class="para-header">Page 11</div>
+
+    <div class="lyric-row">
+      <div class="lr-ja">今はいいんだよ</div>
+      <div class="lr-zh">現在這樣就好了</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">朝が怖くて起きられない</div>
+      <div class="lr-zh">早晨讓我害怕，起不了床</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">努力はそんなに向いてない</div>
+      <div class="lr-zh">努力這件事，並不太適合我</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">泣くことだけが得意になる</div>
+      <div class="lr-zh">唯一擅長的，只有哭泣這件事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">そんな日の狭間で</div>
+      <div class="lr-zh">就在那樣的日子縫隙之中</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">君がそれでいいなら</div>
+      <div class="lr-zh">如果你覺得這樣就好</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">僕だってそれで構わないさ</div>
+      <div class="lr-zh">那我也不在乎，就這樣吧</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">嘘つきの僕が吠えたって</div>
+      <div class="lr-zh">就算說謊的我再怎麼嘶吼</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">友対証葉の愛の歌</div>
+      <div class="lr-zh">（友情對抗不過的愛之歌）</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">メリーゴーランドみたいに回る</div>
+      <div class="lr-zh">像旋轉木馬一樣不停打轉</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">明日が明日が来なければ</div>
+      <div class="lr-zh">如果明天，明天永遠不來的話</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">そしたらきっと楽になれる</div>
+      <div class="lr-zh">那樣的話，一定就能輕鬆了吧</div>
+    </div>
+  </div>
+
+  <!-- Page 12 -->
+  <div class="lyric-block">
+    <div class="para-header">Page 12</div>
+
+    <div class="lyric-row">
+      <div class="lr-ja">僕の頭ん中はもうグルさ</div>
+      <div class="lr-zh">我的腦袋裡已經亂成一團了</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">空っぽなのに心が痛むんだ</div>
+      <div class="lr-zh">明明是空的，心卻還是在痛</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">この両手から零れそうなほど</div>
+      <div class="lr-zh">多到快要從這雙手之間溢出來</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">今日がどうにも寂しくってさ</div>
+      <div class="lr-zh">今天怎麼這麼孤單，真的是</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">眠れないままだけどさ</div>
+      <div class="lr-zh">就這樣還是睡不著，但是嘛</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">君に貰った愛はどこに捨てよう？</div>
+      <div class="lr-zh">你給我的愛，該丟到哪裡去呢？</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">いつか幸せって思えるまで</div>
+      <div class="lr-zh">直到有一天能覺得幸福之前</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">君は君のままでいてよ</div>
+      <div class="lr-zh">你就保持原來的你吧，不要變</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">限りのある消耗品なんて僕は</div>
+      <div class="lr-zh">我這個有限的、會消耗殆盡的東西</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">もうさ強がらなくてもいいんだよ</div>
+      <div class="lr-zh">已經不需要再逞強了，沒關係</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">過去の夜の涙ひとつ</div>
+      <div class="lr-zh">過去那些夜晚，一滴一滴的淚水</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">それを束く持って歩いて征く</div>
+      <div class="lr-zh">把那些都攢成一束，帶著走下去</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">要らないよ</div>
+      <div class="lr-zh">不需要了</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">それだけで今はいいんだよ</div>
+      <div class="lr-zh">就只這樣，現在就夠了</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">進む君と止まった僕の</div>
+      <div class="lr-zh">繼續前進的你，與停下來的我——</div>
+    </div>
+  </div>
+
+  <!-- Page 13 -->
+  <div class="lyric-block">
+    <div class="para-header">Page 13</div>
+
+    <div class="lyric-row">
+      <div class="lr-ja">縮まらない隙を何で埋めよう？</div>
+      <div class="lr-zh">那縮不短的距離，要用什麼來填補？</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">まだ素直に言葉に出来ない僕は</div>
+      <div class="lr-zh">還是無法坦率地把話說出口的我</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">天性の弱虫さ</div>
+      <div class="lr-zh">天生就是個膽小鬼啊</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">いつか君が笑えるような</div>
+      <div class="lr-zh">總有一天，讓你能夠笑著的</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">歌を歌えるのなら</div>
+      <div class="lr-zh">如果我能唱出那樣的歌</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">僕には何も無いけど</div>
+      <div class="lr-zh">我什麼都沒有，但是</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">歌を歌えるのなら</div>
+      <div class="lr-zh">如果我能唱出那樣的歌</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">泣いちゃう傷の数だけ</div>
+      <div class="lr-zh">就只有那些讓人哭出來的傷的數量</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">夜は暖かくなるよ</div>
+      <div class="lr-zh">夜晚就會變得溫暖起來</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">君はさ君のままで笑って</div>
+      <div class="lr-zh">你啊，就是你自己，笑著吧</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">今日が</div>
+      <div class="lr-zh">今天——</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">この両手から零れそうなほど</div>
+      <div class="lr-zh">多到快要從這雙手之間溢出來</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">今日がどうにも寂しくってさ</div>
+      <div class="lr-zh">今天怎麼這麼孤單，真的是</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">眠れないままだけどさ</div>
+      <div class="lr-zh">就這樣還是睡不著，但是嘛</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">君に渡す愛を誰に譲ろう？</div>
+      <div class="lr-zh">要把給你的愛，交給誰呢？</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">いつか幸せって思えるまで</div>
+      <div class="lr-zh">直到有一天能覺得幸福之前</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">君は君のままでいてよ</div>
+      <div class="lr-zh">你就保持原來的你吧，不要變</div>
+    </div>
+  </div>
+
+  <!-- Page 14 -->
+  <div class="lyric-block">
+    <div class="para-header">Page 14</div>
+
+    <div class="lyric-row">
+      <div class="lr-ja">そんなんどこにも</div>
+      <div class="lr-zh">那種事情，哪裡都</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">もうさ強がらなくてもいいんだよ</div>
+      <div class="lr-zh">已經不需要再逞強了，沒關係</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">宛てがあるわけないだろ</div>
+      <div class="lr-zh">又不是有什麼地方可以寄放的</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">過去の夜の涙ひとつ</div>
+      <div class="lr-zh">過去那些夜晚，一滴一滴的淚水</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">それを束く持って歩いて征く</div>
+      <div class="lr-zh">把那些都攢成一束，帶著走下去</div>
+    </div>
+    <div class="lyric-row gap-row"><div class="lr-ja"></div><div class="lr-zh"></div></div>
+    <div class="lyric-row">
+      <div class="lr-ja">まだ待つよ</div>
+      <div class="lr-zh">還在等著呢</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">それだけで今はいいんだよ</div>
+      <div class="lr-zh">就只這樣，現在就夠了</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 難讀漢字 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 難讀漢字拆解</div>
+
+  <div class="kanji-grid">
+
+    <div class="kj-card k-blue">
+      <div class="kj-char">怖</div>
+      <div class="kj-read">こわ（い）</div>
+      <div class="kj-zh">害怕的、恐怖的</div>
+      <div class="kj-in">朝が<strong>怖く</strong>て起きられない<br>早晨讓我<strong>害怕</strong>，起不了床<br>→ い形容詞：怖い</div>
+    </div>
+
+    <div class="kj-card k-green">
+      <div class="kj-char">狭間</div>
+      <div class="kj-read">はざま</div>
+      <div class="kj-zh">縫隙、夾縫之間</div>
+      <div class="kj-in">そんな日の<strong>狭間</strong>で<br>就在那樣日子的<strong>縫隙</strong>中<br>→ 狭（せま）＝窄，間（あいだ）＝之間</div>
+    </div>
+
+    <div class="kj-card k-purple">
+      <div class="kj-char">構</div>
+      <div class="kj-read">かま（わない）</div>
+      <div class="kj-zh">不在乎、沒關係</div>
+      <div class="kj-in">それで<strong>構わない</strong>さ<br><strong>不在乎</strong>就那樣吧<br>→ 構わない＝無所謂</div>
+    </div>
+
+    <div class="kj-card k-red">
+      <div class="kj-char">嘘</div>
+      <div class="kj-read">うそ</div>
+      <div class="kj-zh">謊言</div>
+      <div class="kj-in"><strong>嘘</strong>つきの僕が吠えたって<br>說<strong>謊</strong>的我就算再嘶吼<br>→ 嘘つき＝說謊者、騙子</div>
+    </div>
+
+    <div class="kj-card k-blue">
+      <div class="kj-char">空っぽ</div>
+      <div class="kj-read">からっぽ</div>
+      <div class="kj-zh">空的、空洞的</div>
+      <div class="kj-in"><strong>空っぽ</strong>なのに心が痛む<br>明明是<strong>空的</strong>，心卻在痛<br>→ 空（から）＋っぽ（副詞接尾）</div>
+    </div>
+
+    <div class="kj-card k-green">
+      <div class="kj-char">零れ</div>
+      <div class="kj-read">こぼれ</div>
+      <div class="kj-zh">溢出、灑落</div>
+      <div class="kj-in">両手から<strong>零れ</strong>そうなほど<br>快要從雙手間<strong>溢出</strong>的程度<br>→ 零れる＝溢出來</div>
+    </div>
+
+    <div class="kj-card k-purple">
+      <div class="kj-char">寂しい</div>
+      <div class="kj-read">さびしい／さみしい</div>
+      <div class="kj-zh">寂寞的、孤單的</div>
+      <div class="kj-in">今日がどうにも<strong>寂しく</strong>ってさ<br>今天怎麼這麼<strong>孤單</strong><br>→ い形容詞：寂しい</div>
+    </div>
+
+    <div class="kj-card k-red">
+      <div class="kj-char">消耗品</div>
+      <div class="kj-read">しょうもうひん</div>
+      <div class="kj-zh">消耗品、消耗品</div>
+      <div class="kj-in">限りのある<strong>消耗品</strong>なんて<br>有限的<strong>消耗品</strong>這種東西<br>→ 消耗（しょうもう）＋品（ひん）</div>
+    </div>
+
+    <div class="kj-card k-gold">
+      <div class="kj-char">強がる</div>
+      <div class="kj-read">つよがる</div>
+      <div class="kj-zh">逞強、裝堅強</div>
+      <div class="kj-in">もうさ<strong>強がら</strong>なくてもいい<br>不需要再<strong>逞強</strong>了<br>→ 強（つよ）い＋がる（裝作）</div>
+    </div>
+
+    <div class="kj-card k-blue">
+      <div class="kj-char">縮まる</div>
+      <div class="kj-read">ちぢまる</div>
+      <div class="kj-zh">縮短、縮小</div>
+      <div class="kj-in"><strong>縮まら</strong>ない隙を何で埋めよう<br>那<strong>縮不短</strong>的距離用什麼填<br>→ 縮（ちぢ）まる＝縮短</div>
+    </div>
+
+    <div class="kj-card k-green">
+      <div class="kj-char">素直</div>
+      <div class="kj-read">すなお</div>
+      <div class="kj-zh">坦率、直率</div>
+      <div class="kj-in">まだ<strong>素直</strong>に言葉に出来ない<br>還無法<strong>坦率</strong>地說出口<br>→ な形容詞：素直な人</div>
+    </div>
+
+    <div class="kj-card k-purple">
+      <div class="kj-char">弱虫</div>
+      <div class="kj-read">よわむし</div>
+      <div class="kj-zh">膽小鬼、懦弱的人</div>
+      <div class="kj-in">天性の<strong>弱虫</strong>さ<br>天生就是<strong>膽小鬼</strong>啊<br>→ 弱（よわ）＋虫（むし）蟲=比喻</div>
+    </div>
+
+    <div class="kj-card k-red">
+      <div class="kj-char">傷</div>
+      <div class="kj-read">きず</div>
+      <div class="kj-zh">傷、傷口</div>
+      <div class="kj-in">泣いちゃう<strong>傷</strong>の数だけ<br>那些讓人哭出來的<strong>傷</strong>的數量<br>→ 心の傷＝心靈的傷</div>
+    </div>
+
+    <div class="kj-card k-gold">
+      <div class="kj-char">暖かく</div>
+      <div class="kj-read">あたたかく</div>
+      <div class="kj-zh">溫暖地（副詞形）</div>
+      <div class="kj-in">夜は<strong>暖かく</strong>なるよ<br>夜晚就會變得<strong>溫暖</strong><br>→ 暖かい＝溫暖的（い形）</div>
+    </div>
+
+    <div class="kj-card k-blue">
+      <div class="kj-char">征く</div>
+      <div class="kj-read">ゆく／いく</div>
+      <div class="kj-zh">前進、走向前（壯志的走）</div>
+      <div class="kj-in">歩いて<strong>征く</strong><br>步行著<strong>前進</strong>而去<br>→ 行く的古語・壯烈的書き方</div>
+    </div>
+
+    <div class="kj-card k-green">
+      <div class="kj-char">譲る</div>
+      <div class="kj-read">ゆずる</div>
+      <div class="kj-zh">讓給、轉讓</div>
+      <div class="kj-in">愛を誰に<strong>譲ろう</strong>？<br>把愛<strong>交給</strong>誰呢？<br>→ 讓る＝轉讓、傳遞</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ 難解フレーズ ══ -->
+<div class="sec">
+  <div class="sec-title">④ 難解句型解說</div>
+  <div class="phrase-list">
+
+    <div class="ph-item">
+      <div class="ph-ja">〜られない</div>
+      <div class="ph-zh">無法做〜（可能形否定）</div>
+      <div class="ph-note">起きられない＝無法起床 ／ 眠れない＝無法入睡 ／ 出来ない＝無法做到</div>
+    </div>
+
+    <div class="ph-item">
+      <div class="ph-ja">〜なくてもいいんだよ</div>
+      <div class="ph-zh">不〜也沒關係了（許可・放下）</div>
+      <div class="ph-note">強がらなくてもいい＝不需要逞強了 ／ 這是歌詞最核心的句型，傳達「放下包袱」的心情</div>
+    </div>
+
+    <div class="ph-item">
+      <div class="ph-ja">〜みたいに</div>
+      <div class="ph-zh">像〜一樣（比喻）</div>
+      <div class="ph-note">メリーゴーランドみたいに回る＝像旋轉木馬一樣轉 ／ みたい＝like（口語版のように）</div>
+    </div>
+
+    <div class="ph-item">
+      <div class="ph-ja">〜のままで</div>
+      <div class="ph-zh">保持〜的狀態（不改變）</div>
+      <div class="ph-note">君のままでいてよ＝就保持你的樣子吧 ／ まま＝照原樣、保持現狀</div>
+    </div>
+
+    <div class="ph-item">
+      <div class="ph-ja">〜ってさ / 〜んだよ / 〜だよ</div>
+      <div class="ph-zh">語氣詞（口語・歌詞特有）</div>
+      <div class="ph-note">さ＝輕嘆語氣 ／ んだよ＝強調・解釋 ／ だよ＝確認・告知<br>這些是歌詞口語感的來源，讓歌詞更自然親切</div>
+    </div>
+
+    <div class="ph-item">
+      <div class="ph-ja">いつか〜まで</div>
+      <div class="ph-zh">直到有一天〜為止</div>
+      <div class="ph-note">いつか幸せって思えるまで＝直到有一天能覺得幸福為止<br>いつか＝總有一天 ／ まで＝到〜為止</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="card-footer">歌詞逐行解析 · 中文大意對照 · 難讀漢字 · おにひめ學習筆記</div>
+</div>
+</body>
+</html>
