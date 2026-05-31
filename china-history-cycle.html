@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中國歷史周期表 完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f2e4;--paper2:#f0e8d4;--gold:#b8860b;--gold-l:#d4a017;
+  --red:#8b1a1a;--red-bg:#fff0f0;
+  --blue:#1a3a6b;--blue-bg:#e8f0ff;
+  --green:#1a5c2a;--green-bg:#e8f8ee;
+  --purple:#4a1a6b;
+  --han:#c44b00;--tang:#1a5c6b;--ming:#1a6b3a;--qing:#6b1a5c;
+  --rule:#c8b89a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,34px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:8px;text-align:center;}
+.page-ja{font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#a08060;letter-spacing:3px;margin-bottom:26px;text-align:center;font-weight:700;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1100px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 3px 0 #b8860b;position:relative;overflow:hidden;}
+.sec{position:relative;z-index:1;margin-bottom:36px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:18px;}
+.tip{background:rgba(139,26,26,0.07);border-left:3px solid var(--red);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--red);}
+
+/* ══ 波浪週期視覺化 ══ */
+.wave-container{background:#1a1208;border-radius:8px;padding:24px 20px;margin-bottom:16px;overflow-x:auto;}
+.wave-title{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold-l);letter-spacing:3px;margin-bottom:16px;text-align:center;}
+
+svg.wave-chart{display:block;min-width:900px;}
+
+/* ══ 主要朝代大表 ══ */
+.dynasty-table{overflow-x:auto;border:2px solid var(--gold);border-radius:6px;margin-bottom:14px;}
+table{border-collapse:collapse;width:100%;min-width:800px;}
+thead tr{background:#1a1208;}
+thead th{padding:10px 8px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;color:#f5e6c0;text-align:center;border-right:1px solid #3a3020;}
+thead th:last-child{border-right:none;}
+tbody tr{border-bottom:1px solid var(--rule);}
+tbody tr:hover{background:rgba(180,140,20,0.08);}
+td{padding:9px 8px;text-align:center;border-right:1px solid #d8ccb0;font-size:12.5px;vertical-align:middle;line-height:1.5;}
+td:last-child{border-right:none;}
+td.zh-name{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;}
+td.ja-name{font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;}
+td.year{font-family:'Noto Sans TC',sans-serif;font-size:12px;color:#666;}
+td.note-zh{font-size:11.5px;color:#444;text-align:left;padding-left:10px;}
+td.note-ja{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:#666;text-align:left;padding-left:10px;}
+
+/* 朝代カラー */
+.era-ancient{background:#f8f4ec;}
+.era-unify1{background:#fff8e8;}
+.era-split1{background:#f0f8ff;}
+.era-unify2{background:#fff0e8;}
+.era-split2{background:#f0fff4;}
+.era-unify3{background:#fef0ff;}
+.era-split3{background:#f0f8ff;}
+.era-unify4{background:#fff8ec;}
+.era-split4{background:#f8f0ff;}
+.era-unify5{background:#f0fff8;}
+.era-modern{background:#fff0f0;}
+
+.period-label{font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px;display:inline-block;margin-bottom:3px;font-family:'Noto Sans TC',sans-serif;}
+.pl-unify{background:#ffd8a0;color:#7a4000;}
+.pl-split{background:#b8d8ff;color:#1a3a6b;}
+.pl-modern{background:#d8f0d8;color:#1a5c2a;}
+
+/* ══ 週期分析 ══ */
+.cycle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.cy-box{border-radius:6px;padding:14px 14px;border:2px solid;text-align:center;}
+.cy1{background:#fff8e8;border-color:var(--han);}
+.cy2{background:#e8f8ff;border-color:var(--tang);}
+.cy3{background:#e8fff0;border-color:var(--ming);}
+.cy4{background:#f8e8ff;border-color:var(--qing);}
+.cy-num{font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:2px;margin-bottom:4px;}
+.cy1 .cy-num{color:var(--han);}.cy2 .cy-num{color:var(--tang);}
+.cy3 .cy-num{color:var(--ming);}.cy4 .cy-num{color:var(--qing);}
+.cy-year{font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;}
+.cy1 .cy-year{color:var(--han);}.cy2 .cy-year{color:var(--tang);}
+.cy3 .cy-year{color:var(--ming);}.cy4 .cy-year{color:var(--qing);}
+.cy-peak{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.cy-ja{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:#888;margin-bottom:4px;}
+.cy-note{font-size:11px;color:#666;line-height:1.6;}
+
+/* ══ 文化思想 ══ */
+.culture-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.cu-box{border-radius:4px;padding:12px 14px;border:1.5px solid #d0c8b0;background:white;}
+.cu-box h4{font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:2px;margin-bottom:8px;color:var(--gold);}
+.cu-row{display:flex;gap:8px;margin-bottom:5px;align-items:baseline;}
+.cu-era{font-size:11px;font-weight:700;color:var(--red);min-width:40px;}
+.cu-zh{font-size:12px;color:#333;flex:1;}
+.cu-ja{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:#888;}
+
+/* ══ 歷史規律 ══ */
+.law-box{background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold);border-radius:8px;padding:20px 22px;margin-bottom:14px;color:#f5e6c0;}
+.law-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold-l);letter-spacing:3px;margin-bottom:14px;text-align:center;}
+.law-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.law-item{background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,60,0.3);border-radius:4px;padding:12px 14px;}
+.law-item h5{font-size:12px;color:var(--gold-l);letter-spacing:2px;margin-bottom:6px;}
+.law-item p{font-size:12px;color:#d4c090;line-height:1.8;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">中國歷史周期表 完全版</div>
+<div class="page-sub">統一→分裂→統一 の波浪週期 · 中日対照</div>
+<div class="page-ja">中国歴史周期表　完全版</div>
+
+<div class="card">
+
+<!-- ══ 1. 波浪週期圖 ══ -->
+<div class="sec">
+  <div class="sec-title">① 歷史波浪週期圖 — 中国歴史周期図</div>
+
+  <div class="wave-container">
+    <div class="wave-title">統一（峰）↑ → 分裂（谷）↓ → 統一（峰）↑ の繰り返し</div>
+    <svg class="wave-chart" viewBox="0 0 920 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- 背景グリッド -->
+      <line x1="0" y1="140" x2="920" y2="140" stroke="#3a3020" stroke-width="1" stroke-dasharray="4,4"/>
+      <text x="4" y="136" fill="#888" font-size="9" font-family="Noto Sans TC">統一</text>
+      <text x="4" y="240" fill="#888" font-size="9" font-family="Noto Sans TC">分裂</text>
+
+      <!-- 時間軸 -->
+      <line x1="30" y1="260" x2="910" y2="260" stroke="#5a4030" stroke-width="1.5"/>
+
+      <!-- 年代マーカー -->
+      <!-- -476 戰國 -->
+      <line x1="50" y1="255" x2="50" y2="265" stroke="#888" stroke-width="1"/>
+      <text x="42" y="276" fill="#aaa" font-size="8" font-family="Noto Sans TC">-476</text>
+
+      <!-- -221 秦統一 -->
+      <line x1="95" y1="250" x2="95" y2="265" stroke="#d4a017" stroke-width="1.5"/>
+      <text x="82" y="276" fill="#d4a017" font-size="8" font-family="Noto Sans TC">-221秦</text>
+
+      <!-- -206 秦末 -->
+      <line x1="100" y1="255" x2="100" y2="265" stroke="#888" stroke-width="1"/>
+
+      <!-- 202 漢 -->
+      <line x1="148" y1="250" x2="148" y2="265" stroke="#c44b00" stroke-width="1.5"/>
+      <text x="140" y="276" fill="#c44b00" font-size="8" font-family="Noto Sans TC">前漢</text>
+
+      <!-- 220 漢末 -->
+      <line x1="185" y1="255" x2="185" y2="265" stroke="#888" stroke-width="1"/>
+      <text x="178" y="276" fill="#aaa" font-size="8" font-family="Noto Sans TC">220</text>
+
+      <!-- 581 隋 -->
+      <line x1="350" y1="250" x2="350" y2="265" stroke="#d4a017" stroke-width="1.5"/>
+      <text x="344" y="276" fill="#d4a017" font-size="8" font-family="Noto Sans TC">隋581</text>
+
+      <!-- 618 唐 -->
+      <line x1="375" y1="250" x2="375" y2="265" stroke="#1a5c6b" stroke-width="1.5"/>
+      <text x="369" y="276" fill="#1a5c6b" font-size="8" font-family="Noto Sans TC">唐618</text>
+
+      <!-- 907 唐末 -->
+      <line x1="520" y1="255" x2="520" y2="265" stroke="#888" stroke-width="1"/>
+      <text x="514" y="276" fill="#aaa" font-size="8" font-family="Noto Sans TC">907</text>
+
+      <!-- 1276 元 -->
+      <line x1="612" y1="250" x2="612" y2="265" stroke="#d4a017" stroke-width="1.5"/>
+      <text x="604" y="276" fill="#d4a017" font-size="8" font-family="Noto Sans TC">元1276</text>
+
+      <!-- 1368 明 -->
+      <line x1="642" y1="250" x2="642" y2="265" stroke="#1a6b3a" stroke-width="1.5"/>
+      <text x="634" y="276" fill="#1a6b3a" font-size="8" font-family="Noto Sans TC">明1368</text>
+
+      <!-- 1644 清 -->
+      <line x1="722" y1="250" x2="722" y2="265" stroke="#6b1a5c" stroke-width="1.5"/>
+      <text x="714" y="276" fill="#6b1a5c" font-size="8" font-family="Noto Sans TC">清1644</text>
+
+      <!-- 1911 民國 -->
+      <line x1="790" y1="250" x2="790" y2="265" stroke="#888" stroke-width="1.5"/>
+      <text x="782" y="276" fill="#aaa" font-size="8" font-family="Noto Sans TC">1911</text>
+
+      <!-- 1949 PRC -->
+      <line x1="820" y1="250" x2="820" y2="265" stroke="#c44b00" stroke-width="1.5"/>
+      <text x="812" y="276" fill="#c44b00" font-size="8" font-family="Noto Sans TC">1949</text>
+
+      <!-- 波浪パス -->
+      <!-- 戰國低谷 → 秦短暫統一 → 楚漢之爭低 → 漢盛世 → 三國魏晉低 → 隋短暫 → 唐盛世 → 五代十國低 → 宋部分統一 → 元統一 → 明盛世 → 明末清初低 → 清盛世 → 近代動盪低 → 現代上升 -->
+      <path d="M50,220 Q70,230 95,200 Q100,230 115,235 Q130,238 148,80 Q165,60 185,230 Q220,240 260,238 Q300,236 350,220 Q360,215 375,70 Q430,50 480,75 Q505,90 520,225 Q540,235 560,210 Q580,195 612,200 Q625,190 642,75 Q660,55 690,65 Q705,70 722,210 Q738,230 758,225 Q770,222 790,230 Q800,232 820,170 Q850,140 880,120 Q900,110 915,105"
+        fill="none" stroke="#d4a017" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- 統一盛世のマーカー（峰） -->
+      <!-- 漢盛世 -->
+      <circle cx="148" cy="80" r="5" fill="#c44b00"/>
+      <text x="130" y="72" fill="#c44b00" font-size="9" font-family="Shippori Mincho" font-weight="700">漢盛世</text>
+
+      <!-- 唐盛世 -->
+      <circle cx="430" cy="52" r="5" fill="#1a5c6b"/>
+      <text x="416" y="44" fill="#1a5c6b" font-size="9" font-family="Shippori Mincho" font-weight="700">唐盛世</text>
+
+      <!-- 明盛世 -->
+      <circle cx="660" cy="58" r="5" fill="#1a6b3a"/>
+      <text x="646" y="50" fill="#1a6b3a" font-size="9" font-family="Shippori Mincho" font-weight="700">明盛世</text>
+
+      <!-- 清盛世 -->
+      <circle cx="750" cy="68" r="5" fill="#6b1a5c"/>
+      <text x="736" y="60" fill="#6b1a5c" font-size="9" font-family="Shippori Mincho" font-weight="700">清盛世</text>
+
+      <!-- 谷のマーカー（分裂期） -->
+      <circle cx="260" cy="238" r="4" fill="#3a5080"/>
+      <text x="246" y="250" fill="#6080a0" font-size="8" font-family="Noto Sans TC">三國魏晉</text>
+
+      <circle cx="540" cy="230" r="4" fill="#3a5080"/>
+      <text x="526" y="242" fill="#6080a0" font-size="8" font-family="Noto Sans TC">五代十國</text>
+
+      <circle cx="758" cy="228" r="4" fill="#3a5080"/>
+      <text x="744" y="240" fill="#6080a0" font-size="8" font-family="Noto Sans TC">晚清動盪</text>
+
+      <!-- 現在・未來 -->
+      <text x="870" y="98" fill="#f5e6c0" font-size="9" font-family="Noto Sans TC">現在↗</text>
+
+      <!-- 周期ラベル -->
+      <rect x="100" y="8" width="85" height="16" rx="3" fill="rgba(196,75,0,0.3)"/>
+      <text x="142" y="20" fill="#ff9060" font-size="9" font-family="Noto Sans TC" text-anchor="middle">第一週期 696年</text>
+
+      <rect x="340" y="8" width="85" height="16" rx="3" fill="rgba(26,92,107,0.3)"/>
+      <text x="382" y="20" fill="#60c0d0" font-size="9" font-family="Noto Sans TC" text-anchor="middle">第二週期 687年</text>
+
+      <rect x="610" y="8" width="85" height="16" rx="3" fill="rgba(26,107,58,0.3)"/>
+      <text x="652" y="20" fill="#60d090" font-size="9" font-family="Noto Sans TC" text-anchor="middle">第三週期 737年</text>
+
+      <rect x="790" y="8" width="75" height="16" rx="3" fill="rgba(107,26,92,0.3)"/>
+      <text x="828" y="20" fill="#d090c0" font-size="9" font-family="Noto Sans TC" text-anchor="middle">第四週期...</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ 2. 朝代完整表 ══ -->
+<div class="sec">
+  <div class="sec-title">② 朝代完整表 — 王朝完全一覧（中日対照）</div>
+
+  <div class="dynasty-table">
+    <table>
+      <thead>
+        <tr>
+          <th>性質</th>
+          <th>朝代（中）</th>
+          <th>王朝（日）</th>
+          <th>起訖年</th>
+          <th>存續</th>
+          <th>都城</th>
+          <th>代表事件（中）</th>
+          <th>代表事件（日）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 先秦 -->
+        <tr class="era-ancient">
+          <td><span class="period-label pl-split">分裂</span></td>
+          <td class="zh-name" style="color:#5c3a00;">夏・商・周</td>
+          <td class="ja-name" style="color:#5c3a00;">夏・殷・周</td>
+          <td class="year">約BC2070—BC476</td>
+          <td class="year">~1594年</td>
+          <td>鎬京・洛邑</td>
+          <td class="note-zh">封建制・諸侯林立・周禮</td>
+          <td class="note-ja">封建制度・礼楽文化の成立</td>
+        </tr>
+        <tr class="era-ancient">
+          <td><span class="period-label pl-split">亂世</span></td>
+          <td class="zh-name" style="color:#5c3a00;">春秋戰國</td>
+          <td class="ja-name" style="color:#5c3a00;">春秋戦国時代</td>
+          <td class="year">BC476—BC221</td>
+          <td class="year">255年</td>
+          <td>各國首都</td>
+          <td class="note-zh">百家爭鳴・孔孟老莊・鐵器革命</td>
+          <td class="note-ja">百家争鳴・孔子・老子・戦国七雄</td>
+        </tr>
+        <!-- 第一週期 -->
+        <tr class="era-unify1">
+          <td><span class="period-label pl-unify">統一</span></td>
+          <td class="zh-name" style="color:var(--red);">秦</td>
+          <td class="ja-name" style="color:var(--red);">秦（しん）</td>
+          <td class="year">BC221—BC206</td>
+          <td class="year">15年</td>
+          <td>咸陽</td>
+          <td class="note-zh">首次大一統・郡縣制・書同文・焚書坑儒</td>
+          <td class="note-ja">初の統一・始皇帝・万里の長城</td>
+        </tr>
+        <tr class="era-split1">
+          <td><span class="period-label pl-split">過渡</span></td>
+          <td class="zh-name" style="color:var(--blue);">楚漢之爭</td>
+          <td class="ja-name" style="color:var(--blue);">楚漢戦争</td>
+          <td class="year">BC206—BC202</td>
+          <td class="year">4年</td>
+          <td>—</td>
+          <td class="note-zh">劉邦vs項羽・農民起義</td>
+          <td class="note-ja">劉邦と項羽の争い</td>
+        </tr>
+        <tr class="era-unify1">
+          <td><span class="period-label pl-unify">統一★</span></td>
+          <td class="zh-name" style="color:var(--han);">漢（西漢）</td>
+          <td class="ja-name" style="color:var(--han);">前漢（ぜんかん）</td>
+          <td class="year">BC202—AD8</td>
+          <td class="year">210年</td>
+          <td>長安</td>
+          <td class="note-zh">文景之治・漢武帝・絲綢之路・儒學立國</td>
+          <td class="note-ja">武帝の遠征・シルクロード・儒教国教化</td>
+        </tr>
+        <tr class="era-split1">
+          <td><span class="period-label pl-split">過渡</span></td>
+          <td class="zh-name" style="color:var(--blue);">新（王莽）</td>
+          <td class="ja-name" style="color:var(--blue);">新（しん）</td>
+          <td class="year">AD8—AD23</td>
+          <td class="year">15年</td>
+          <td>長安</td>
+          <td class="note-zh">王莽篡漢・改制失敗・綠林赤眉起義</td>
+          <td class="note-ja">王莽の簒奪・改革失敗</td>
+        </tr>
+        <tr class="era-unify1">
+          <td><span class="period-label pl-unify">統一</span></td>
+          <td class="zh-name" style="color:var(--han);">漢（東漢）</td>
+          <td class="ja-name" style="color:var(--han);">後漢（ごかん）</td>
+          <td class="year">AD25—AD220</td>
+          <td class="year">195年</td>
+          <td>洛陽</td>
+          <td class="note-zh">光武中興・黃巾起義・宦官外戚之爭</td>
+          <td class="note-ja">光武帝・黄巾の乱・後漢の衰退</td>
+        </tr>
+        <tr class="era-split1">
+          <td><span class="period-label pl-split">分裂</span></td>
+          <td class="zh-name" style="color:var(--blue);">三國</td>
+          <td class="ja-name" style="color:var(--blue);">三国時代</td>
+          <td class="year">220—280</td>
+          <td class="year">60年</td>
+          <td>魏洛陽・蜀成都・吳建業</td>
+          <td class="note-zh">魏蜀吳鼎立・赤壁之戰・諸葛亮</td>
+          <td class="note-ja">魏蜀呉・赤壁の戦い・三国志</td>
+        </tr>
+        <tr class="era-split1">
+          <td><span class="period-label pl-split">短暫</span></td>
+          <td class="zh-name" style="color:var(--blue);">西晉</td>
+          <td class="ja-name" style="color:var(--blue);">西晋（せいしん）</td>
+          <td class="year">265—316</td>
+          <td class="year">51年</td>
+          <td>洛陽</td>
+          <td class="note-zh">短暫統一・八王之亂・五胡亂華</td>
+          <td class="note-ja">短期統一・五胡の侵入</td>
+        </tr>
+        <tr class="era-split1">
+          <td><span class="period-label pl-split">分裂</span></td>
+          <td class="zh-name" style="color:var(--blue);">東晉十六國</td>
+          <td class="ja-name" style="color:var(--blue);">東晋・五胡十六国</td>
+          <td class="year">317—439</td>
+          <td class="year">122年</td>
+          <td>建康</td>
+          <td class="note-zh">南北對立・淝水之戰・民族融合</td>
+          <td class="note-ja">南北対立・民族融合の時代</td>
+        </tr>
+        <tr class="era-split1">
+          <td><span class="period-label pl-split">分裂</span></td>
+          <td class="zh-name" style="color:var(--blue);">南北朝</td>
+          <td class="ja-name" style="color:var(--blue);">南北朝時代</td>
+          <td class="year">420—589</td>
+          <td class="year">169年</td>
+          <td>建康（南）・平城/洛陽（北）</td>
+          <td class="note-zh">佛教盛行・孝文帝漢化・鮮卑融合</td>
+          <td class="note-ja">仏教の普及・孝文帝の漢化政策</td>
+        </tr>
+        <!-- 第二週期 -->
+        <tr class="era-unify2">
+          <td><span class="period-label pl-unify">統一</span></td>
+          <td class="zh-name" style="color:#805000;">隋</td>
+          <td class="ja-name" style="color:#805000;">隋（ずい）</td>
+          <td class="year">581—618</td>
+          <td class="year">37年</td>
+          <td>大興（長安）</td>
+          <td class="note-zh">再次大一統・科舉制・大運河・三征高句麗</td>
+          <td class="note-ja">科挙制度・大運河・煬帝の暴政</td>
+        </tr>
+        <tr class="era-unify2">
+          <td><span class="period-label pl-unify">統一★</span></td>
+          <td class="zh-name" style="color:var(--tang);">唐</td>
+          <td class="ja-name" style="color:var(--tang);">唐（とう）</td>
+          <td class="year">618—907</td>
+          <td class="year">289年</td>
+          <td>長安</td>
+          <td class="note-zh">貞觀之治・武則天・開元盛世・安史之亂</td>
+          <td class="note-ja">貞観の治・遣唐使・安史の乱・文化黄金期</td>
+        </tr>
+        <tr class="era-split2">
+          <td><span class="period-label pl-split">分裂</span></td>
+          <td class="zh-name" style="color:var(--blue);">五代十國</td>
+          <td class="ja-name" style="color:var(--blue);">五代十国時代</td>
+          <td class="year">907—979</td>
+          <td class="year">72年</td>
+          <td>各國首都</td>
+          <td class="note-zh">武人割據・後梁後唐後晉後漢後周</td>
+          <td class="note-ja">軍閥割拠・五つの王朝が交替</td>
+        </tr>
+        <tr class="era-unify2">
+          <td><span class="period-label pl-unify">半統一</span></td>
+          <td class="zh-name" style="color:#3a5080;">宋（北宋）</td>
+          <td class="ja-name" style="color:#3a5080;">北宋（ほくそう）</td>
+          <td class="year">960—1127</td>
+          <td class="year">167年</td>
+          <td>開封</td>
+          <td class="note-zh">重文輕武・王安石變法・商品經濟繁榮</td>
+          <td class="note-ja">文治主義・王安石の改革・経済発展</td>
+        </tr>
+        <tr class="era-split2">
+          <td><span class="period-label pl-split">對峙</span></td>
+          <td class="zh-name" style="color:var(--blue);">南宋・遼・金・西夏</td>
+          <td class="ja-name" style="color:var(--blue);">南宋・遼・金・西夏</td>
+          <td class="year">1127—1276</td>
+          <td class="year">149年</td>
+          <td>臨安（南宋）</td>
+          <td class="note-zh">靖康之恥・岳飛・南北對峙</td>
+          <td class="note-ja">靖康の変・岳飛・南北分立</td>
+        </tr>
+        <!-- 第三週期 -->
+        <tr class="era-unify3">
+          <td><span class="period-label pl-unify">統一</span></td>
+          <td class="zh-name" style="color:#5c3a00;">元</td>
+          <td class="ja-name" style="color:#5c3a00;">元（げん）</td>
+          <td class="year">1271—1368</td>
+          <td class="year">97年</td>
+          <td>大都（北京）</td>
+          <td class="note-zh">蒙古帝國・忽必烈・馬可波羅・兩次征日</td>
+          <td class="note-ja">モンゴル帝国・フビライ・元寇（文永・弘安）</td>
+        </tr>
+        <tr class="era-unify3">
+          <td><span class="period-label pl-unify">統一★</span></td>
+          <td class="zh-name" style="color:var(--ming);">明</td>
+          <td class="ja-name" style="color:var(--ming);">明（みん）</td>
+          <td class="year">1368—1644</td>
+          <td class="year">276年</td>
+          <td>南京→北京</td>
+          <td class="note-zh">永樂盛世・鄭和下西洋・萬里長城修建・倭寇</td>
+          <td class="note-ja">永楽帝・鄭和の航海・万里の長城・倭寇</td>
+        </tr>
+        <!-- 第四週期 -->
+        <tr class="era-split3">
+          <td><span class="period-label pl-split">過渡</span></td>
+          <td class="zh-name" style="color:var(--blue);">明末動亂</td>
+          <td class="ja-name" style="color:var(--blue);">明末の動乱</td>
+          <td class="year">1628—1644</td>
+          <td class="year">16年</td>
+          <td>—</td>
+          <td class="note-zh">李自成農民起義・崇禎帝自縊</td>
+          <td class="note-ja">李自成の乱・明の滅亡</td>
+        </tr>
+        <tr class="era-unify4">
+          <td><span class="period-label pl-unify">統一★</span></td>
+          <td class="zh-name" style="color:var(--qing);">清</td>
+          <td class="ja-name" style="color:var(--qing);">清（しん）</td>
+          <td class="year">1644—1912</td>
+          <td class="year">268年</td>
+          <td>北京</td>
+          <td class="note-zh">康熙雍正乾隆盛世・閉關鎖國・鴉片戰爭・喪權辱國</td>
+          <td class="note-ja">康熙・雍正・乾隆の全盛期・アヘン戦争・不平等条約</td>
+        </tr>
+        <tr class="era-modern">
+          <td><span class="period-label pl-split">分裂</span></td>
+          <td class="zh-name" style="color:var(--red);">中華民國（大陸）</td>
+          <td class="ja-name" style="color:var(--red);">中華民国</td>
+          <td class="year">1912—1949</td>
+          <td class="year">37年</td>
+          <td>南京・重慶</td>
+          <td class="note-zh">軍閥割據・北伐・抗日戰爭・國共內戰</td>
+          <td class="note-ja">軍閥割拠・北伐・日中戦争・国共内戦</td>
+        </tr>
+        <tr class="era-modern">
+          <td><span class="period-label pl-modern">現代</span></td>
+          <td class="zh-name" style="color:var(--red);">中華人民共和國</td>
+          <td class="ja-name" style="color:var(--red);">中華人民共和国</td>
+          <td class="year">1949—現在</td>
+          <td class="year">75年+</td>
+          <td>北京</td>
+          <td class="note-zh">毛澤東建國・文化大革命・鄧小平改革開放・習近平</td>
+          <td class="note-ja">毛沢東・文化大革命・改革開放・現在</td>
+        </tr>
+        <tr class="era-modern">
+          <td><span class="period-label pl-modern">並立</span></td>
+          <td class="zh-name" style="color:#3a5080;">中華民國（臺灣）</td>
+          <td class="ja-name" style="color:#3a5080;">中華民国（台湾）</td>
+          <td class="year">1949—現在</td>
+          <td class="year">75年+</td>
+          <td>臺北</td>
+          <td class="note-zh">蔣介石退守臺灣・民主化・經濟奇蹟</td>
+          <td class="note-ja">蒋介石・台湾の民主化・経済発展</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 3. 週期分析 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 四大週期分析 — 四つの大周期</div>
+
+  <div class="cycle-grid">
+    <div class="cy-box cy1">
+      <div class="cy-num">第一週期</div>
+      <div class="cy-year">696年</div>
+      <div class="cy-peak">秦漢時期 BC221—AD476</div>
+      <div class="cy-ja">秦漢時代</div>
+      <div class="cy-note">
+        統一：秦（15年）＋漢（405年）<br>
+        分裂：三國魏晉南北朝（276年）<br>
+        盛世代表：漢武帝・文景之治
+      </div>
+    </div>
+    <div class="cy-box cy2">
+      <div class="cy-num">第二週期</div>
+      <div class="cy-year">687年</div>
+      <div class="cy-peak">隋唐時期 581—1276</div>
+      <div class="cy-ja">隋唐時代</div>
+      <div class="cy-note">
+        統一：隋（37年）＋唐（289年）<br>
+        分裂：五代十國＋宋遼金（361年）<br>
+        盛世代表：貞觀之治・開元盛世
+      </div>
+    </div>
+    <div class="cy-box cy3">
+      <div class="cy-num">第三週期</div>
+      <div class="cy-year">737年</div>
+      <div class="cy-peak">元明時期 1271—1912</div>
+      <div class="cy-ja">元明時代</div>
+      <div class="cy-note">
+        統一：元（97年）＋明（276年）<br>
+        分裂：明末清初動亂＋近代（364年）<br>
+        盛世代表：永樂盛世・鄭和航海
+      </div>
+    </div>
+    <div class="cy-box cy4">
+      <div class="cy-num">第四週期</div>
+      <div class="cy-year">進行中…</div>
+      <div class="cy-peak">清朝—現代 1644—？</div>
+      <div class="cy-ja">清朝〜現代</div>
+      <div class="cy-note">
+        統一：清（268年）<br>
+        盛世代表：康雍乾盛世<br>
+        現在：中華人民共和國 上升期？
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 4. 文化思想 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 各時代文化思想 — 時代別文化・思想</div>
+
+  <div class="culture-grid">
+    <div class="cu-box">
+      <h4>思想・哲學</h4>
+      <div class="cu-row"><span class="cu-era">先秦</span><span class="cu-zh">百家爭鳴：儒道法墨兵名農</span><span class="cu-ja">百家争鳴</span></div>
+      <div class="cu-row"><span class="cu-era">漢</span><span class="cu-zh">罷黜百家・獨尊儒術</span><span class="cu-ja">儒教の国教化</span></div>
+      <div class="cu-row"><span class="cu-era">魏晉</span><span class="cu-zh">玄學清談・佛教傳入</span><span class="cu-ja">玄学・仏教伝来</span></div>
+      <div class="cu-row"><span class="cu-era">唐</span><span class="cu-zh">儒釋道三教並行</span><span class="cu-ja">儒仏道の共存</span></div>
+      <div class="cu-row"><span class="cu-era">宋</span><span class="cu-zh">程朱理學・心學萌芽</span><span class="cu-ja">朱子学の成立</span></div>
+      <div class="cu-row"><span class="cu-era">明</span><span class="cu-zh">王陽明心學・實學興起</span><span class="cu-ja">陽明学・実学</span></div>
+      <div class="cu-row"><span class="cu-era">清</span><span class="cu-zh">考據學・西學東漸・中西合璧</span><span class="cu-ja">考証学・西洋思想の流入</span></div>
+    </div>
+    <div class="cu-box">
+      <h4>文學・藝術・科技</h4>
+      <div class="cu-row"><span class="cu-era">先秦</span><span class="cu-zh">詩經・楚辭・諸子散文</span><span class="cu-ja">詩経・楚辞</span></div>
+      <div class="cu-row"><span class="cu-era">漢</span><span class="cu-zh">漢賦・史記・造紙術</span><span class="cu-ja">漢賦・史記・製紙術</span></div>
+      <div class="cu-row"><span class="cu-era">唐</span><span class="cu-zh">唐詩（李白杜甫白居易）・唐三彩</span><span class="cu-ja">唐詩・李白・杜甫</span></div>
+      <div class="cu-row"><span class="cu-era">宋</span><span class="cu-zh">宋詞・活版印刷・羅盤・火藥成熟</span><span class="cu-ja">宋詞・活版印刷・羅針盤・火薬</span></div>
+      <div class="cu-row"><span class="cu-era">元</span><span class="cu-zh">元曲・雜劇・馬可波羅遊記</span><span class="cu-ja">元曲・マルコポーロ</span></div>
+      <div class="cu-row"><span class="cu-era">明</span><span class="cu-zh">四大名著（三國演義西遊記水滸傳紅樓夢）</span><span class="cu-ja">四大奇書・鄭和の航海記録</span></div>
+      <div class="cu-row"><span class="cu-era">清</span><span class="cu-zh">紅樓夢・四庫全書・西洋科技引入</span><span class="cu-ja">紅楼夢・四庫全書</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 歷史規律 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 歷史規律總結 — 歴史の法則</div>
+  <div class="law-box">
+    <h4>中國歷史的四大規律</h4>
+    <div class="law-grid">
+      <div class="law-item">
+        <h5>① 分久必合・合久必分</h5>
+        <p>三國演義開篇名句。統一王朝平均約200-300年後必然衰落，分裂後再由新王朝統一，形成波浪週期。<br>日語：「分かれれば必ず合し、合すれば必ず分かれる」</p>
+      </div>
+      <div class="law-item">
+        <h5>② 農民起義→新王朝</h5>
+        <p>幾乎每個王朝的終結都伴隨大規模農民起義（秦末陳勝、漢末黃巾、唐末黃巢、明末李自成）。<br>日語：農民反乱が王朝交替を引き起こす</p>
+      </div>
+      <div class="law-item">
+        <h5>③ 盛世在第二任前後</h5>
+        <p>開國君主打天下，盛世往往在第二、三代出現（漢文景、唐貞觀開元、清康乾）。創業難，守業更難。<br>日語：黄金期は建国2〜3代目に来る</p>
+      </div>
+      <div class="law-item">
+        <h5>④ 週期約700年</h5>
+        <p>圖表顯示三個完整週期各約696、687、737年，平均約700年。第四週期從1644年清建立算起，理論上延伸到2300年後。<br>日語：一周期は約700年の法則</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  中國歷史周期表 完全版 · 先秦〜現代 · 中日対照 · 四大週期分析 · おにひめ學習參考
+</div>
+</div>
+</body>
+</html>
