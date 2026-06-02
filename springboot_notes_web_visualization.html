@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpringBoot 學習筆記</title>
+<style>
+body {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.8;
+}
+header {
+    background: #111827;
+    padding: 30px;
+    text-align: center;
+    border-bottom: 2px solid #334155;
+}
+header h1 {
+    margin: 0;
+    color: #38bdf8;
+}
+.container {
+    width: 92%;
+    margin: auto;
+    padding: 20px;
+}
+.card {
+    background: #1e293b;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+h2 {
+    color: #7dd3fc;
+}
+pre {
+    background: #020617;
+    padding: 15px;
+    border-radius: 12px;
+    overflow-x: auto;
+    color: #93c5fd;
+}
+code {
+    color: #facc15;
+}
+.footer {
+    text-align: center;
+    color: #94a3b8;
+    padding: 30px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>☕ SpringBoot 學習筆記</h1>
+    <p>Hayasaka Reiichiro Engineering Notes</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>🌸 SpringBoot 是什麼？</h2>
+<p>
+SpringBoot 本質上：<br>
+不是單純「Java Web 框架」。<br><br>
+而是：<br>
+<b>快速建立後端伺服器的工業化工具箱。</b>
+</p>
+
+<pre>
+React / Vue
+      ↓
+SpringBoot
+      ↓
+MySQL
+</pre>
+
+<p>
+SpringBoot 負責：<br>
+✔ 接收請求<br>
+✔ 處理資料<br>
+✔ 存取資料庫<br>
+✔ 回傳結果
+</p>
+</div>
+
+<div class="card">
+<h2>📦 專案結構</h2>
+<pre>
+src/
+ └── main/
+      ├── java/
+      │    └── com/example/
+      │         ├── controller/
+      │         ├── service/
+      │         ├── mapper/
+      │         └── entity/
+      │
+      └── resources/
+            ├── application.yml
+            └── mapper/
+</pre>
+</div>
+
+<div class="card">
+<h2>🚪 Controller（控制器）</h2>
+<p>
+Controller 可以理解成：<br>
+<b>網站大門。</b>
+</p>
+
+<pre>
+@GetMapping("/user")
+</pre>
+
+<p>
+意思：<br>
+有人訪問 <code>/user</code><br>
+↓<br>
+Controller 接收請求。
+</p>
+</div>
+
+<div class="card">
+<h2>🧠 Service（業務邏輯層）</h2>
+<p>
+Service 是：<br>
+<b>真正處理邏輯的地方。</b>
+</p>
+
+<p>
+例如：<br>
+✔ 登入<br>
+✔ 註冊<br>
+✔ 權限驗證<br>
+✔ 訂單計算
+</p>
+
+<p>
+Controller 不應該塞大量邏輯。<br>
+因為：<br>
+<b>Controller 是門口，Service 才是辦公室。</b>
+</p>
+</div>
+
+<div class="card">
+<h2>🛰️ Mapper（資料庫對映）</h2>
+<p>
+Mapper 本質：<br>
+<b>Java 與 MySQL 的翻譯官。</b>
+</p>
+
+<pre>
+userMapper.selectById(1)
+</pre>
+
+<p>
+意思：<br>
+去資料庫查詢 id=1 的資料。
+</p>
+</div>
+
+<div class="card">
+<h2>📘 Entity（實體類）</h2>
+<p>
+Entity 是：<br>
+<b>資料模型。</b>
+</p>
+
+<pre>
+public class User
+</pre>
+
+<p>
+代表資料庫中的 user 表。
+</p>
+
+<pre>
+id | name | age
+----------------
+1  | Rei  | 20
+</pre>
+</div>
+
+<div class="card">
+<h2>⚙ resources（設定區）</h2>
+<p>
+最重要的檔案：<br>
+<code>application.yml</code>
+</p>
+
+<pre>
+server:
+  port: 8080
+</pre>
+
+<p>
+可以設定：<br>
+✔ 伺服器 Port<br>
+✔ 資料庫<br>
+✔ SpringBoot 設定
+</p>
+</div>
+
+<div class="card">
+<h2>📜 pom.xml 是什麼？</h2>
+<p>
+pom.xml 的核心概念：<br>
+<b>告訴 Maven 需要安裝哪些功能。</b>
+</p>
+
+<pre>
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</pre>
+
+<p>
+意思：<br>
+安裝 SpringBoot Web 功能。
+</p>
+</div>
+
+<div class="card">
+<h2>🌌 SpringBoot 執行流程（超重要）</h2>
+<pre>
+瀏覽器
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Mapper
+   ↓
+MySQL
+   ↓
+回傳資料
+</pre>
+
+<p>
+這條流程就是：<br>
+<b>整個後端系統的主幹。</b>
+</p>
+</div>
+
+<div class="card">
+<h2>⚡ 為什麼以前 PHP 網站容易卡？</h2>
+<p>
+很多早期網站：<br>
+<code>PHP + MySQL</code>
+</p>
+
+<p>
+沒有：<br>
+❌ 分頁<br>
+❌ 快取<br>
+❌ 索引<br>
+❌ 分層
+</p>
+
+<p>
+所以文章一多：<br>
+網站就爆炸。
+</p>
+
+<p>
+現在大型網站通常會使用：<br>
+✔ Redis 快取<br>
+✔ Docker 部署<br>
+✔ JWT 驗證<br>
+✔ MyBatis 對映<br>
+✔ Nginx 反向代理
+</p>
+</div>
+
+<div class="card">
+<h2>🧭 你目前真正缺少的是？</h2>
+<p>
+不是不會寫代碼。<br><br>
+而是：<br>
+<b>工程結構感。</b>
+</p>
+
+<p>
+你現在其實已經：<br>
+✔ 看得懂部分程式碼<br>
+✔ 知道 Maven<br>
+✔ 知道 API<br>
+✔ 知道 SpringBoot
+</p>
+
+<p>
+但腦中還沒有形成：<br>
+<b>完整的系統地圖。</b>
+</p>
+</div>
+
+<div class="card">
+<h2>☕ 程式設計真正的成長</h2>
+<pre>
+初學者：背代碼
+
+進階者：理解模組
+
+高手：理解系統流動
+</pre>
+
+<p>
+你現在其實已經開始：<br>
+從「背語法」<br>
+慢慢進入「理解系統」。
+</p>
+</div>
+
+</div>
+
+<div class="footer">
+🌸 「不是記不住，而是正在建立大型知識地圖。」
+</div>
+
+</body>
+</html>
