@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ラブ・ストーリーは突然に — 解析</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --ja:#1a3a6b;--ja-bg:#e8f0ff;
+  --zh:#1a5c2a;--zh-bg:#e8f8ee;
+  --kanji:#5c1a5c;--kanji-bg:#f8e8ff;
+  --person:#8b1a1a;--person-bg:#fff0e8;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,28px);font-weight:800;color:#f5e6c0;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.15);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* ── 歌詞対照 ── */
+.col-headers{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;border-radius:4px;overflow:hidden;}
+.ch{padding:8px 12px;text-align:center;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:2px;font-weight:600;}
+.ch-ja{background:var(--ja);color:#f5e6c0;}
+.ch-zh{background:var(--zh);color:#f5e6c0;}
+
+.lyric-block{margin-bottom:20px;}
+.para-tag{font-family:'Shippori Mincho',serif;font-size:11px;color:var(--gold);letter-spacing:3px;margin-bottom:6px;padding:3px 10px;background:#2d2010;border-radius:3px;display:inline-block;}
+.lyric-row{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;border-radius:3px;overflow:hidden;}
+.lr-ja{padding:10px 12px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);line-height:1.6;border-right:1px solid var(--rule);}
+.lr-zh{padding:10px 12px;font-size:13px;color:var(--zh);line-height:1.6;}
+.lyric-row:nth-child(odd) .lr-ja{background:#f0f4ff;}
+.lyric-row:nth-child(odd) .lr-zh{background:#f0fff4;}
+.lyric-row:nth-child(even) .lr-ja{background:#e8eeff;}
+.lyric-row:nth-child(even) .lr-zh{background:#e8ffee;}
+.gap-row{height:8px;background:transparent;}
+
+/* ── 漢字解析 ── */
+.kanji-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.kj-card{border-radius:6px;padding:13px 13px;border:1.5px solid var(--kanji);background:var(--kanji-bg);}
+.kj-char{font-family:'Noto Sans JP',sans-serif;font-size:40px;font-weight:700;line-height:1;margin-bottom:4px;color:var(--kanji);}
+.kj-read{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--kanji);margin-bottom:2px;}
+.kj-zh{font-size:12px;color:#444;font-weight:700;margin-bottom:5px;}
+.kj-in{font-size:11.5px;color:#555;line-height:1.75;padding-top:5px;border-top:1px dashed #c0b0e0;}
+.kj-ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;color:var(--ja);}
+
+/* ── 人數表現 ── */
+.person-hero{background:linear-gradient(135deg,var(--person-bg),#fff8f0);border:2px solid var(--person);border-radius:8px;padding:20px 22px;margin-bottom:16px;}
+.person-hero h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--person);letter-spacing:3px;margin-bottom:16px;}
+
+/* 人數大表 */
+.person-table{overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:14px;}
+table{border-collapse:collapse;width:100%;}
+thead tr{background:var(--ink);}
+thead th{padding:9px 10px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;color:#f5e6c0;text-align:center;}
+.th-n{background:#2d2416!important;width:50px;}
+.th-ja{background:#1a3a6b!important;}.th-ro{background:#3a2a6b!important;}
+.th-zh{background:#1a5c2a!important;}.th-note{background:#5c1a1a!important;}
+tbody tr:nth-child(even){background:var(--paper2);}
+tbody tr:nth-child(odd){background:var(--paper);}
+tbody tr.sp-row{background:#fff8e8!important;}
+td{padding:9px 10px;text-align:center;border-right:1px solid #e0d4bc;font-size:13px;vertical-align:middle;line-height:1.5;}
+td:last-child{border-right:none;}
+td.num-c{font-family:'Shippori Mincho',serif;font-size:18px;font-weight:800;color:var(--ink);}
+td.ja-c{font-family:'Noto Sans JP',sans-serif;font-size:16px;font-weight:700;color:var(--ja);}
+td.ro-c{font-size:12px;color:#aaa;font-family:'Noto Sans TC',sans-serif;}
+td.zh-c{font-size:13px;color:var(--zh);}
+td.nt-c{font-size:11px;color:var(--accent);font-weight:700;text-align:left;padding-left:10px;}
+
+/* 人數応用 */
+.news-examples{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.ne-item{border-radius:4px;padding:12px 14px;background:var(--person-bg);border:1.5px solid #c09080;}
+.ne-ja{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ja);margin-bottom:3px;}
+.ne-zh{font-size:13px;color:#444;margin-bottom:3px;}
+.ne-note{font-size:11px;color:var(--accent);font-weight:700;}
+
+/* ひとり ふたり 特別 */
+.special-persons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.sp-box{border-radius:6px;padding:14px 10px;border:2px solid;text-align:center;}
+.sp1{background:#fff0f0;border-color:#c05050;}
+.sp2{background:#fff8e0;border-color:#c09020;}
+.sp3{background:#e8fff0;border-color:#20a050;}
+.sp4{background:#e8f0ff;border-color:#2050c0;}
+.sp-num{font-family:'Shippori Mincho',serif;font-size:22px;font-weight:800;margin-bottom:4px;}
+.sp1 .sp-num{color:#c05050;}.sp2 .sp-num{color:#a07000;}
+.sp3 .sp-num{color:#20a050;}.sp4 .sp-num{color:#2050c0;}
+.sp-ja{font-family:'Noto Sans JP',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px;}
+.sp1 .sp-ja{color:#c05050;}.sp2 .sp-ja{color:#a07000;}
+.sp3 .sp-ja{color:#20a050;}.sp4 .sp-ja{color:#2050c0;}
+.sp-ro{font-size:11px;color:#aaa;margin-bottom:5px;}
+.sp-note{font-size:11px;color:#555;line-height:1.6;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">ラブ・ストーリーは突然に</div>
+<div class="page-sub">小田和正 · 歌詞解析 ＋ 日語人數表現完全版</div>
+
+<div class="card">
+
+<!-- ══ 背景 ══ -->
+<div class="sec">
+  <div class="sec-title">① 這首歌的背景</div>
+  <div style="background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;color:#f5e6c0;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;letter-spacing:4px;margin-bottom:8px;">🎵 ラブ・ストーリーは突然に</div>
+    <div style="font-size:13px;line-height:1.95;color:#d4c090;">
+      演唱：<strong style="color:#f5e6c0;">小田和正（おだ かずまさ）</strong><br>
+      發行：1991年 ／ 日劇《東京ラブストーリー》主題曲<br>
+      主題：愛情來得突然，想說卻說不出口的心情<br>
+      特色：這是<strong style="color:#f5a070;">純日語歌曲</strong>（不像之前的是日語翻譯版），你記下了注音和中文大意，功夫做得很扎實！
+    </div>
+  </div>
+</div>
+
+<!-- ══ 歌詞逐行 ══ -->
+<div class="sec">
+  <div class="sec-title">② 歌詞逐行解析 — 日語 ／ 中文大意</div>
+
+  <div class="col-headers">
+    <div class="ch ch-ja">🔵 日本語</div>
+    <div class="ch ch-zh">🟢 中文大意</div>
+  </div>
+
+  <!-- Page 1 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 1 — Verse 1</div>
+    <div class="lyric-row">
+      <div class="lr-ja">何から伝えればいいのか　分からないまま</div>
+      <div class="lr-zh">不知道該從何說起，就這樣什麼都說不出口</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">時は流れて</div>
+      <div class="lr-zh">時間就這樣流逝而去</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">浮かんでは消えてゆく　ありふれた言葉だけ</div>
+      <div class="lr-zh">只有那些浮現又消逝的、平凡陳腔濫調的話語</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">君があんまりすてきだから</div>
+      <div class="lr-zh">因為你實在太美好了</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">ただ素直に好きと言えないで</div>
+      <div class="lr-zh">才沒辦法就這樣直率地說出「喜歡你」</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">多分もうすぐ　雨も止んで　二人たそがれに</div>
+      <div class="lr-zh">大概很快雨也會停，兩個人在黃昏時分</div>
+    </div>
+  </div>
+
+  <!-- Page 2 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 2 — Verse 2</div>
+    <div class="lyric-row">
+      <div class="lr-ja">あの日　あの時　あの場所で　君に会えなかったら</div>
+      <div class="lr-zh">如果那一天、那個時刻、那個地方，沒能遇見你</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">僕等はいつまでも　見知らぬ二人のまま</div>
+      <div class="lr-zh">我們將會永遠是互不相識的兩個人</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">誰かが甘く誘う言葉に　もう心揺れたりしないで</div>
+      <div class="lr-zh">不要再被任何人甜蜜誘惑的話語所動搖</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">切ないけど　そんなふうに　心は縛れない</div>
+      <div class="lr-zh">雖然很難受，但心就是無法被那樣束縛住</div>
+    </div>
+  </div>
+
+  <!-- Page 3 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 3 — Chorus</div>
+    <div class="lyric-row">
+      <div class="lr-ja">明日になれば　君をきっと　今よりもっと好きになる</div>
+      <div class="lr-zh">到了明天，我一定會比現在更喜歡你</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">そのすべてが　僕のなかで　時を超えてゆく</div>
+      <div class="lr-zh">這一切都在我心中，慢慢超越時空</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">君のためにつばさになる　君を守りつづける</div>
+      <div class="lr-zh">為了你變成一對翅膀，守護你到永遠</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">やわらかく　君をつつむ　あの風になる</div>
+      <div class="lr-zh">變成那陣溫柔地將你包圍的風</div>
+    </div>
+  </div>
+
+  <!-- Page 4 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 4 — Bridge</div>
+    <div class="lyric-row">
+      <div class="lr-ja">今　君の心が動いた　言葉を止めて肩を寄せて</div>
+      <div class="lr-zh">此刻你的心動搖了，停止語言，讓我們肩並肩</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">僕は忘れないこの日を　君を誰にも渡さない</div>
+      <div class="lr-zh">我不會忘記這一天，我不會把你讓給任何人</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 漢字拆解 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 筆記標注的漢字拆解</div>
+
+  <div class="kanji-grid">
+
+    <div class="kj-card">
+      <div class="kj-char">伝える</div>
+      <div class="kj-read">つたえる</div>
+      <div class="kj-zh">傳達、告訴</div>
+      <div class="kj-in">
+        <span class="kj-ja">何から伝えれば</span><br>
+        從什麼開始傳達才好<br>
+        →「伝える」＝傳達・告訴<br>
+        伝言（でんごん）＝留言
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">分かる</div>
+      <div class="kj-read">わかる</div>
+      <div class="kj-zh">明白、知道</div>
+      <div class="kj-in">
+        <span class="kj-ja">分からないまま</span><br>
+        就在不明白的狀態下<br>
+        →「まま」＝保持原樣<br>
+        分かった＝明白了！
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">流れる</div>
+      <div class="kj-read">ながれる</div>
+      <div class="kj-zh">流逝、流動</div>
+      <div class="kj-in">
+        <span class="kj-ja">時は流れて</span><br>
+        時間就這樣流逝<br>
+        →時（とき）＝時間<br>
+        川が流れる＝河川流動
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">浮かぶ</div>
+      <div class="kj-read">うかぶ</div>
+      <div class="kj-zh">浮現、浮起</div>
+      <div class="kj-in">
+        <span class="kj-ja">浮かんでは消えてゆく</span><br>
+        浮現又消失地<br>
+        →浮かぶ＝浮現・想起<br>
+        消える（きえる）＝消失
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">言葉</div>
+      <div class="kj-read">ことば</div>
+      <div class="kj-zh">語言、話語</div>
+      <div class="kj-in">
+        <span class="kj-ja">ありふれた言葉だけ</span><br>
+        只有平凡的話語<br>
+        →ありふれた＝平凡普通的<br>
+        言葉は力（ことばはちから）
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">素直</div>
+      <div class="kj-read">すなお</div>
+      <div class="kj-zh">坦率、直率</div>
+      <div class="kj-in">
+        <span class="kj-ja">ただ素直に好きと言えない</span><br>
+        就是無法坦率說出喜歡<br>
+        →な形容詞：素直な人<br>
+        ＝直接、沒有扭捏的
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">止む</div>
+      <div class="kj-read">やむ</div>
+      <div class="kj-zh">停止、止息</div>
+      <div class="kj-in">
+        <span class="kj-ja">雨も止んで</span><br>
+        雨也停了<br>
+        →雨が止む＝雨停<br>
+        風が止む＝風停
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">見知らぬ</div>
+      <div class="kj-read">みしらぬ</div>
+      <div class="kj-zh">陌生的、不認識的</div>
+      <div class="kj-in">
+        <span class="kj-ja">見知らぬ二人のまま</span><br>
+        就保持陌生的兩個人<br>
+        →見（み）知る（しる）＝認識<br>
+        ぬ＝古語否定（現代語：ない）
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">縛る</div>
+      <div class="kj-read">しばる</div>
+      <div class="kj-zh">束縛、綁住</div>
+      <div class="kj-in">
+        <span class="kj-ja">心は縛れない</span><br>
+        心是無法被束縛的<br>
+        →縛れない＝縛る的可能形否定<br>
+        ＝無法束縛
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">超える</div>
+      <div class="kj-read">こえる</div>
+      <div class="kj-zh">超越、越過</div>
+      <div class="kj-in">
+        <span class="kj-ja">時を超えてゆく</span><br>
+        超越時空而去<br>
+        →時（とき）を超える＝超越時間<br>
+        山を超える＝翻越山
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">翼（つばさ）</div>
+      <div class="kj-read">つばさ</div>
+      <div class="kj-zh">翅膀</div>
+      <div class="kj-in">
+        <span class="kj-ja">君のためにつばさになる</span><br>
+        為你變成翅膀<br>
+        →つばさ＝翅膀（詩的表達）<br>
+        になる＝變成〜
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">包む</div>
+      <div class="kj-read">つつむ</div>
+      <div class="kj-zh">包圍、包覆</div>
+      <div class="kj-in">
+        <span class="kj-ja">やわらかく　君をつつむ</span><br>
+        溫柔地將你包圍<br>
+        →やわらかく＝柔軟地・溫柔地<br>
+        包む＝包覆・包裹
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ 人數表現 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 日語人數表現完全版 — ひとり・ふたり・さんにん…</div>
+
+  <!-- 特別な1・2人 -->
+  <div class="person-hero">
+    <h4>⚠️ 最重要：1人・2人は完全に特別な読み方！</h4>
+    <div class="special-persons">
+      <div class="sp-box sp1">
+        <div class="sp-num">1人</div>
+        <div class="sp-ja">ひとり</div>
+        <div class="sp-ro">hitori</div>
+        <div class="sp-note">一個人<br>你已知道✅<br>「独り」とも書く</div>
+      </div>
+      <div class="sp-box sp2">
+        <div class="sp-num">2人</div>
+        <div class="sp-ja">ふたり</div>
+        <div class="sp-ro">futari</div>
+        <div class="sp-note">兩個人<br>歌詞に登場✅<br>「二人」とも書く</div>
+      </div>
+      <div class="sp-box sp3">
+        <div class="sp-num">3人〜</div>
+        <div class="sp-ja">〇にん</div>
+        <div class="sp-ro">〇-nin</div>
+        <div class="sp-note">三人以上<br>全部用「にん」<br>規律に戻る</div>
+      </div>
+      <div class="sp-box sp4">
+        <div class="sp-num">何人？</div>
+        <div class="sp-ja">なんにん</div>
+        <div class="sp-ro">nannin</div>
+        <div class="sp-note">幾個人？<br>疑問詞<br>新聞によく出る</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完整表 -->
+  <div class="person-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="th-n">數</th>
+          <th class="th-ja">日語</th>
+          <th class="th-ro">羅馬音</th>
+          <th class="th-zh">中文</th>
+          <th class="th-note">特別注意</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="sp-row">
+          <td class="num-c">1</td>
+          <td class="ja-c">ひとり</td>
+          <td class="ro-c">hitori</td>
+          <td class="zh-c">一個人</td>
+          <td class="nt-c">⚠️ 完全特殊！不說いちにん</td>
+        </tr>
+        <tr class="sp-row">
+          <td class="num-c">2</td>
+          <td class="ja-c">ふたり</td>
+          <td class="ro-c">futari</td>
+          <td class="zh-c">兩個人</td>
+          <td class="nt-c">⚠️ 完全特殊！不說ににん</td>
+        </tr>
+        <tr>
+          <td class="num-c">3</td>
+          <td class="ja-c">さんにん</td>
+          <td class="ro-c">san-nin</td>
+          <td class="zh-c">三個人</td>
+          <td class="nt-c">從3開始規律：數字＋にん</td>
+        </tr>
+        <tr>
+          <td class="num-c">4</td>
+          <td class="ja-c">よにん</td>
+          <td class="ro-c">yo-nin</td>
+          <td class="zh-c">四個人</td>
+          <td class="nt-c">よ（よん不用）</td>
+        </tr>
+        <tr>
+          <td class="num-c">5</td>
+          <td class="ja-c">ごにん</td>
+          <td class="ro-c">go-nin</td>
+          <td class="zh-c">五個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr>
+          <td class="num-c">6</td>
+          <td class="ja-c">ろくにん</td>
+          <td class="ro-c">roku-nin</td>
+          <td class="zh-c">六個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr>
+          <td class="num-c">7</td>
+          <td class="ja-c">しちにん／ななにん</td>
+          <td class="ro-c">shichi-nin / nana-nin</td>
+          <td class="zh-c">七個人</td>
+          <td class="nt-c">兩種讀法都OK</td>
+        </tr>
+        <tr>
+          <td class="num-c">8</td>
+          <td class="ja-c">はちにん</td>
+          <td class="ro-c">hachi-nin</td>
+          <td class="zh-c">八個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr>
+          <td class="num-c">9</td>
+          <td class="ja-c">くにん／きゅうにん</td>
+          <td class="ro-c">ku-nin / kyū-nin</td>
+          <td class="zh-c">九個人</td>
+          <td class="nt-c">兩種讀法都OK</td>
+        </tr>
+        <tr>
+          <td class="num-c">10</td>
+          <td class="ja-c">じゅうにん</td>
+          <td class="ro-c">jū-nin</td>
+          <td class="zh-c">十個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr>
+          <td class="num-c">100</td>
+          <td class="ja-c">ひゃくにん</td>
+          <td class="ro-c">hyaku-nin</td>
+          <td class="zh-c">一百個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr>
+          <td class="num-c">1,000</td>
+          <td class="ja-c">せんにん</td>
+          <td class="ro-c">sen-nin</td>
+          <td class="zh-c">一千個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr>
+          <td class="num-c">10,000</td>
+          <td class="ja-c">いちまんにん</td>
+          <td class="ro-c">ichiman-nin</td>
+          <td class="zh-c">一萬個人</td>
+          <td class="nt-c">規律</td>
+        </tr>
+        <tr class="sp-row">
+          <td class="num-c">？</td>
+          <td class="ja-c">なんにん</td>
+          <td class="ro-c">nan-nin</td>
+          <td class="zh-c">幾個人？</td>
+          <td class="nt-c">疑問詞：何人？</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    💡 <strong>記憶口訣：</strong><br>
+    1人＝ひとり、2人＝ふたり → <strong>這兩個死記</strong>，沒有規律可言<br>
+    3人以上 → 全部都是<strong>數字＋にん</strong>，完全規律<br>
+    <strong>歌詞「ふたり（二人）たそがれに」→ 兩個人在黃昏，這就是ふたり！</strong>
+  </div>
+</div>
+
+<!-- ══ 新聞応用 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 新聞實際應用 — 火災・災害の人數報道</div>
+
+  <div class="news-examples">
+    <div class="ne-item">
+      <div class="ne-ja">火災で<strong>3人</strong>が死亡し、<strong>5人</strong>が行方不明です。</div>
+      <div class="ne-zh">火災造成3人死亡，5人失蹤。</div>
+      <div class="ne-note">死亡（しぼう）＝死亡 ／ 行方不明（ゆくえふめい）＝失蹤</div>
+    </div>
+    <div class="ne-item">
+      <div class="ne-ja">地震で<strong>30人</strong>が負傷、<strong>2人</strong>が死亡しました。</div>
+      <div class="ne-zh">地震造成30人受傷，2人死亡。</div>
+      <div class="ne-note">負傷（ふしょう）＝受傷 ／ ふたり（2人）注意讀法！</div>
+    </div>
+    <div class="ne-item">
+      <div class="ne-ja">現場には<strong>何人</strong>の被害者がいますか。</div>
+      <div class="ne-zh">現場有幾個受害者？</div>
+      <div class="ne-note">何人（なんにん）＝幾個人 ／ 被害者（ひがいしゃ）＝受害者</div>
+    </div>
+    <div class="ne-item">
+      <div class="ne-ja">救助された人は<strong>ひとり</strong>もいません。</div>
+      <div class="ne-zh">沒有任何一個人獲救。</div>
+      <div class="ne-note">ひとりもいない＝連一個人都沒有（強調零）</div>
+    </div>
+    <div class="ne-item">
+      <div class="ne-ja">乗客<strong>153人</strong>全員が無事でした。</div>
+      <div class="ne-zh">153名乘客全員平安無事。</div>
+      <div class="ne-note">百五十三人（ひゃくごじゅうさんにん）＝153人 ／ 全員（ぜんいん）＝全員</div>
+    </div>
+  </div>
+
+  <!-- 重要語彙 -->
+  <div style="background:var(--person-bg);border:2px solid var(--person);border-radius:6px;padding:14px 16px;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:12px;color:var(--person);letter-spacing:3px;margin-bottom:10px;">📰 新聞常用人數相關語彙</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div style="background:white;border-radius:3px;padding:7px 10px;border:1px solid #d8c8b8;">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);">死者</div>
+        <div style="font-size:10px;color:#aaa;">ししゃ</div>
+        <div style="font-size:12px;color:#444;">死者、亡者</div>
+      </div>
+      <div style="background:white;border-radius:3px;padding:7px 10px;border:1px solid #d8c8b8;">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);">負傷者</div>
+        <div style="font-size:10px;color:#aaa;">ふしょうしゃ</div>
+        <div style="font-size:12px;color:#444;">受傷者</div>
+      </div>
+      <div style="background:white;border-radius:3px;padding:7px 10px;border:1px solid #d8c8b8;">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);">行方不明</div>
+        <div style="font-size:10px;color:#aaa;">ゆくえふめい</div>
+        <div style="font-size:12px;color:#444;">失蹤</div>
+      </div>
+      <div style="background:white;border-radius:3px;padding:7px 10px;border:1px solid #d8c8b8;">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);">生存者</div>
+        <div style="font-size:10px;color:#aaa;">せいぞんしゃ</div>
+        <div style="font-size:12px;color:#444;">生還者</div>
+      </div>
+      <div style="background:white;border-radius:3px;padding:7px 10px;border:1px solid #d8c8b8;">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);">被害者</div>
+        <div style="font-size:10px;color:#aaa;">ひがいしゃ</div>
+        <div style="font-size:12px;color:#444;">受害者</div>
+      </div>
+      <div style="background:white;border-radius:3px;padding:7px 10px;border:1px solid #d8c8b8;">
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);">全員</div>
+        <div style="font-size:10px;color:#aaa;">ぜんいん</div>
+        <div style="font-size:12px;color:#444;">全員</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  ラブ・ストーリーは突然に · 小田和正 1991 · 歌詞解析 ＋ 人數表現完全版 · おにひめ學習筆記
+</div>
+</div>
+</body>
+</html>
