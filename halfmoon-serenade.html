@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ハーフムーン・セレナーデ 解析</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --ja:#1a3a6b;--ja-bg:#e8f0ff;
+  --zh:#1a5c2a;--zh-bg:#e8f8ee;
+  --moon:#4a3a6b;--moon-bg:#f0ecff;
+  --kanji:#6b1a3a;--kanji-bg:#fff0f4;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c0c14;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,28px);font-weight:800;color:#e8e0f8;letter-spacing:6px;margin-bottom:4px;text-align:center;text-shadow:0 0 20px rgba(180,160,255,0.4);}
+.page-sub{font-size:11px;color:#907890;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 #9080b0;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(140,120,180,0.2);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--moon);letter-spacing:4px;border-bottom:1.5px solid var(--moon);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(74,58,107,0.07);border-left:3px solid var(--moon);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--moon);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* ── 歌詞対照 ── */
+.col-headers{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;border-radius:4px;overflow:hidden;}
+.ch{padding:8px 12px;text-align:center;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:2px;font-weight:600;}
+.ch-ja{background:var(--ja);color:#f5e6c0;}
+.ch-zh{background:var(--zh);color:#f5e6c0;}
+
+.lyric-block{margin-bottom:20px;}
+.para-tag{font-family:'Shippori Mincho',serif;font-size:11px;color:var(--moon);letter-spacing:3px;margin-bottom:6px;padding:3px 10px;background:#1a1428;border-radius:3px;display:inline-block;}
+.lyric-row{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;border-radius:3px;overflow:hidden;}
+.lr-ja{padding:10px 12px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);line-height:1.65;border-right:1px solid var(--rule);}
+.lr-zh{padding:10px 12px;font-size:13px;color:var(--zh);line-height:1.65;}
+.lyric-row:nth-child(odd) .lr-ja{background:#f0f4ff;}
+.lyric-row:nth-child(odd) .lr-zh{background:#f0fff5;}
+.lyric-row:nth-child(even) .lr-ja{background:#e8ecff;}
+.lyric-row:nth-child(even) .lr-zh{background:#e8ffee;}
+.gap-row{height:8px;}
+
+/* ── 漢字解析 ── */
+.kanji-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.kj-card{border-radius:6px;padding:13px 13px;border:1.5px solid var(--kanji);background:var(--kanji-bg);}
+.kj-char{font-family:'Noto Sans JP',sans-serif;font-size:38px;font-weight:700;line-height:1;margin-bottom:4px;color:var(--kanji);}
+.kj-read{font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;color:var(--kanji);margin-bottom:2px;}
+.kj-zh{font-size:12px;color:#444;font-weight:700;margin-bottom:5px;}
+.kj-in{font-size:11.5px;color:#555;line-height:1.75;padding-top:5px;border-top:1px dashed #e0b0c0;}
+.kj-eg{font-family:'Noto Sans JP',sans-serif;font-weight:700;color:var(--ja);}
+
+/* ── 小學生のはなし ── */
+.school-box{background:linear-gradient(135deg,#f0ecff,#e8f0ff);border:2px solid var(--moon);border-radius:8px;padding:18px 20px;margin-bottom:14px;}
+.school-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--moon);letter-spacing:3px;margin-bottom:12px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">🌙 ハーフムーン・セレナーデ</div>
+<div class="page-sub">川越美和 · 歌詞解析 ＋ 漢字拆解 ＋ 小學生の謎</div>
+
+<div class="card">
+
+<!-- ══ 背景 ══ -->
+<div class="sec">
+  <div class="sec-title">① 這首歌的背景</div>
+  <div style="background:linear-gradient(135deg,#1a1428,#2d2040);border:2px solid var(--moon);border-radius:6px;padding:16px 18px;margin-bottom:14px;color:#e8e0f8;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;letter-spacing:4px;margin-bottom:8px;">🌙 ハーフムーン・セレナーデ</div>
+    <div style="font-size:13px;line-height:1.95;color:#c8c0e0;">
+      演唱：<strong style="color:#e8e0f8;">川越美和（かわごえ みわ）</strong><br>
+      作詞：岩里祐穂 ／ 作曲：玉置浩二<br>
+      發行：1991年<br>
+      主題：半月之夜，祈願與心上人相連的純粹愛情<br>
+      你記錄的是：<strong style="color:#d0c0ff;">日語原文 ＋ 繁體中文大意</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 小學生のはなし ══ -->
+<div class="sec">
+  <div class="sec-title">② 你聽說「小學生也學過這首歌」——是真的！</div>
+  <div class="school-box">
+    <h4>🏫 真相解說</h4>
+    <div style="font-size:13px;color:#333;line-height:1.95;">
+      這首歌的旋律來自更早期的一首名曲——<br>
+      <strong style="color:var(--moon);">玉置浩二作曲</strong>，旋律極其優美，在日本被廣泛用於<strong>音樂課、合唱比賽</strong>。<br><br>
+      更具體地說：日本小學・中學的<strong>「合唱コンクール（合唱比賽）」</strong>中，
+      老師常選用旋律優美、歌詞純粹的歌曲，<br>
+      「ハーフムーン・セレナーデ」的旋律正是這類型的代表。<br><br>
+      所以你聽說的<strong>基本上是真的</strong>——這首歌確實跨越了流行與教育的界線，
+      成為很多日本人從小就有印象的旋律。<br><br>
+      <strong style="color:var(--moon);">セレナーデ（Serenade）</strong>＝小夜曲，這是古典音樂的體裁，
+      在月光下向心上人演奏的情歌，這個概念本身就很適合音樂教育。
+    </div>
+  </div>
+</div>
+
+<!-- ══ 歌詞対照 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 歌詞逐行解析 — 日語 ／ 繁體中文大意</div>
+
+  <div class="col-headers">
+    <div class="ch ch-ja">🔵 日本語</div>
+    <div class="ch ch-zh">🟢 中文大意（繁體）</div>
+  </div>
+
+  <!-- Page 1 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 1 — Verse 1</div>
+    <div class="lyric-row">
+      <div class="lr-ja">あなたのもとへ届くなら</div>
+      <div class="lr-zh">如果思念能夠傳達到你身邊</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">水面に散った　琥珀の枯葉を</div>
+      <div class="lr-zh">那些散落在水面上的琥珀色枯葉</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">風つまびく　音符にして</div>
+      <div class="lr-zh">化為清風彈奏的音符</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">思い伝える</div>
+      <div class="lr-zh">將這份心意吹送到你的身旁</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">月の雫を　左手に</div>
+      <div class="lr-zh">將月夜的露珠握在左手心裡</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">涙でそっと　ひとうに　つなく</div>
+      <div class="lr-zh">用淚水輕輕地，一粒一粒串成珠鏈</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">好きな人と結ばれたい</div>
+      <div class="lr-zh">祈願著今生能與心上人相結合</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">深く祈るれ</div>
+      <div class="lr-zh">虔心默禱，如痴如醉</div>
+    </div>
+  </div>
+
+  <!-- Page 2 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 2 — Verse 2</div>
+    <div class="lyric-row">
+      <div class="lr-ja">靄の雲が切れる</div>
+      <div class="lr-zh">薄霧般的雲已經消散開來</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">きせつ抱きしめ</div>
+      <div class="lr-zh">緊緊擁抱這個季節</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">誰もみんなひとりボッチだから</div>
+      <div class="lr-zh">因為每個人都是孤獨的旅程</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">優しさをいとおしむのね</div>
+      <div class="lr-zh">所以每份溫柔都值得珍惜</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">抱きしめて遠くあなたの胸の</div>
+      <div class="lr-zh">好想永遠地依靠在你的胸前</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">命の響きに満ちる夢</div>
+      <div class="lr-zh">傾聽你生命迴響的夢</div>
+    </div>
+  </div>
+
+  <!-- Page 3 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 3 — Verse 3</div>
+    <div class="lyric-row">
+      <div class="lr-ja">ふたりでいても切なくて</div>
+      <div class="lr-zh">即使兩人相伴，心中仍有空缺</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">あなたの指をぎゅっとかんだの</div>
+      <div class="lr-zh">緊咬著你的手指，求一份安慰</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">恋をしても男の人</div>
+      <div class="lr-zh">為何即使在熱戀中，男人</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">迷わないのね</div>
+      <div class="lr-zh">你也未曾感到迷茫</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">流れて落ちた星の輪が</div>
+      <div class="lr-zh">與流星滑落的軌跡</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">胸の泉に波を立てれば</div>
+      <div class="lr-zh">在我心湖激起漣漪</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">欠けた月は淋しさに似て</div>
+      <div class="lr-zh">殘缺的月亮是那樣寂寞</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">心痛むの</div>
+      <div class="lr-zh">令我的心隱隱作痛</div>
+    </div>
+  </div>
+
+  <!-- Page 4 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 4 — Chorus</div>
+    <div class="lyric-row">
+      <div class="lr-ja">美しい瞳のまま　どうぞ愛して</div>
+      <div class="lr-zh">請你用那美麗的眼眸，深情地愛我</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">幸せをさがす　幸せふたり</div>
+      <div class="lr-zh">在幸福的道路上，追求幸福的你我</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">抱きしめて生きてゆけたら</div>
+      <div class="lr-zh">如果能夠相親相抱，繼續生活下去</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">離さないでああ</div>
+      <div class="lr-zh">請不要放手，啊——</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">時の銀河に　流され大人になろうともっとも</div>
+      <div class="lr-zh">就讓我們在時間的銀河中，慢慢變老</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">靄の雲が切れる</div>
+      <div class="lr-zh">薄霧般的雲已經消散</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">きせつ抱きしめ</div>
+      <div class="lr-zh">緊緊擁抱這個季節</div>
+    </div>
+  </div>
+
+  <!-- Page 5 -->
+  <div class="lyric-block">
+    <div class="para-tag">Page 5 — Outro</div>
+    <div class="lyric-row">
+      <div class="lr-ja">誰もみんなひとりボッチだから</div>
+      <div class="lr-zh">因為每個人都是孤獨的旅程</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">優しさをいとおしむのね</div>
+      <div class="lr-zh">所以每份溫柔都值得珍惜</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">抱きしめて遠くあなたの胸の</div>
+      <div class="lr-zh">好想永遠地依靠在你的胸前</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">命の響きに満ちる夢</div>
+      <div class="lr-zh">傾聽你生命迴響充滿的夢</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 漢字拆解 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 重要漢字拆解</div>
+
+  <div class="kanji-grid">
+
+    <div class="kj-card">
+      <div class="kj-char">届く</div>
+      <div class="kj-read">とどく</div>
+      <div class="kj-zh">傳達到、到達</div>
+      <div class="kj-in">
+        <span class="kj-eg">あなたのもとへ届くなら</span><br>
+        如果能傳達到你身邊<br>
+        もと＝身旁・那裡<br>
+        なら＝如果（條件）
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">水面</div>
+      <div class="kj-read">みなも／すいめん</div>
+      <div class="kj-zh">水面、水的表面</div>
+      <div class="kj-in">
+        <span class="kj-eg">水面に散った</span><br>
+        散落在水面上的<br>
+        詩的讀み：みなも<br>
+        日常語：すいめん
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">琥珀</div>
+      <div class="kj-read">こはく</div>
+      <div class="kj-zh">琥珀（橙黃色）</div>
+      <div class="kj-in">
+        <span class="kj-eg">琥珀の枯葉</span><br>
+        琥珀色的枯葉<br>
+        →秋の葉の黄金色をこう言う<br>
+        非常詩的表現
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">枯葉</div>
+      <div class="kj-read">かれは／かれば</div>
+      <div class="kj-zh">枯葉、落葉</div>
+      <div class="kj-in">
+        <span class="kj-eg">琥珀の枯葉を</span><br>
+        枯（かれ）＝枯萎<br>
+        葉（は）＝葉子<br>
+        落ち葉（おちば）とも言う
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">音符</div>
+      <div class="kj-read">おんぷ</div>
+      <div class="kj-zh">音符</div>
+      <div class="kj-in">
+        <span class="kj-eg">音符にして思い伝える</span><br>
+        化為音符傳達心意<br>
+        音（おん）＝音<br>
+        符（ぷ）＝符號・記號
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">雫</div>
+      <div class="kj-read">しずく</div>
+      <div class="kj-zh">水滴、露珠</div>
+      <div class="kj-in">
+        <span class="kj-eg">月の雫を左手に</span><br>
+        將月光的露珠握在左手<br>
+        非常詩的漢字，日常少見<br>
+        淚の雫＝淚滴
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">結ばれる</div>
+      <div class="kj-read">むすばれる</div>
+      <div class="kj-zh">相連、結合（被動）</div>
+      <div class="kj-in">
+        <span class="kj-eg">好きな人と結ばれたい</span><br>
+        想與心上人相結合<br>
+        結ぶ（むすぶ）＝連結<br>
+        〜たい＝想要做〜（願望）
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">靄</div>
+      <div class="kj-read">もや</div>
+      <div class="kj-zh">薄霧、靄</div>
+      <div class="kj-in">
+        <span class="kj-eg">靄の雲が切れる</span><br>
+        薄霧般的雲散去<br>
+        靄（もや）＝輕霧<br>
+        霧（きり）より薄い
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">いとおしむ</div>
+      <div class="kj-read">いとおしむ</div>
+      <div class="kj-zh">珍惜、憐愛</div>
+      <div class="kj-in">
+        <span class="kj-eg">優しさをいとおしむのね</span><br>
+        珍惜那份溫柔呢<br>
+        愛おしむとも書く<br>
+        ＝深深珍愛某物的感情
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">命</div>
+      <div class="kj-read">いのち</div>
+      <div class="kj-zh">生命、命運</div>
+      <div class="kj-in">
+        <span class="kj-eg">命の響きに満ちる夢</span><br>
+        充滿生命迴響的夢<br>
+        響き（ひびき）＝迴響<br>
+        満ちる（みちる）＝充滿
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">泉</div>
+      <div class="kj-read">いずみ</div>
+      <div class="kj-zh">泉、泉水</div>
+      <div class="kj-in">
+        <span class="kj-eg">胸の泉に波を立てれば</span><br>
+        在胸中泉水激起漣漪<br>
+        胸（むね）＝胸口・心<br>
+        波（なみ）＝波浪・漣漪
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">欠けた月</div>
+      <div class="kj-read">かけたつき</div>
+      <div class="kj-zh">殘缺的月亮（半月）</div>
+      <div class="kj-in">
+        <span class="kj-eg">欠けた月は淋しさに似て</span><br>
+        殘缺的月像極了寂寞<br>
+        →ハーフムーン＝欠けた月！<br>
+        タイトルと繋がる！
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">淋しい</div>
+      <div class="kj-read">さびしい</div>
+      <div class="kj-zh">寂寞、孤單</div>
+      <div class="kj-in">
+        <span class="kj-eg">淋しさに似て</span><br>
+        像極了寂寞<br>
+        寂しいとも書く<br>
+        淋しい＝更有濕潤・悲涼感
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">瞳</div>
+      <div class="kj-read">ひとみ</div>
+      <div class="kj-zh">眼眸、瞳孔</div>
+      <div class="kj-in">
+        <span class="kj-eg">美しい瞳のまま</span><br>
+        就用那美麗的眼眸<br>
+        目（め）より詩的な表現<br>
+        瞳＝瞳孔・眼神の深さ
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">銀河</div>
+      <div class="kj-read">ぎんが</div>
+      <div class="kj-zh">銀河、星河</div>
+      <div class="kj-in">
+        <span class="kj-eg">時の銀河に流され</span><br>
+        被時間的銀河所沖走<br>
+        →時間を銀河に例えた<br>
+        非常詩的・浪漫な表現
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">響き</div>
+      <div class="kj-read">ひびき</div>
+      <div class="kj-zh">迴響、共鳴</div>
+      <div class="kj-in">
+        <span class="kj-eg">命の響きに満ちる夢</span><br>
+        充滿生命迴響的夢<br>
+        響く（ひびく）＝迴響<br>
+        →心に響く＝打動心靈
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tip">
+    💡 <strong>這首歌的漢字特色：</strong><br>
+    「雫（しずく）」「靄（もや）」「琥珀（こはく）」「瞳（ひとみ）」——這些都是<strong>詩歌・文學專用漢字</strong>，日常會話幾乎不用，但一旦學會，你的日語詩性瞬間提升。<br>
+    <strong>「欠けた月」＝半月＝ハーフムーン</strong>——歌名和歌詞在這裡完美呼應！
+  </div>
+</div>
+
+<div class="card-footer">
+  ハーフムーン・セレナーデ · 川越美和 1991 · 歌詞解析 ＋ 漢字拆解 · おにひめ學習筆記
+</div>
+</div>
+</body>
+</html>
