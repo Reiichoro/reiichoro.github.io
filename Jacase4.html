@@ -1,0 +1,334 @@
+<html lang="ja">
+
+<head>
+ <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>異星クライアント事例：生命体8472 (Species 8472) 次元間物理互換制御レイヤー | REII CHORO デリバリープロジェクト</title>
+    <meta name="title" content="異星デリバリー事例：生命体8472 (Species 8472) 流体空間シミュレーションシステム | REII CHORO">
+    <meta name="description" content="生命体8472のために開発された物理パラメータ互換レイヤーを解析。重力シミュレーションミドルウェアを活用し、流体空間生物が実体宇宙に進入する際の物理的拒絶反応を解決。ブレのない次元間航行を実現。">
+    <meta name="keywords" content="生命体8472, Species 8472, 流体空間, Fluidic Space, 物理互換レイヤー, 重力シミュレーション, 次元間技術, REII CHORO, 異星ソフトウェア開発, 物理定数再構成">
+    
+    <link rel="alternate" hreflang="zh" href="https://reiichoro.github.io/case4.html?lang=zh" />
+    <link rel="alternate" hreflang="ja" href="https://reiichoro.github.io/Jacase4.html?lang=ja" />
+<link rel="alternate" hreflang="en" href="https://reiichoro.github.io/Jacase4.html?lang=en" />
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://reiichoro.github.io/Jacase4.html">
+    <meta property="og:title" content="次元間航行技術：生命体8472 (Species 8472) プロジェクト実録 - REII CHORO">
+    <meta property="og:description" content="三本の足はもう震えない。物理パラメータ制御レイヤーを通じて、流体生物が枯渇した実体宇宙をいかに自在に航行するかを解析。">
+    <meta property="og:image" content="https://reiichoro.github.io/assets/images/JA-Case10.webp">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://reiichoro.github.io/Jacase4.html">
+    <meta property="twitter:title" content="REII CHORO 銀河横断プロジェクト：生命体8472 流体物理互換システム">
+    <meta property="twitter:description" content="物理ミドルウェアが流体文明と出会うとき。五つの眼でこの枯渇した宇宙を見つめるための技術的詳細を探る。">
+    <meta property="twitter:image" content="https://reiichoro.github.io/assets/images/JA-Case10.webp">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "name": "生命体8472 (Species 8472) 物理パラメータ互換制御レイヤープロジェクト",
+      "headline": "重力シミュレーションミドルウェアに基づく次元間物理定数再構成開発",
+      "description": "Technical implementation of a Fluidic-Physical Compatibility Layer for Species 8472, allowing biological vessels to navigate the material universe via localized gravity field modulation.",
+      "image": [
+        "https://reiichoro.github.io/assets/images/JA-Case10.webp",
+        "https://reiichoro.github.io/assets/images/JA-Case11.webp",
+        "https://reiichoro.github.io/assets/images/JA-Case12.webp"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Kyoko (Senior Architect)",
+        "url": "https://reiichoro.github.io/Jateam3.html"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "REII CHORO"
+      },
+      "datePublished": "2026-06-08",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://reiichoro.github.io/Jacase4.html"
+      },
+      "keywords": "Species 8472, Fluidic Space, Physics Middleware, Interstellar Navigation, Tech Case Study"
+    }
+    </script>
+</head>
+<style>
+	body, html {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    color: var(--font-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"  crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+
+</head>
+
+<body>
+<style>
+:root {
+    --logo-reii: #007bff;
+    --logo-text: #333333;
+    --font-color: #333333;
+    --nav-bg: #ffffff;
+    --copyright-color: #8996a0;
+    --bg-color: #ffffff;
+}
+
+[data-theme='dark'] {
+    --logo-reii: #4dabff;
+    --logo-text: #ffffff;
+    --font-color: #eeeeee;
+    --nav-bg: #151515;
+    --copyright-color: #c2c2c2;
+    --bg-color: #151515;
+}
+
+#site-header {
+    background-color: var(--nav-bg) !important;
+    padding: 10px 0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand .logo-reii { color: var(--logo-reii) !important; font-weight: bold; }
+.navbar-brand .logo-text, 
+.navbar-brand i.fa-opera { 
+    color: var(--logo-text) !important; 
+    transition: color 0.3s ease; 
+}
+
+#site-header .navbar-nav .nav-link {
+    color: var(--font-color) !important;
+}
+
+.navbar-toggler {
+    background-color: #007bff !important;
+    border: none; padding: 8px; border-radius: 5px;
+}
+.navbar-toggler .icon-expand, 
+.navbar-toggler .icon-close {
+    color: #ffffff !important;
+}
+
+#article-content {
+    padding-top: 140px !important;
+    padding-bottom: 60px;
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    min-height: 80vh;
+}
+
+#copyright {
+    color: var(--copyright-color) !important;
+    font-size: 15px;
+    line-height: 26px;
+    transition: color 0.3s ease;
+}
+
+.wthree-footerhny .footer-links ul li a {
+    color: #8996a0;
+}
+
+.wthree-footerhny .footer-links ul li a:hover {
+    color: var(--logo-reii);
+}
+
+.ppt-slide img {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.ppt-slide img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+</style>
+
+<header id="site-header" class="fixed-top">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light stroke py-lg-0">
+			<h1><a class="navbar-brand" href="">
+                     <span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
+				</a></h1>
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+				<span class="navbar-toggler-icon fa icon-close fa-times"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				<ul class="navbar-nav ms-lg-auto my-2 my-lg-0 navbar-nav-scroll">
+    <li class="nav-item">
+        <a class="nav-link active" id="nav-home" href="/index.html">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-about" href="/Jabout.html">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-services" href="/Jasystem.html">Solutions</a> </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/index.html#Pages" id="nav-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources <span class="fa fa-angle-down ms-1"></span> </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item pt-2 scroll" id="nav-stats" href="/index.html#counts">Insights</a></li> <li><a class="dropdown-item scroll" id="nav-team" href="/index.html#team">Engineers</a></li> <li><a class="dropdown-item scroll" id="nav-portfolio" href="/index.html#portfolio">Cases</a></li> <li><a class="dropdown-item scroll" id="nav-pricing" href="/index.html#pricing">Plans</a></li> <li><a class="dropdown-item scroll" id="nav-blog" href="/index.html#blog">Tech Blog</a></li>
+            <li><a class="dropdown-item scroll" id="nav-test" href="/index.html#testimonials">Clients</a></li>
+        </ul>
+    </li>
+    <li class="nav-item me-lg-4">
+        <a class="nav-link scroll" id="nav-contact" href="/index.html#contact">Contact</a>
+    </li>
+</ul>
+				<ul class="header-search me-lg-4">
+					<div class="theme-switch-wrapper">
+				</ul>
+			</div>
+			
+			<div class="mobile-position diaflex">
+			 <div class="language-selector">
+    <span id="lang-toggle" style="cursor:pointer; font-weight:bold; color:#f5af23;" onclick="handleLangClick()">
+        JP
+    </span>
+</div>
+				<nav class="navigation">
+								<label class="theme-switch" for="checkbox">
+							<input type="checkbox" id="checkbox">
+							<div class="mode-container">
+								<i class="gg-sun"></i>
+								<i class="gg-moon"></i>
+							</div>
+						</label>
+				</nav>
+				</div>
+			</div>
+		</nav>
+	</div>
+</header>
+
+<section id="article-content" class="py-5" style="background-color: #2b0040;">
+    <div class="container py-lg-3">
+        <div class="header-section text-center mb-5">
+            <h3 id="case4-title-main" class="title-w3l" style="color: #da70ff !important; font-weight: 700; letter-spacing: 1px;">
+                異星デリバリー事例：生命体8472 (Species 8472) 物理パラメータ互換制御レイヤー
+            </h3>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="article-body">
+                    
+                    <div class="ppt-slide mb-5">
+                        <img id="img-case4-1" src="assets/images/JA-Case10.webp" alt="Species 8472 Client Profile" class="img-fluid w-100 shadow-lg" style="border-radius: 20px; border: 1px solid rgba(218,112,255,0.2);">
+                        <p id="case4-ch1" class="mt-4 text-center mb-2" style="color: #da70ff; font-size: 1.1rem; font-weight: 700;">
+                            Part 01: 【クライアントプロファイル】—— 流体空間の頂点捕食者
+                        </p>
+                        <p id="case4-p1" class="text-center mx-auto" style="color: #e0d1e8; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+                            三本足の構造と五つの冷光複眼を持つ次元間生物。その居住環境は純粋な有機流体次元であり、実体宇宙への進入時には物理定数の不互換によって生物組織に深刻な拒絶反応（ストレス反応）が生じることが多い。
+                        </p>
+                    </div>
+
+                    <div class="ppt-slide mb-5">
+                        <img id="img-case4-2" src="assets/images/JA-Case11.webp" alt="Physics Middleware Development" class="img-fluid w-100 shadow-lg" style="border-radius: 20px; border: 1px solid rgba(218,112,255,0.2);">
+                        <p id="case4-ch2" class="mt-4 text-center mb-2" style="color: #da70ff; font-size: 1.1rem; font-weight: 700;">
+                            Part 02: 【開発ソフトウェア】—— 物理シミュレーションミドルウェアと重力場調整システム
+                        </p>
+                        <p id="case4-p2" class="text-center mx-auto" style="color: #e0d1e8; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+                            物理パラメータ互換レイヤーを開発し、生物宇宙船の周囲に局所的な流体物理場を生成。実体宇宙の重力抵抗を、生物体が適応可能な環境圧へと再エンコードするシステムを構築。
+                        </p>
+                    </div>
+
+                    <div class="ppt-slide mb-5">
+                        <img id="img-case4-3" src="assets/images/JA-Case12.webp" alt="Species 8472 Feedback" class="img-fluid w-100 shadow-lg" style="border-radius: 20px; border: 1px solid rgba(218,112,255,0.2);">
+                        <p id="case4-ch3" class="mt-4 text-center mb-2" style="color: #da70ff; font-size: 1.1rem; font-weight: 700;">
+                            Part 03: 【高評価の理由】—— 次元を超えた物理的自由の定義
+                        </p>
+                        <p id="case4-p3" class="text-center mx-auto" style="color: #da70ff; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.9;">
+                            次元間航行における物理的拒絶反応を完璧に解決。クライアントからは、「三本の足はもう震えず、五つの眼はこの枯渇した宇宙をはっきりと捉えている」との高い評価をいただいた。
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="footer" class="wthree-footerhny">
+	<div class="container d-md-flex py-4">
+		<div class="me-md-auto text-center text-md-start">
+			<div class="copyright text-center">
+    <p class="copy-footer-29">
+        <span id="copyright">Copyright &copy; 2026 REII CHORO. All rights reserved.</span>
+        <span class="ms-2"> | </span>
+        <a href="sitemap.xml" style="color: var(--copyright-color); font-size: 13px; text-decoration: none; margin-left: 5px;">Sitemap</a>
+    </p>
+</div>
+		</div>
+		<div class="social-links text-center text-md-end pt-3 pt-md-0">
+			<a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+			<a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+			<a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+			<a href="#" class="google-plus"><i class="fab fa-google-plus-g"></i></a>
+			<a href="#" class="linkedin"><i class="fab fa-linkedin-in"></i></a>
+		</div>
+	</div>
+	<button onclick="topFunction()" id="movetop" title="Go to top" style="display: block;">
+		<span class="fa fa-angle-up"></span>
+	</button>
+	<script>
+		window.onscroll = function() {
+			scrollFunction()
+		};
+
+		if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+				document.getElementById("movetop").style.display = "block";
+			} else {
+				document.getElementById("movetop").style.display = "none";
+			}
+		}
+
+		function topFunction() {
+			document.body.scrollTop = 0;
+			document.documentElement.scrollTop = 0;
+		}
+	</script>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="assets/js/theme-change.js"></script>
+<script src="assets/js/Jalanguage.js"></script>
+<script>
+	$(window).on("scroll", function() {
+		var scroll = $(window).scrollTop();
+
+		if (scroll >= 80) {
+			$("#site-header").addClass("nav-fixed");
+		} else {
+			$("#site-header").removeClass("nav-fixed");
+		}
+	});
+	$(".navbar-toggler").on("click", function() {
+		$("header").toggleClass("active");
+	});
+	$(document).on("ready", function() {
+		if ($(window).width() > 991) {
+			$("header").removeClass("active");
+		}
+		$(window).on("resize", function() {
+			if ($(window).width() > 991) {
+				$("header").removeClass("active");
+			}
+		});
+	});
+</script>
+<script>
+	$(function() {
+		$('.navbar-toggler').click(function() {
+			$('body').toggleClass('noscroll');
+		})
+	});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>
