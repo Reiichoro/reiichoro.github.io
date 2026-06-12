@@ -285,9 +285,9 @@ const i18nData = {
 // Slide 3
 'blog1-ch3': 'Part 03: 【バリューチェーン】—— ビジネスモデルと戦略的収益化',
 'blog1-p3': '火星移住における長期的な投資対効果（ROI）を模索：科学データの販売、特殊材料製造、技術特許ライセンス、および富裕層向け宇宙旅行を含む。',
-'img-blog1-1': 'assets/images/JA-Blog1.webp',
-'img-blog1-2': 'assets/images/JA-Blog2.webp',
-'img-blog1-3': 'assets/images/JA-Blog3.webp',
+'img-blog1-1': 'assets/images/JA-Blog1-1.webp',
+'img-blog1-2': 'assets/images/JA-Blog2-1.webp',
+'img-blog1-3': 'assets/images/JA-Blog3-1.webp',
 
 // --- Blog 2: Human Genetic Programming (人類遺伝子プログラミング) ---
 'blog2-title-main': '人類遺伝子プログラミング：若返り工学',
