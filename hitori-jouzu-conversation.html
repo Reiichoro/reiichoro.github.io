@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ひとり上手 ＋ 日常會話</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --ja:#1a3a6b;--ja-bg:#e8f0ff;
+  --zh:#1a5c2a;--zh-bg:#e8f8ee;
+  --ro:#5c3a00;--ro-bg:#fff4e0;
+  --kanji:#6b1a5c;--kanji-bg:#f8e8ff;
+  --conv:#1a5c5c;--conv-bg:#e0f8f8;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,28px);font-weight:800;color:#f5e6c0;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.15);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4k 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* ── 歌詞三列 ── */
+.col-headers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-bottom:2px;border-radius:4px;overflow:hidden;}
+.ch{padding:7px 10px;text-align:center;font-family:'Shippori Mincho',serif;font-size:11px;letter-spacing:2px;font-weight:600;}
+.ch-ja{background:var(--ja);color:#f5e6c0;}
+.ch-ro{background:var(--ro);color:#f5e6c0;}
+.ch-zh{background:var(--zh);color:#f5e6c0;}
+
+.lyric-block{margin-bottom:18px;}
+.para-tag{font-family:'Shippori Mincho',serif;font-size:11px;color:var(--gold);letter-spacing:3px;margin-bottom:6px;padding:3px 10px;background:#2d2010;border-radius:3px;display:inline-block;}
+.lyric-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-bottom:2px;border-radius:3px;overflow:hidden;}
+.lr-ja{padding:9px 11px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);line-height:1.6;border-right:1px solid var(--rule);}
+.lr-ro{padding:9px 11px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ro);line-height:1.6;border-right:1px solid var(--rule);}
+.lr-zh{padding:9px 11px;font-size:12.5px;color:var(--zh);line-height:1.6;}
+.lyric-row:nth-child(odd) .lr-ja{background:#f0f4ff;}
+.lyric-row:nth-child(odd) .lr-ro{background:#fffae8;}
+.lyric-row:nth-child(odd) .lr-zh{background:#f0fff4;}
+.lyric-row:nth-child(even) .lr-ja{background:#e8ecff;}
+.lyric-row:nth-child(even) .lr-ro{background:#fff4d8;}
+.lyric-row:nth-child(even) .lr-zh{background:#e8ffee;}
+.gap-row{height:7px;}
+
+/* ── 漢字 ── */
+.kanji-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px;}
+.kj-card{border-radius:6px;padding:12px 12px;border:1.5px solid var(--kanji);background:var(--kanji-bg);}
+.kj-char{font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;line-height:1;margin-bottom:4px;color:var(--kanji);}
+.kj-read{font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;color:var(--kanji);margin-bottom:2px;}
+.kj-zh{font-size:11.5px;color:#444;font-weight:700;margin-bottom:5px;}
+.kj-in{font-size:11px;color:#555;line-height:1.75;padding-top:5px;border-top:1px dashed #d0a0d0;}
+.kj-eg{font-family:'Noto Sans JP',sans-serif;font-weight:700;color:var(--ja);}
+
+/* ── 会話フレーズ ── */
+.conv-section{background:linear-gradient(135deg,var(--conv-bg),#e8f8f0);border:2px solid var(--conv);border-radius:8px;padding:18px 20px;margin-bottom:14px;}
+.conv-section h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--conv);letter-spacing:3px;margin-bottom:14px;}
+
+.conv-list{display:flex;flex-direction:column;gap:8px;}
+.conv-item{border-radius:4px;padding:11px 14px;background:white;border:1px solid #a0d0d0;}
+.ci-ja{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ja);margin-bottom:3px;}
+.ci-ro{font-family:'DM Mono',monospace;font-size:10.5px;color:#aaa;margin-bottom:3px;}
+.ci-zh{font-size:13px;color:var(--zh);margin-bottom:3px;}
+.ci-note{font-size:11px;color:var(--accent);font-weight:700;}
+
+/* ── 自我介紹会話 ── */
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.ig-item{border-radius:4px;padding:10px 12px;background:white;border:1.5px solid #a0b8d0;}
+.ig-label{font-size:10px;font-weight:700;color:var(--conv);letter-spacing:2px;margin-bottom:5px;font-family:'Noto Sans TC',sans-serif;}
+.ig-ja{font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);margin-bottom:2px;}
+.ig-ro{font-family:'DM Mono',monospace;font-size:10px;color:#bbb;margin-bottom:2px;}
+.ig-en{font-size:11.5px;color:#888;}
+.ig-zh{font-size:12px;color:var(--zh);}
+
+/* ── 特別フレーズ ── */
+.special-box{background:linear-gradient(135deg,#fff8e8,#fff0d0);border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;}
+.special-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold);letter-spacing:3px;margin-bottom:12px;}
+.sp-item{background:white;border-radius:4px;padding:11px 14px;margin-bottom:8px;border:1px solid #e8d890;}
+.sp-item:last-child{margin-bottom:0;}
+.sp-ja{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ja);margin-bottom:3px;}
+.sp-zh{font-size:13px;color:var(--zh);margin-bottom:3px;}
+.sp-note{font-size:11.5px;color:var(--accent);font-weight:700;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">ひとり上手 ＋ 日常會話集</div>
+<div class="page-sub">中島みゆき · 歌詞解析 ＋ 漢字 ＋ 實用日語會話</div>
+
+<div class="card">
+
+<!-- ══ 背景 ══ -->
+<div class="sec">
+  <div class="sec-title">① 這首歌的背景</div>
+  <div style="background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;color:#f5e6c0;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;letter-spacing:4px;margin-bottom:8px;">🎵 ひとり上手</div>
+    <div style="font-size:13px;line-height:1.95;color:#d4c090;">
+      演唱：<strong style="color:#f5e6c0;">中島みゆき（なかじま みゆき）</strong><br>
+      發行：1981年<br>
+      「ひとり上手」＝擅長獨處的人、一個人的達人<br>
+      主題：表面上說自己擅長一個人，其實是在壓抑對人的渴望<br>
+      你筆記的特色：<strong style="color:#f5a070;">有羅馬轉寫！這說明是最初期學日語，還不會假名時的記錄</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 歌詞 ══ -->
+<div class="sec">
+  <div class="sec-title">② 歌詞逐行解析 — 日語 ／ 羅馬音 ／ 中文大意</div>
+
+  <div class="col-headers">
+    <div class="ch ch-ja">🔵 日本語</div>
+    <div class="ch ch-ro">羅馬音</div>
+    <div class="ch ch-zh">🟢 中文大意</div>
+  </div>
+
+  <div class="lyric-block">
+    <div class="para-tag">Page 1 — Verse 1</div>
+    <div class="lyric-row">
+      <div class="lr-ja">私の帰る家は</div>
+      <div class="lr-ro">watashi no kaeru ie wa</div>
+      <div class="lr-zh">我回去的那個家</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">あなたの声のする街角</div>
+      <div class="lr-ro">anata no koe no suru machikado</div>
+      <div class="lr-zh">是傳來你聲音的那個街角</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">冬の雨に打たれて</div>
+      <div class="lr-ro">fuyu no ame ni utarete</div>
+      <div class="lr-zh">被冬日的雨水打濕</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">あなたの跡をさがすのよ</div>
+      <div class="lr-ro">anata no ashiato o sagasu no yo</div>
+      <div class="lr-zh">我在尋找你的足跡</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">あなたの帰る家は</div>
+      <div class="lr-ro">anata no kaeru ie wa</div>
+      <div class="lr-zh">你回去的那個家</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">私を忘れたい街角</div>
+      <div class="lr-ro">watashi o wasuretai machikado</div>
+      <div class="lr-zh">是那個想忘掉我的街角</div>
+    </div>
+  </div>
+
+  <div class="lyric-block">
+    <div class="para-tag">Page 2 — Verse 2</div>
+    <div class="lyric-row">
+      <div class="lr-ja">肩を抱いているのは</div>
+      <div class="lr-ro">kata o daite iru no wa</div>
+      <div class="lr-zh">正抱著肩膀的那個人</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">私と似ていない長い髪</div>
+      <div class="lr-ro">watashi to nite inai nagai kami</div>
+      <div class="lr-zh">留著與我不同的長髮</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">心が街角で泣いている</div>
+      <div class="lr-ro">kokoro ga machikado de naite iru</div>
+      <div class="lr-zh">心在街角哭泣著</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">ひとりはキライだとすねる</div>
+      <div class="lr-ro">hitori wa kirai da to suneru</div>
+      <div class="lr-zh">嘴上說討厭一個人，在那裡鬧彆扭</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">ひとり上手と呼ばないで</div>
+      <div class="lr-ro">hitori jouzu to yobanaide</div>
+      <div class="lr-zh">別叫我「擅長獨處的人」</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">心だけ連れてゆかないで</div>
+      <div class="lr-ro">kokoro dake tsurete yukanaide</div>
+      <div class="lr-zh">不要只帶走我的心</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">私を置いてゆかないで</div>
+      <div class="lr-ro">watashi o oite yukanaide</div>
+      <div class="lr-zh">不要把我留下獨自離去</div>
+    </div>
+  </div>
+
+  <div class="lyric-block">
+    <div class="para-tag">Page 3 — Chorus</div>
+    <div class="lyric-row">
+      <div class="lr-ja">ひとりが好きなわけじゃないのよ</div>
+      <div class="lr-ro">hitori ga suki na wake ja nai no yo</div>
+      <div class="lr-zh">我並不是真的喜歡一個人啊</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">雨のように素直に</div>
+      <div class="lr-ro">ame no you ni sunao ni</div>
+      <div class="lr-zh">像雨一樣坦然地</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">あの人と私は流れて</div>
+      <div class="lr-ro">ano hito to watashi wa nagarete</div>
+      <div class="lr-zh">我和那個人就這樣漂流</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">雨のように愛して</div>
+      <div class="lr-ro">ame no you ni aishite</div>
+      <div class="lr-zh">像雨一樣地去愛吧</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">サヨナラの海へ流れついた</div>
+      <div class="lr-ro">sayonara no umi e nagare tsuita</div>
+      <div class="lr-zh">最終漂向了「再見」的大海</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-ja">手紙なんてよしてね</div>
+      <div class="lr-ro">tegami nante yoshite ne</div>
+      <div class="lr-zh">信就別寫了好嗎</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">なんどもくり返し泣くから</div>
+      <div class="lr-ro">nando mo kurikaeshi naku kara</div>
+      <div class="lr-zh">因為會一次又一次地哭泣</div>
+    </div>
+  </div>
+
+  <div class="lyric-block">
+    <div class="para-tag">Page 4 — 特別的句子</div>
+    <div class="lyric-row">
+      <div class="lr-ja">電話だけで捨ててね</div>
+      <div class="lr-ro">denwa dake de sutete ne</div>
+      <div class="lr-zh">只用電話就拋棄我就好了</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-ja">僕もひとりだよとだましてね</div>
+      <div class="lr-ro">boku mo hitori da yo to damashite ne</div>
+      <div class="lr-zh">告訴我「我也是孤獨的」，來騙騙我吧</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 漢字 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 重要漢字拆解</div>
+  <div class="kanji-grid">
+
+    <div class="kj-card">
+      <div class="kj-char">街角</div>
+      <div class="kj-read">まちかど</div>
+      <div class="kj-zh">街角、路口</div>
+      <div class="kj-in">
+        <span class="kj-eg">あなたの声のする街角</span><br>
+        傳來你聲音的街角<br>
+        街（まち）＝街道<br>
+        角（かど）＝角落・轉角
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">打たれる</div>
+      <div class="kj-read">うたれる</div>
+      <div class="kj-zh">被打、被擊打（被動）</div>
+      <div class="kj-in">
+        <span class="kj-eg">冬の雨に打たれて</span><br>
+        被冬天的雨水打濕<br>
+        打つ（うつ）＝打<br>
+        に打たれる＝被〜打
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">跡</div>
+      <div class="kj-read">あしあと／あと</div>
+      <div class="kj-zh">足跡、痕跡</div>
+      <div class="kj-in">
+        <span class="kj-eg">あなたの跡をさがすのよ</span><br>
+        尋找你留下的足跡<br>
+        足跡（あしあと）＝腳印<br>
+        痕跡（こんせき）とも言う
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">似る</div>
+      <div class="kj-read">にる</div>
+      <div class="kj-zh">相似、像</div>
+      <div class="kj-in">
+        <span class="kj-eg">私と似ていない長い髪</span><br>
+        與我不相似的長髮<br>
+        似ている＝相似的<br>
+        似ていない＝不相似的
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">すねる</div>
+      <div class="kj-read">すねる</div>
+      <div class="kj-zh">鬧彆扭、撒嬌賭氣</div>
+      <div class="kj-in">
+        <span class="kj-eg">ひとりはキライだとすねる</span><br>
+        說討厭一個人，鬧彆扭<br>
+        → 心裡其實很在意<br>
+        但嘴上逞強的感覺
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">流れつく</div>
+      <div class="kj-read">ながれつく</div>
+      <div class="kj-zh">漂流到達</div>
+      <div class="kj-in">
+        <span class="kj-eg">サヨナラの海へ流れついた</span><br>
+        漂到「再見」的大海<br>
+        流れる（流）＋つく（到達）<br>
+        複合動詞
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">繰り返す</div>
+      <div class="kj-read">くりかえす</div>
+      <div class="kj-zh">一再重複、反覆</div>
+      <div class="kj-in">
+        <span class="kj-eg">なんどもくり返し泣くから</span><br>
+        因為會一次又一次哭泣<br>
+        何度も（なんども）＝好幾次<br>
+        くり返し＝反覆地
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">捨てる</div>
+      <div class="kj-read">すてる</div>
+      <div class="kj-zh">拋棄、丟掉</div>
+      <div class="kj-in">
+        <span class="kj-eg">電話だけで捨ててね</span><br>
+        只用電話拋棄我就好<br>
+        捨てる＝丟棄・放棄<br>
+        諦める（あきらめる）とは違う
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">だます</div>
+      <div class="kj-read">だます</div>
+      <div class="kj-zh">欺騙</div>
+      <div class="kj-in">
+        <span class="kj-eg">だましてね</span><br>
+        來騙騙我吧（反諷）<br>
+        だます＝欺騙<br>
+        〜てね＝請〜吧（輕柔請求）
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tip">
+    💡 <strong>「ひとり上手」這個詞的深意：</strong><br>
+    上手（じょうず）＝擅長。ひとり上手＝擅長一個人。<br>
+    但這首歌說「ひとり上手と<strong>呼ばないで</strong>（別這樣叫我）」——<br>
+    表面堅強，內心其實渴望有人陪伴。這種反差是這首歌最打動人的地方。
+  </div>
+</div>
+
+<!-- ══ 日常会話 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 自我介紹會話句型（Page 5）</div>
+
+  <div class="intro-grid">
+    <div class="ig-item">
+      <div class="ig-label">名前 · 姓名</div>
+      <div class="ig-ja">なまえはなんですか？</div>
+      <div class="ig-ro">Namae wa nan desu ka?</div>
+      <div class="ig-en">What's your name?</div>
+      <div class="ig-zh">你叫什麼名字？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">出身 · 籍貫</div>
+      <div class="ig-ja">しゅっしんはどこですか？</div>
+      <div class="ig-ro">Shusshin wa doko desu ka?</div>
+      <div class="ig-en">Where are you from?</div>
+      <div class="ig-zh">你是哪裡人？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">何歲 · 年齡</div>
+      <div class="ig-ja">なんさいですか？</div>
+      <div class="ig-ro">Nansai desu ka?</div>
+      <div class="ig-en">How old are you?</div>
+      <div class="ig-zh">你幾歲？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">仕事 · 職業</div>
+      <div class="ig-ja">おしごとはなんですか？</div>
+      <div class="ig-ro">Oshigoto wa nan desu ka?</div>
+      <div class="ig-en">What do you do?</div>
+      <div class="ig-zh">你的工作是什麼？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">学生 · 學生</div>
+      <div class="ig-ja">がくせいですか？</div>
+      <div class="ig-ro">Gakusei desu ka?</div>
+      <div class="ig-en">Are you a student?</div>
+      <div class="ig-zh">你是學生嗎？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">住所 · 住所</div>
+      <div class="ig-ja">どこにすんでいますか？</div>
+      <div class="ig-ro">Doko ni sunde imasu ka?</div>
+      <div class="ig-en">Where do you live?</div>
+      <div class="ig-zh">你住在哪裡？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">趣味 · 興趣</div>
+      <div class="ig-ja">しゅみはなんですか？</div>
+      <div class="ig-ro">Shumi wa nan desu ka?</div>
+      <div class="ig-en">What are your hobbies?</div>
+      <div class="ig-zh">你的興趣是什麼？</div>
+    </div>
+    <div class="ig-item">
+      <div class="ig-label">お久しぶり · 久違</div>
+      <div class="ig-ja">おひさしぶりです</div>
+      <div class="ig-ro">Ohisashiburi desu</div>
+      <div class="ig-en">Long time no see</div>
+      <div class="ig-zh">好久不見</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 特別フレーズ ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 特別實用句型（Page 6〜10）</div>
+
+  <div class="conv-section">
+    <h4>👗 稱讚穿搭 / ファッション</h4>
+    <div class="conv-list">
+      <div class="conv-item">
+        <div class="ci-ja">ファッションがとても素敵です！</div>
+        <div class="ci-ro">Fasshon ga totemo suteki desu!</div>
+        <div class="ci-zh">你的穿搭非常好看！</div>
+        <div class="ci-note">素敵（すてき）＝很棒・很好看（な形容詞）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">おしゃれすぎです！</div>
+        <div class="ci-ro">Oshare sugi desu!</div>
+        <div class="ci-zh">太時尚了！太洋氣了！</div>
+        <div class="ci-note">おしゃれ＝時尚 ／ すぎ＝太…了（過度）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">その服とてもかわいいです！</div>
+        <div class="ci-ro">Sono fuku totemo kawaii desu!</div>
+        <div class="ci-zh">那件衣服真的很可愛！</div>
+        <div class="ci-note">かわいい＝可愛 ／ その＝那個（對方那邊的）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">どこで買ったのですか？</div>
+        <div class="ci-ro">Doko de katta no desu ka?</div>
+        <div class="ci-zh">在哪裡買的？</div>
+        <div class="ci-note">買った＝買了（過去形）／ のですか＝禮貌疑問</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conv-section">
+    <h4>📺 直播相關 / 配信（はいしん）</h4>
+    <div class="conv-list">
+      <div class="conv-item">
+        <div class="ci-ja">すみません、こちらはれんぽうほうそうですか？</div>
+        <div class="ci-ro">Sumimasen, kochira wa renpou housou desu ka?</div>
+        <div class="ci-zh">請問這是聯播嗎？</div>
+        <div class="ci-note">れんぽうほうそう（連邦放送）＝聯播 ／ こちら＝這邊（禮貌語）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">もしかして、ろくがほうそうですか？</div>
+        <div class="ci-ro">Moshikashite, rokuga housou desu ka?</div>
+        <div class="ci-zh">難道這是錄播嗎？</div>
+        <div class="ci-note">もしかして＝難道・莫非 ／ ろくが（録画）＝錄影</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">さっきとまったく同じシーンがくり返されていますね</div>
+        <div class="ci-ro">Sakki to mattaku onaji shiin ga kurikaesarete imasu ne</div>
+        <div class="ci-zh">剛才完全一樣的場景在重複呢</div>
+        <div class="ci-note">まったく＝完全 ／ 同じ＝相同 ／ くり返される＝被重複（被動形）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">すみません、おとがきこえません</div>
+        <div class="ci-ro">Sumimasen, oto ga kikoemasen</div>
+        <div class="ci-zh">抱歉，聽不到聲音</div>
+        <div class="ci-note">音（おと）＝聲音 ／ きこえない＝聽不到（可能形否定）</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conv-section">
+    <h4>💌 關心他人健康 / 丁寧な表現</h4>
+    <div class="conv-list">
+      <div class="conv-item">
+        <div class="ci-ja">先日の配信で体調が優れないご様子でしたが</div>
+        <div class="ci-ro">Senjitsu no haishin de taichou ga sugurenai go-yousu deshita ga</div>
+        <div class="ci-zh">日前直播時看您身體好像不太舒服</div>
+        <div class="ci-note">先日（せんじつ）＝前些日子 ／ ご様子（ごようす）＝您的樣子（敬語）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">その後、お加減はいかがでしょうか？</div>
+        <div class="ci-ro">Sonogo, okagen wa ikaga deshou ka?</div>
+        <div class="ci-zh">之後不知情況如何？</div>
+        <div class="ci-note">お加減（おかげん）＝身體狀況（敬語）／ いかがでしょうか＝如何呢（禮貌）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">どうかご無理をなさらず</div>
+        <div class="ci-ro">Douka go-muri o nasarazu</div>
+        <div class="ci-zh">請您千萬別勉強</div>
+        <div class="ci-note">ご無理（ごむり）＝勉強 ／ なさらず＝不要做（敬語的なさる否定）</div>
+      </div>
+      <div class="conv-item">
+        <div class="ci-ja">お大事になさってください</div>
+        <div class="ci-ro">Odaiji ni nasatte kudasai</div>
+        <div class="ci-zh">請您多多保重</div>
+        <div class="ci-note">日語最重要的關懷句！比「元気でね」更正式有禮</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最後の特別句 -->
+  <div class="special-box">
+    <h4>⭐ Page 10 — 最高難度句子解析（搭訕用語）</h4>
+    <div class="sp-item">
+      <div class="sp-ja">失礼いたします。あなたのそのシャンとした直角肩がとても印象的で、思わずご挨拶させていただきました。お元気でお過ごしでしょうか？</div>
+      <div class="sp-zh">打擾了。您那挺拔的直角肩令人印象深刻，忍不住想向您問候。您一切都好嗎？</div>
+      <div class="sp-note">
+        失礼いたします＝打擾了（最禮貌）<br>
+        シャンとした＝挺拔的・精神奕奕的<br>
+        直角肩（ちょっかくかた）＝直角肩（垂直肩型）<br>
+        思わず（おもわず）＝忍不住・不由得<br>
+        ご挨拶させていただきました＝容我向您問候（謙讓語）<br>
+        → 這是<strong>文語級別的超禮貌初次搭訕句</strong>！
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  ひとり上手 · 中島みゆき 1981 · ＋日常会話集 · おにひめ學習筆記（最初期記錄）
+</div>
+</div>
+</body>
+</html>
