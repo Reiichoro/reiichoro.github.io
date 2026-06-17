@@ -49,7 +49,7 @@
           "url": "https://reiichoro.github.io/assets/images/logo.png"
         }
       },
-      "datePublished": "2026-01-07",
+      "datePublished": "2026-06-17",
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://reiichoro.github.io/Jablog1.html"
@@ -79,33 +79,33 @@
 
 <body>
 <style>
-/* --- 1. 顏色變量定義 --- */
+/* --- 1. カラー変数の定義 --- */
 :root {
-    --logo-reii: #007bff;      /* REII 藍色 */
-    --logo-text: #333333;      /* CH, R 與圖標黑 */
-    --font-color: #333333;     /* 導航與內文黑 */
-    --nav-bg: #ffffff;         /* 導航背景白 */
-    --copyright-color: #8996a0;/* 版權灰色 */
-    --bg-color: #ffffff;       /* 頁面背景白 */
+    --logo-reii: #007bff;      /* REII ブルー */
+    --logo-text: #333333;      /* CH, R およびアイコンのブラック */
+    --font-color: #333333;     /* ナビゲーションおよび本文のブラック */
+    --nav-bg: #ffffff;         /* ナビゲーション背景のホワイト */
+    --copyright-color: #8996a0;/* コピーライトのグレー */
+    --bg-color: #ffffff;       /* ページ背景のホワイト */
 }
 
 [data-theme='dark'] {
-    --logo-reii: #4dabff;      /* 深色模式亮藍 */
-    --logo-text: #ffffff;      /* 深色模式變白 */
-    --font-color: #eeeeee;     /* 深色模式文字白 */
-    --nav-bg: #151515;         /* 深色模式背景黑 */
-    --copyright-color: #c2c2c2;/* 深色模式版權亮灰 */
-    --bg-color: #151515;       /* 深色模式背景黑 */
+    --logo-reii: #4dabff;      /* ダークモードのライトブルー */
+    --logo-text: #ffffff;      /* ダークモードのホワイト */
+    --font-color: #eeeeee;     /* ダークモードの文字ホワイト */
+    --nav-bg: #151515;         /* ダークモードの背景ブラック */
+    --copyright-color: #c2c2c2;/* ダークモードのコピーライトライトグレー */
+    --bg-color: #151515;       /* ダークモードの背景ブラック */
 }
 
-/* --- 2. 導航欄 (Header) 強制樣式 --- */
+/* --- 2. ナビゲーションバー (Header) 強制スタイル --- */
 #site-header {
     background-color: var(--nav-bg) !important;
     padding: 10px 0 !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Logo 顏色精準控制 */
+/* Logoカラーの精密コントロール */
 .navbar-brand .logo-reii { color: var(--logo-reii) !important; font-weight: bold; }
 .navbar-brand .logo-text, 
 .navbar-brand i.fa-opera { 
@@ -113,31 +113,31 @@
     transition: color 0.3s ease; 
 }
 
-/* 導航連結顏色 */
+/* ナビゲーションリンクのカラー */
 #site-header .navbar-nav .nav-link {
     color: var(--font-color) !important;
 }
 
-/* --- 3. 行動端選單按鈕 (漢堡鈕) --- */
+/* --- 3. モバイル用メニューボタン (ハンバーガーボタン) --- */
 .navbar-toggler {
-    background-color: #007bff !important; /* 始終藍底 */
+    background-color: #007bff !important; /* 常にブルー背景 */
     border: none; padding: 8px; border-radius: 5px;
 }
 .navbar-toggler .icon-expand, 
 .navbar-toggler .icon-close {
-    color: #ffffff !important; /* 始終白槓 */
+    color: #ffffff !important; /* 常にホワイトライン */
 }
 
-/* --- 4. 文章內容區塊 --- */
+/* --- 4. 記事コンテンツエリア --- */
 #article-content {
-    padding-top: 140px !important; /* 避免被 Header 遮擋 */
+    padding-top: 140px !important; /* Headerによる遮りを防止 */
     padding-bottom: 60px;
     background-color: var(--bg-color);
     color: var(--font-color);
     min-height: 80vh;
 }
 
-/* --- 5. 頁尾 (Footer) --- */
+/* --- 5. フッター (Footer) --- */
 #copyright {
     color: var(--copyright-color) !important;
     font-size: 15px;
@@ -146,13 +146,14 @@
 }
 
 .wthree-footerhny .footer-links ul li a {
-    color: #8996a0; /* 保持頁尾鏈接低調 */
+    color: #8996a0; /* フッターリンクを控えめな色に維持 */
 }
 
 .wthree-footerhny .footer-links ul li a:hover {
     color: var(--logo-reii);
 }
-/* 增加圖片懸停效果，讓 PPT 感更強 */
+
+/* 画像ホバーエフェクトの追加、PPT感をより強調 */
 .ppt-slide img {
     transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
@@ -161,11 +162,12 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
 }
 </style>
+<!--/Header-->
 <header id="site-header" class="fixed-top">
 	<div class="container">
 		<nav class="navbar navbar-expand-lg navbar-light stroke py-lg-0">
 			<h1><a class="navbar-brand" href="">
-					<span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
+                     <span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
 				</a></h1>
 			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
@@ -193,16 +195,20 @@
         <a class="nav-link scroll" id="nav-contact" href="/index.html#contact">Contact</a>
     </li>
 </ul>
+				<!--/search-right-->
 				<ul class="header-search me-lg-4">
 					<div class="theme-switch-wrapper">
 						
 				</ul>
-				</div>
+				<!--//search-right-->
+			</div>
+			<!-- toggle switch for light and dark theme -->
+			
 			<div class="mobile-position diaflex">
 				
 			 <div class="language-selector">
     <span id="lang-toggle" style="cursor:pointer; font-weight:bold; color:#f5af23;" onclick="handleLangClick()">
-        EN
+        JA
     </span>
 </div>
 				<nav class="navigation">
@@ -217,7 +223,8 @@
 				</nav>
 				</div>
 			</div>
-			</nav>
+			<!-- //toggle switch for light and dark theme -->
+		</nav>
 	</div>
 </header>
 <section id="article-content" class="py-5" style="background-color: #345da7;">
