@@ -61,7 +61,7 @@
     background: var(--bg-color);
     color: var(--font-color);
     
-    /* システムフォント構成：各プラットフォームの最適なフォントを優先的に呼び出し */
+    /* 系統字體方案：按順序優先調用各平台最美字體 */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
@@ -85,14 +85,13 @@
     --bg-color: #ffffff;       /* 頁面背景白 */
 }
 
-/* 深色模式變量設定 */
 [data-theme='dark'] {
-    --logo-reii: #4dabff;      
-    --logo-text: #ffffff;      
-    --font-color: #eeeeee;     
-    --nav-bg: #151515;         
-    --copyright-color: #c2c2c2;
-    --bg-color: #151515;       
+    --logo-reii: #4dabff;      /* 深色模式亮藍 */
+    --logo-text: #ffffff;      /* 深色模式變白 */
+    --font-color: #eeeeee;     /* 深色模式文字白 */
+    --nav-bg: #151515;         /* 深色模式背景黑 */
+    --copyright-color: #c2c2c2;/* 深色模式版權亮灰 */
+    --bg-color: #151515;       /* 深色模式背景黑 */
 }
 
 /* --- 2. 導航欄 (Header) 強制樣式 --- */
@@ -117,17 +116,17 @@
 
 /* --- 3. 行動端選單按鈕 (漢堡鈕) --- */
 .navbar-toggler {
-    background-color: #007bff !important; 
+    background-color: #007bff !important; /* 始終藍底 */
     border: none; padding: 8px; border-radius: 5px;
 }
 .navbar-toggler .icon-expand, 
 .navbar-toggler .icon-close {
-    color: #ffffff !important; 
+    color: #ffffff !important; /* 始終白槓 */
 }
 
 /* --- 4. 文章內容區塊 --- */
 #article-content {
-    padding-top: 140px !important; 
+    padding-top: 140px !important; /* 避免被 Header 遮擋 */
     padding-bottom: 60px;
     background-color: var(--bg-color);
     color: var(--font-color);
@@ -143,13 +142,13 @@
 }
 
 .wthree-footerhny .footer-links ul li a {
-    color: #8996a0; 
+    color: #8996a0; /* 保持頁尾鏈接低調 */
 }
 
 .wthree-footerhny .footer-links ul li a:hover {
     color: var(--logo-reii);
 }
-
+/* 增加圖片懸停效果，讓 PPT 感更強 */
 .ppt-slide img {
     transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
@@ -158,12 +157,11 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
 }
 </style>
-<!--/Header-->
 <header id="site-header" class="fixed-top">
 	<div class="container">
 		<nav class="navbar navbar-expand-lg navbar-light stroke py-lg-0">
 			<h1><a class="navbar-brand" href="">
-                     <span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
+					<span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
 				</a></h1>
 			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
@@ -193,10 +191,11 @@
 </ul>
 				<ul class="header-search me-lg-4">
 					<div class="theme-switch-wrapper">
+						
 				</ul>
-			</div>
-			
+				</div>
 			<div class="mobile-position diaflex">
+				
 			 <div class="language-selector">
     <span id="lang-toggle" style="cursor:pointer; font-weight:bold; color:#f5af23;" onclick="handleLangClick()">
         JA
@@ -210,10 +209,11 @@
 								<i class="gg-moon"></i>
 							</div>
 						</label>
+					
 				</nav>
 				</div>
 			</div>
-		</nav>
+			</nav>
 	</div>
 </header>
 <section id="article-content" class="py-5" style="background-color: #345da7;">
@@ -291,6 +291,7 @@
 		<span class="fa fa-angle-up"></span>
 	</button>
 	<script>
+		// When the user scrolls down 20px from the top of the document, show the button
 		window.onscroll = function() {
 			scrollFunction()
 		};
@@ -303,19 +304,17 @@
 			}
 		}
 
+		// When the user clicks on the button, scroll to the top of the document
 		function topFunction() {
 			document.body.scrollTop = 0;
 			document.documentElement.scrollTop = 0;
 		}
+
+
 	</script>
-</footer>
-
-
-<!-- Template JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="assets/js/theme-change.js"></script>
 <script src="assets/js/Jalanguage.js"></script>
-<!-- MENU-JS -->
 <script>
 	$(window).on("scroll", function() {
 		var scroll = $(window).scrollTop();
@@ -326,6 +325,7 @@
 			$("#site-header").removeClass("nav-fixed");
 		}
 	});
+	//Main navigation Active Class Add Remove
 	$(".navbar-toggler").on("click", function() {
 		$("header").toggleClass("active");
 	});
@@ -348,6 +348,6 @@
 		})
 	});
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
