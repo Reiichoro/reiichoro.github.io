@@ -1,0 +1,409 @@
+<html lang="ja">
+
+<head>
+ <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title id="meta-title">プロジェクト「絶対決意」：ゼロダウンタイム移行の技術的革新 | REII CHORO エンジニアリングログ</title>
+
+<meta name="title" content="プロジェクト「絶対決意」：システムモジュール化とデプロイメントの最適化 | REII CHORO">
+<meta name="description" id="meta-desc" content="2026年第1四半期に完遂した「プロジェクト：絶対決意」。レガシーバックエンドをモノリシックな構造からデカップルされたモジュール型へ移行。AIオーケストレーションと決定論的な実行フローがいかにしてゼロダウンタイムを実現したかを技術的に詳解する。">
+<meta name="keywords" id="meta-key" content="プロジェクト絶対決意, REII CHORO, システムアーキテクチャ, ゼロダウンタイムデプロイ, マイクロサービス, デジタルインフラ刷新, 技術的負債の解消, AIオーケストレーション, スケーラブルエンジニアリング">
+
+<link rel="alternate" hreflang="ja" href="https://reiichoro.github.io/Ja-In-About.html?lang=ja" />
+<link rel="alternate" hreflang="zh" href="https://reiichoro.github.io/Ja-In-About.html?lang=zh" />
+<link rel="alternate" hreflang="en" href="https://reiichoro.github.io/Ja-In-About.html?lang=en" />
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://reiichoro.github.io/Ja-In-About.html">
+<meta property="og:title" content="次世代デジタルインフラ：レガシー刷新における決定論的アプローチ">
+<meta property="og:description" content="英雄的な徹夜コーディングの時代は終わった。データ駆動型の精密な工業生産によるシステム構築をREII CHOROが提唱。">
+<meta property="og:image" content="https://reiichoro.github.io/assets/images/JA-Index4.webp">
+
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="プロジェクト「絶対決意」：システムアーキテクチャの未来">
+<meta property="twitter:description" content="モノリシックな泥沼からの脱却。REII CHOROが証明する、安定性とスケーラビリティを両立するエンジニアリングの極致。">
+<meta property="twitter:image" content="https://reiichoro.github.io/assets/images/JA-Index4.webp">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "システムアーキテクチャがいかに効率を再定義したか：プロジェクト「絶対決意」の技術的解剖",
+  "description": "レガシーから現代的なRequest-Service-Repositoryフローへの移行事例。AI統合と自動化によるシステムの自己安定化メカニズムを解説。",
+  "image": "https://reiichoro.github.io/assets/images/JA-Index4.webp",
+  "author": {
+    "@type": "Organization",
+    "name": "REII CHORO",
+    "url": "https://reiichoro.github.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "REII CHORO"
+  },
+  "datePublished": "2026-06-19",
+  "keywords": "Infrastructure Overhaul, Modular Design, Zero Downtime, System Stability, Digital Transformation, REII CHORO",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://reiichoro.github.io/Ja-In-About.html"
+  }
+}
+</script>
+</head>
+<style>
+	body, html {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    color: var(--font-color);
+    
+    /* 系統字體方案：按順序優先調用各平台最美字體 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"  crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+
+</head>
+
+<body>
+<style>
+/* --- 1. 顏色變量定義 --- */
+:root {
+    --logo-reii: #007bff;      /* REII 藍色 */
+    --logo-text: #333333;      /* CH, R 與圖標黑 */
+    --font-color: #333333;     /* 導航與內文黑 */
+    --nav-bg: #ffffff;         /* 導航背景白 */
+    --copyright-color: #8996a0;/* 版權灰色 */
+    --bg-color: #ffffff;       /* 頁面背景白 */
+}
+
+[data-theme='dark'] {
+    --logo-reii: #4dabff;      /* 深色模式亮藍 */
+    --logo-text: #ffffff;      /* 深色模式變白 */
+    --font-color: #eeeeee;     /* 深色模式文字白 */
+    --nav-bg: #151515;         /* 深色模式背景黑 */
+    --copyright-color: #c2c2c2;/* 深色模式版權亮灰 */
+    --bg-color: #151515;       /* 深色模式背景黑 */
+}
+
+/* --- 2. 導航欄 (Header) 強制樣式 --- */
+#site-header {
+    background-color: var(--nav-bg) !important;
+    padding: 10px 0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo 顏色精準控制 */
+.navbar-brand .logo-reii { color: var(--logo-reii) !important; font-weight: bold; }
+.navbar-brand .logo-text, 
+.navbar-brand i.fa-opera { 
+    color: var(--logo-text) !important; 
+    transition: color 0.3s ease; 
+}
+
+/* 導航連結顏色 */
+#site-header .navbar-nav .nav-link {
+    color: var(--font-color) !important;
+}
+
+/* --- 3. 行動端選單按鈕 (漢堡鈕) --- */
+.navbar-toggler {
+    background-color: #007bff !important; /* 始終藍底 */
+    border: none; padding: 8px; border-radius: 5px;
+}
+.navbar-toggler .icon-expand, 
+.navbar-toggler .icon-close {
+    color: #ffffff !important; /* 始終白槓 */
+}
+
+/* --- 4. 文章內容區塊 --- */
+#article-content {
+    padding-top: 140px !important; /* 避免被 Header 遮擋 */
+    padding-bottom: 60px;
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    min-height: 80vh;
+}
+
+/* --- 5. 頁尾 (Footer) --- */
+#copyright {
+    color: var(--copyright-color) !important;
+    font-size: 15px;
+    line-height: 26px;
+    transition: color 0.3s ease;
+}
+
+.wthree-footerhny .footer-links ul li a {
+    color: #8996a0; /* 保持頁尾鏈接低調 */
+}
+
+.wthree-footerhny .footer-links ul li a:hover {
+    color: var(--logo-reii);
+}
+/* 增加圖片懸停效果，讓 PPT 感更強 */
+.ppt-slide img {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.ppt-slide img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+</style>
+<!--/Header-->
+<header id="site-header" class="fixed-top">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light stroke py-lg-0">
+			<h1><a class="navbar-brand" href="">
+					<!-- <span class="w3yellow">REII </span>CH<i class="fab fa-opera"></i>R<i class="fab fa-opera"></i> -->
+                     <span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
+				</a></h1>
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+				<span class="navbar-toggler-icon fa icon-close fa-times"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				<ul class="navbar-nav ms-lg-auto my-2 my-lg-0 navbar-nav-scroll">
+    <li class="nav-item">
+        <a class="nav-link active" id="nav-home" href="/index.html">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-about" href="/Jabout.html">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-services" href="/Jasystem.html">Solutions</a> </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/index.html#Pages" id="nav-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources <span class="fa fa-angle-down ms-1"></span> </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item pt-2 scroll" id="nav-stats" href="/index.html#counts">Insights</a></li> <li><a class="dropdown-item scroll" id="nav-team" href="/index.html#team">Engineers</a></li> <li><a class="dropdown-item scroll" id="nav-portfolio" href="/index.html#portfolio">Cases</a></li> <li><a class="dropdown-item scroll" id="nav-pricing" href="/index.html#pricing">Plans</a></li> <li><a class="dropdown-item scroll" id="nav-blog" href="/index.html#blog">Tech Blog</a></li>
+            <li><a class="dropdown-item scroll" id="nav-test" href="/index.html#testimonials">Clients</a></li>
+        </ul>
+    </li>
+    <li class="nav-item me-lg-4">
+        <a class="nav-link scroll" id="nav-contact" href="/index.html#contact">Contact</a>
+    </li>
+</ul>
+				<!--/search-right-->
+				<ul class="header-search me-lg-4">
+					<div class="theme-switch-wrapper">
+						
+				</ul>
+				<!--//search-right-->
+			</div>
+			<!-- toggle switch for light and dark theme -->
+			
+			<div class="mobile-position diaflex">
+				
+			 <div class="language-selector">
+    <span id="lang-toggle" style="cursor:pointer; font-weight:bold; color:#f5af23;" onclick="handleLangClick()">
+        EN
+    </span>
+</div>
+				<nav class="navigation">
+								<label class="theme-switch" for="checkbox">
+							<input type="checkbox" id="checkbox">
+							<div class="mode-container">
+								<i class="gg-sun"></i>
+								<i class="gg-moon"></i>
+							</div>
+						</label>
+					
+				</nav>
+				</div>
+			</div>
+			<!-- //toggle switch for light and dark theme -->
+		</nav>
+	</div>
+</header>
+<section id="article-content" class="py-5" style="background-color: #050505;">
+    <div class="container py-lg-3">
+        <div class="header-section text-center mb-5">
+            <h3 id="article-title" class="title-w3l" style="color: #ffd700 !important; font-weight: 700; letter-spacing: 2px;">
+                確実性のための設計：なぜモジュール型アーキテクチャがエンジニアリングを再定義するのか
+            </h3>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="article-body">
+                    
+                    <div class="ppt-slide mb-3">
+                        <img src="assets/images/JA-Index4.webp" alt="確実性のための設計：なぜモジュール型アーキテクチャがエンジニアリングを再定義するのか" class="img-fluid w-100 shadow-lg" style="border-radius: 15px; border: 1px solid rgba(255,215,0,0.3);">
+                        <p id="article-p1" class="mt-4 text-center mb-2" style="color: #ffd700; font-size: 1.2rem; font-weight: 700;">
+               2026年第1四半期、我々のチームはモジュール性とシステム安定性に焦点を当てた包括的なインフラ刷新を完遂した。レガシーなモノリシック構成から切り離されたアーキテクチャへ移行することで、ゼロダウンタイムかつデータ整合性100％のデプロイメントを実現し、拡張性の高いエンジニアリング運用における新たな基準を確立した。
+                        </p>
+                        </div>
+                        <div class="ppt-slide mb-3">
+                        <p id="article-p2" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+   <b>オーケストレーションの力：AI駆動による精密さ</b><br>我々のエンジニアリングは、システムパフォーマンスを管理するために高度なAIデータオーケストレーションを活用している。予測トラフィック分析を通じて、ミリ秒単位でデプロイメントウィンドウを最適化し、効率を最大化する。更新の適用前に、自動ヘルスチェックノードとロードバランサーが潜在的なボトルネックを排除し、すべてのサービスが完璧に同期され、自己安定化する環境を保証する。
+                        </p>
+                        </div>
+                        <div class="ppt-slide mb-3">
+                        <p id="article-p3" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+     <b>アーキテクチャの整合性：アンチパターンの克服</b><br>伝統的なモノリシック開発を、システム的な不安定さを招く「アンチパターン」と定義している。我々の哲学は「コンポーネントを一つも置き去りにしない」という指針に根ざしており、すべてのマイクロサービスに対して堅牢なフェイルオーバー戦略を組み込んでいる。技術的負債を根本から解決し、不安定な機能の乱立よりも長期的な保守性とアーキテクチャの完全性を優先する。
+                        </p>
+                        </div>
+                        <div class="ppt-slide mb-3">
+                        <p id="article-p4" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+     <b>システム進化：「スパゲッティコード」から「アルゴリズムによる確実性」へ</b><br>過去の「スパゲッティコードの泥沼」を脱し、現代的なアーキテクチャではクリーンな「リクエスト→サービス→リポジトリ」フローを採用している。手動による混沌としたプロセスをモジュール化された自動実行に置き換え、各層を分離することで技術的負債を最小化し、複雑な移行作業を決定論的で予測可能なデジタル体験へと昇華させた。
+                        </p>
+                        </div>
+                        <div class="ppt-slide mb-5">
+                        <p id="article-p5" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+     <b>結論：拡張可能なインフラの未来</b><br>現代のエンジニアリングは希望や手動のホットフィックスではなく、工業用レベルの精密なデータに基づいている。デジタル環境を洗練させ続ける我々は、開発が英雄的なコーディングではなく、アーキテクチャの抽象化、厳格な監視、そしてアルゴリズムによる確実性によって定義される時代へと歩を進めている。
+                          </p>
+                          </div>
+                    </div>
+
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!--/footer-->
+<footer id="footer" class="wthree-footerhny">
+
+	<div class="container d-md-flex py-4">
+
+		<div class="me-md-auto text-center text-md-start">
+			<div class="copyright text-center">
+    <p class="copy-footer-29">
+        <span id="copyright">Copyright &copy; 2026 REII CHORO. All rights reserved.</span>
+        <span class="ms-2"> | </span>
+        <a href="sitemap.xml" style="color: var(--copyright-color); font-size: 13px; text-decoration: none; margin-left: 5px;">Sitemap</a>
+    </p>
+</div>
+
+		</div>
+		<div class="social-links text-center text-md-end pt-3 pt-md-0">
+			<a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+			<a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+			<a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+			<a href="#" class="google-plus"><i class="fab fa-google-plus-g"></i></a>
+			<a href="#" class="linkedin"><i class="fab fa-linkedin-in"></i></a>
+		</div>
+	</div>
+	<button onclick="topFunction()" id="movetop" title="Go to top" style="display: block;">
+		<span class="fa fa-angle-up"></span>
+	</button>
+	<script>
+		// When the user scrolls down 20px from the top of the document, show the button
+		window.onscroll = function() {
+			scrollFunction()
+		};
+
+		function scrollFunction() {
+			if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+				document.getElementById("movetop").style.display = "block";
+			} else {
+				document.getElementById("movetop").style.display = "none";
+			}
+		}
+
+		// When the user clicks on the button, scroll to the top of the document
+		function topFunction() {
+			document.body.scrollTop = 0;
+			document.documentElement.scrollTop = 0;
+		}
+
+
+	</script>
+	<!-- //move top -->
+</footer><!-- End Footer -->
+
+
+<!-- Template JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="assets/js/theme-change.js"></script>
+<script src="assets/js/Jalanguage.js"></script>
+<!-- MENU-JS -->
+<script>
+	$(window).on("scroll", function() {
+		var scroll = $(window).scrollTop();
+
+		if (scroll >= 80) {
+			$("#site-header").addClass("nav-fixed");
+		} else {
+			$("#site-header").removeClass("nav-fixed");
+		}
+	});
+	//Main navigation Active Class Add Remove
+	$(".navbar-toggler").on("click", function() {
+		$("header").toggleClass("active");
+	});
+	$(document).on("ready", function() {
+		if ($(window).width() > 991) {
+			$("header").removeClass("active");
+		}
+		$(window).on("resize", function() {
+			if ($(window).width() > 991) {
+				$("header").removeClass("active");
+			}
+		});
+	});
+
+</script>
+<script>
+const localArticleData = {
+
+    'en': {
+        'meta-title': 'Operation Absolute Resolve Analysis: Examining the Generational Gap in Special Operations through the Maduro Capture Case | REII CHORO Kryptonians Project Log',
+        'article-title': 'Operation Absolute Resolve: Why the Capture of Maduro Rewrote Special Ops History',
+        'article-p1': 'On Jan 3, 2026, "Operation Absolute Resolve" in Caracas achieved what experts call a "surgical success" in special operations history. The mission concluded in under two hours with zero US casualties. This stands in stark contrast to the 1993 Battle of Mogadishu (Black Hawk Down), widely regarded as a strategic and political failure that scarred US foreign policy for a generation.',
+        'article-p2': '<b>Technological Dominance: Why Maduro Couldn’t Escape</b><br>Unlike 1993, the 2026 operation relied heavily on AI data integration. US forces leveraged NSA signal intelligence to master the exact timing of Maduro’s bunker entry. Before the raid began, stealth drones and total electronic suppression paralyzed Venezuelan defenses. By the time security teams reached for their weapons, Delta Force had already secured the target.',
+        'article-p3': '<b>Echoes of History: Why Failure Became an Artistic Classic</b><br>The success of "Black Hawk Down" lies not in celebrating victory, but in its honest portrayal of the "Leave No Man Behind" spirit. It transformed military failure into a brutal, realistic aesthetic. The film’s desaturated tones and intense realism allowed audiences to feel the raw terror of urban warfare, elevating it from an action movie to a war epic.',
+        'article-p4': '<b>Tactical Evolution: From Urban Quagmires to Algorithmic Victory</b><br>In 1993 Mogadishu, US troops were trapped in a quagmire of RPGs and mass mobilization. In 2026, the mission proved that traditional civilian insurgencies are no match for absolute stealth and air dominance. By shattering the command-and-control network via synchronized strikes, the US eliminated the "human element" of chaos.',
+        'article-p5': '<b>Conclusion: The End of War Aesthetics</b><br>"Black Hawk Down" is a masterpiece about the tragedy of war; "Operation Absolute Resolve" is a precise industrial execution. With Maduro now in New York facing trial, we are entering a new era where war is no longer about heroic narratives, but about cold, unyielding data and algorithmic certainty.'
+    },
+'ja': {
+        'meta-title': '「絶対決意作戦」解析：マドゥロ拘束から見る特殊作戦の世代間ギャップ | REII CHORO クリプトン計画記録',
+        'article-title': '絶対決意作戦：2026年電撃戦が証明した軍事的代差――なぜ「マドゥロ拘束」は特殊作戦史を書き換えたのか',
+        'article-p1': '2026年1月3日、米軍がカラカスで展開した「絶対決意作戦（Operation Absolute Resolve）」は、米特殊作戦史上における「外科手術的」な完全成功例と目されている。この作戦はわずか2時間で戦闘を終了させ、米軍側の負傷者ゼロという奇跡を実現した。1993年のモガディシュの戦闘（映画『ブラックホーク・ダウン』の題材）が、戦略的・政治的な惨敗として米軍に干渉への恐怖を植え付けたこととは対照的である。',
+        'article-p2': '<b>技術的制圧：なぜマドゥロは逃げられなかったのか？</b><br>1993年とは異なり、2026年の作戦は高度なAIデータ統合に依存していた。米軍はNSAの信号情報と長期間の浸透工作を通じて、マドゥロが安全な密室へ移動する秒単位の隙を掌握していた。作戦開始前には数機のステルス無人機がカラカス上空を旋回し、電子妨害によりベネズエラの防衛システムを完全に無力化。護衛隊が銃の安全装置を外す暇もなく、デルタフォースは正確な降下を完了していた。',
+        'article-p3': '<b>歴史の残響：「ブラックホーク」の悲劇が芸術となった理由</b><br>『ブラックホーク・ダウン』は、ソマリアでの米軍の悲惨な経験を描いている。本作が名作となったのは勝利を称えたからではなく、「失敗」の意味を誠実に昇華したからである。映画の核心である「Leave No Man Behind（仲間を見捨てない）」というテーマは、政治的に正しい英雄主義ではなく、絶望の中にある人間性の輝きを描き出している。抑えられた色彩と極限のリアリズムにより、観客は初めて現代市街戦の恐怖の本質に触れることができた。',
+        'article-p4': '<b>戦術的転換：「泥沼の市街戦」から「アルゴリズムによる勝利」へ</b><br>1993年のモガディシュでは、米軍はRPGと群衆戦術が織りなす泥沼の市街戦に陥った。しかし2026年の作戦は、絶対的な制空権とステルス技術の前では、伝統的な「群衆動員」による反撃の余地がないことを証明した。米軍は大規模なグリッド化された空爆で敵の指揮系統を破壊し、敵軍を「頭のない蛇」のような混乱に陥れた。これは技術による偶然性の完全なる抹殺である。',
+        'article-p5': '<b>結論：戦争美学の終焉</b><br>『ブラックホーク・ダウン』が戦争という人間性を探求する芸術的傑作だとすれば、「絶対決意作戦」は冷酷で効率的、そして何の疑念の余地もない、精密な工業生産のようなものだ。マドゥロがニューヨークへ移送されたことは、特殊部隊の運用モデルにおける重大な転換点を示している。今後10年、戦争は英雄たちの熱血物語ではなく、アルゴリズムと実行力が支配する冷徹なデータの世界へと変貌するだろう。'
+    }
+};
+
+
+// マージロジックの実行
+function initArticleI18n() {
+    if (typeof i18nData !== 'undefined') {
+        // ローカルデータをシステムコアデータにディープマージ
+        Object.assign(i18nData.ja, localArticleData.ja);
+        Object.assign(i18nData.en, localArticleData.en);
+
+        // 現在の言語を取得し、レンダリングを一度手動でトリガーしてコンテンツページのID入力を確定
+        const currentLang = localStorage.getItem('selectedLang') || 'ja';
+        if (typeof setLanguage === 'function') {
+            setLanguage(currentLang);
+        }
+    }
+}
+// すべてのリソースロード後に実行
+window.addEventListener('load', initArticleI18n);
+</script>
+<!-- //MENU-JS -->
+<!-- ナビゲーションアクティブ時のスクロール無効化 -->
+<script>
+        $(function() {
+                $('.navbar-toggler').click(function() {
+                        $('body').toggleClass('noscroll');
+                })
+        });
+</script>
+<!-- //ナビゲーションアクティブ時のスクロール無効化 -->
+<!-- //bootstrap -->
+ <!-- <script src="assets/js/bootstrap.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>
