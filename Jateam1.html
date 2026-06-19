@@ -115,6 +115,7 @@
 }
 
 /* --- 4. 文章內容區塊 --- */
+/*
 #article-content {
     padding-top: 140px !important; /* 避免被 Header 遮擋 */
     padding-bottom: 60px;
@@ -122,7 +123,22 @@
     color: var(--font-color);
     min-height: 80vh;
 }
+*/
+/* --- 4. 文章內容區塊 --- */
+#article-content {
+    /* padding-top を大幅に削減し、コンテンツを上に引き寄せる */
+    padding-top: 40px !important; 
+    padding-bottom: 60px;
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    min-height: 80vh;
+}
 
+/* Bannerとの境界を最適化するためのスペーサー */
+.banner-wrapper {
+    /* Bannerの下部にマージンを追加し、article-contentとの適切な距離を確保 */
+    margin-bottom: 30px !important; 
+}
 /* --- 5. 頁尾 (Footer) --- */
 #copyright {
     color: var(--copyright-color) !important;
