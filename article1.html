@@ -353,7 +353,7 @@
 </script>
 <script>
 const localArticleData = {
-    'zh': {
+    /*'zh': {
         'meta-title': '絕對決心行動解析：從馬杜羅抓捕案看特種作戰代差 | REII CHORO 氪星 (Kryptonians) 專案實錄',
         'article-title': '絕對決心行動：從 2026 閃電戰看軍事代差——為何「馬杜羅被捕」重寫了特種作戰史',
         'article-p1': '2026年1月3日，美軍在加拉加斯發動的「絕對決心行動」（Operation Absolute Resolve），目前被視為美軍特種作戰史上的一次「外科手術式」完美成功。這場行動不僅在2小時內結束戰鬥，更實現了美軍零傷亡的奇蹟。與之形成鮮明對比的是1993年摩加迪休之戰（即《黑鷹計畫》原型），後者在戰略與政治上被公認為慘敗，導致了美軍整整一代人的干預恐懼。',
@@ -361,7 +361,7 @@ const localArticleData = {
         'article-p3': '<b>歷史迴響：失敗的「黑鷹」為何成為藝術經典？</b><br>《黑鷹計畫》描述的是美軍在索馬利亞的慘痛經歷。它之所以成為經典，並非歌頌勝利，而在於它誠實地轉化了「失敗」的意義。電影的核心主題 "Leave No Man Behind"（不拋棄隊友）展現了絕境中的人性光輝，而非政治正確的英雄主義。那種壓抑的色調與極致的寫實感，讓觀眾第一次觸摸到了現代巷戰的恐懼本質。',
         'article-p4': '<b>戰術轉型：從「泥潭巷戰」到「算法制勝」</b><br>1993年的摩加迪休，美軍在破碎的城市街道中陷入了由RPG和群眾戰術編織的泥潭；而2026年的行動證明，在絕對的制空權與隱身技術面前，傳統的「群眾動員」已失去反擊空間。美軍通過大規模網格化空襲摧毀了對方的指揮鏈，讓敵軍陷入「群龍無首」的混亂，這是技術對偶然性的徹底抹除。',
         'article-p5': '<b>總結：戰爭美學的終結</b><br>《黑鷹計畫》是一部探討戰爭人性的藝術傑作，其美感來自於混亂與悲劇；而「絕對決心行動」則更像是一場精準的工業生產，冷酷、高效、毫無懸念。馬杜羅目前已被押往紐約，這標誌著特種部隊運作模式的重大轉折——未來十年，戰爭將不再是關於英雄的熱血故事，而是關於算法與執行力的冰冷數據。'
-    },
+    },*/
     'en': {
         'meta-title': 'Operation Absolute Resolve Analysis: Examining the Generational Gap in Special Operations through the Maduro Capture Case | REII CHORO Kryptonians Project Log',
         'article-title': 'Operation Absolute Resolve: Why the Capture of Maduro Rewrote Special Ops History',
@@ -383,31 +383,33 @@ const localArticleData = {
 };
 
 
-// 実行合併ロジック（日本語を追加）
+// マージロジックの実行
 function initArticleI18n() {
     if (typeof i18nData !== 'undefined') {
-        Object.assign(i18nData.zh, localArticleData.zh);
+        // ローカルデータをシステムコアデータにディープマージ
+        Object.assign(i18nData.ja, localArticleData.ja);
         Object.assign(i18nData.en, localArticleData.en);
-        Object.assign(i18nData.ja, localArticleData.ja); // 日本語マッピングを追加
-        
-        const currentLang = localStorage.getItem('selectedLang') || 'ja'; // デフォルトを日本語へ
+
+        // 現在の言語を取得し、レンダリングを一度手動でトリガーしてコンテンツページのID入力を確定
+        const currentLang = localStorage.getItem('selectedLang') || 'ja';
         if (typeof setLanguage === 'function') {
             setLanguage(currentLang);
         }
     }
 }
+// すべてのリソースロード後に実行
 window.addEventListener('load', initArticleI18n);
 </script>
 <!-- //MENU-JS -->
-<!-- disable body scroll which navbar is in active -->
+<!-- ナビゲーションアクティブ時のスクロール無効化 -->
 <script>
-	$(function() {
-		$('.navbar-toggler').click(function() {
-			$('body').toggleClass('noscroll');
-		})
-	});
+        $(function() {
+                $('.navbar-toggler').click(function() {
+                        $('body').toggleClass('noscroll');
+                })
+        });
 </script>
-<!-- //disable body scroll which navbar is in active -->
+<!-- //ナビゲーションアクティブ時のスクロール無効化 -->
 <!-- //bootstrap -->
  <!-- <script src="assets/js/bootstrap.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
