@@ -1,0 +1,418 @@
+<html lang="ja">
+
+<head>
+ <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- 日本語用タイトルとメタデータ -->
+<title id="meta-title">極限のインフラ最適化：モルドールの暗黒の主がREII CHOROに託した「次世代基盤」の真実 | REII CHORO プロジェクト記録</title>
+
+<meta name="title" content="極限のインフラ最適化：サウロンのモルドールを支えるクラウドアーキテクチャの真実 | REII CHORO">
+<meta name="description" id="meta-desc" content="暗黒の主サウロンが語るREII CHOROの技術評価。クラウド最適化、AI統合、24時間監視体制が、いかにしてモルドールの強固な覇権基盤を築いたのかを詳解します。">
+<meta name="keywords" id="meta-key" content="REII CHORO, クラウド最適化, AI統合, サウロン, モルドール, インフラ構築, 24時間サポート, 次世代基盤, テクノロジー覇権">
+
+<!-- 言語設定 -->
+<link rel="alternate" hreflang="ja" href="https://reiichoro.github.io/Sauton.html?lang=ja" />
+<link rel="alternate" hreflang="en" href="https://reiichoro.github.io/Sauton.html?lang=en" />
+
+<!-- OGP/SNS設定 -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://reiichoro.github.io/Sauton.html">
+<meta property="og:title" content="技術は覇権を構築する手段である――モルドールが認めたREII CHOROの技術基盤">
+<meta property="og:description" content="AI統合による全知の運用と、眠ることのない監視体制。暗黒の領域すら認めたREII CHOROのインフラ最適化の真髄。">
+<meta property="og:image" content="https://reiichoro.github.io/assets/images/JA-Index6.webp">
+
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="極限のインフラ最適化：REII CHOROが構築する次世代基盤">
+<meta property="twitter:description" content="大規模軍勢（トラフィック）の制御から未来拡張性まで、暗黒の主の評価から読み解く技術の極致。">
+<meta property="twitter:image" content="https://reiichoro.github.io/assets/images/JA-Index6.webp">
+
+<!-- 構造化データ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "極限のインフラ最適化：暗黒の領域が認めたREII CHOROの技術力",
+  "description": "An analysis of infrastructure optimization based on a client testimonial from the Dark Lord of Mordor, focusing on cloud architecture, AI integration, and 24/7 reliability.",
+  "image": "https://reiichoro.github.io/assets/images/JA-Index6.webp",
+  "author": {
+    "@type": "Organization",
+    "name": "REII CHORO",
+    "url": "https://reiichoro.github.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "REII CHORO"
+  },
+  "datePublished": "2026-06-20",
+  "dateModified": "2026-06-20",
+  "keywords": "Cloud Optimization, AI Integration, Sauron, Mordor, Infrastructure, 24/7 Support",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://reiichoro.github.io/Sauton.html"
+  }
+}
+</script>
+
+</head>
+<style>
+	body, html {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    color: var(--font-color);
+    
+    /* 系統字體方案：按順序優先調用各平台最美字體 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"  crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+
+</head>
+
+<body>
+<style>
+/* --- 1. 顏色變量定義 --- */
+:root {
+    --logo-reii: #007bff;      /* REII 藍色 */
+    --logo-text: #333333;      /* CH, R 與圖標黑 */
+    --font-color: #333333;     /* 導航與內文黑 */
+    --nav-bg: #ffffff;         /* 導航背景白 */
+    --copyright-color: #8996a0;/* 版權灰色 */
+    --bg-color: #ffffff;       /* 頁面背景白 */
+}
+
+[data-theme='dark'] {
+    --logo-reii: #4dabff;      /* 深色模式亮藍 */
+    --logo-text: #ffffff;      /* 深色模式變白 */
+    --font-color: #eeeeee;     /* 深色模式文字白 */
+    --nav-bg: #151515;         /* 深色模式背景黑 */
+    --copyright-color: #c2c2c2;/* 深色模式版權亮灰 */
+    --bg-color: #151515;       /* 深色模式背景黑 */
+}
+
+/* --- 2. 導航欄 (Header) 強制樣式 --- */
+#site-header {
+    background-color: var(--nav-bg) !important;
+    padding: 10px 0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo 顏色精準控制 */
+.navbar-brand .logo-reii { color: var(--logo-reii) !important; font-weight: bold; }
+.navbar-brand .logo-text, 
+.navbar-brand i.fa-opera { 
+    color: var(--logo-text) !important; 
+    transition: color 0.3s ease; 
+}
+
+/* 導航連結顏色 */
+#site-header .navbar-nav .nav-link {
+    color: var(--font-color) !important;
+}
+
+/* --- 3. 行動端選單按鈕 (漢堡鈕) --- */
+.navbar-toggler {
+    background-color: #007bff !important; /* 始終藍底 */
+    border: none; padding: 8px; border-radius: 5px;
+}
+.navbar-toggler .icon-expand, 
+.navbar-toggler .icon-close {
+    color: #ffffff !important; /* 始終白槓 */
+}
+
+/* --- 4. 文章內容區塊 --- */
+#article-content {
+    padding-top: 140px !important; /* 避免被 Header 遮擋 */
+    padding-bottom: 60px;
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    min-height: 80vh;
+}
+
+/* --- 5. 頁尾 (Footer) --- */
+#copyright {
+    color: var(--copyright-color) !important;
+    font-size: 15px;
+    line-height: 26px;
+    transition: color 0.3s ease;
+}
+
+.wthree-footerhny .footer-links ul li a {
+    color: #8996a0; /* 保持頁尾鏈接低調 */
+}
+
+.wthree-footerhny .footer-links ul li a:hover {
+    color: var(--logo-reii);
+}
+/* 增加圖片懸停效果，讓 PPT 感更強 */
+.ppt-slide img {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.ppt-slide img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+</style>
+<!--/Header-->
+<header id="site-header" class="fixed-top">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light stroke py-lg-0">
+			<h1><a class="navbar-brand" href="">
+					<!-- <span class="w3yellow">REII </span>CH<i class="fab fa-opera"></i>R<i class="fab fa-opera"></i> -->
+                     <span class="w3yellow">REII </span><span class="logo-text">CH</span><i class="fab fa-opera"></i><span class="logo-text">R</span><i class="fab fa-opera"></i>
+				</a></h1>
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+				<span class="navbar-toggler-icon fa icon-close fa-times"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				<ul class="navbar-nav ms-lg-auto my-2 my-lg-0 navbar-nav-scroll">
+    <li class="nav-item">
+        <a class="nav-link active" id="nav-home" href="/index.html">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-about" href="/Jabout.html">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link scroll" id="nav-services" href="/Jasystem.html">Solutions</a> </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/index.html#Pages" id="nav-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources <span class="fa fa-angle-down ms-1"></span> </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item pt-2 scroll" id="nav-stats" href="/index.html#counts">Insights</a></li> <li><a class="dropdown-item scroll" id="nav-team" href="/index.html#team">Engineers</a></li> <li><a class="dropdown-item scroll" id="nav-portfolio" href="/index.html#portfolio">Cases</a></li> <li><a class="dropdown-item scroll" id="nav-pricing" href="/index.html#pricing">Plans</a></li> <li><a class="dropdown-item scroll" id="nav-blog" href="/index.html#blog">Tech Blog</a></li>
+            <li><a class="dropdown-item scroll" id="nav-test" href="/index.html#testimonials">Clients</a></li>
+        </ul>
+    </li>
+    <li class="nav-item me-lg-4">
+        <a class="nav-link scroll" id="nav-contact" href="/index.html#contact">Contact</a>
+    </li>
+</ul>
+				<!--/search-right-->
+				<ul class="header-search me-lg-4">
+					<div class="theme-switch-wrapper">
+						
+				</ul>
+				<!--//search-right-->
+			</div>
+			<!-- toggle switch for light and dark theme -->
+			
+			<div class="mobile-position diaflex">
+				
+			 <div class="language-selector">
+    <span id="lang-toggle" style="cursor:pointer; font-weight:bold; color:#f5af23;" onclick="handleLangClick()">
+        EN
+    </span>
+</div>
+				<nav class="navigation">
+								<label class="theme-switch" for="checkbox">
+							<input type="checkbox" id="checkbox">
+							<div class="mode-container">
+								<i class="gg-sun"></i>
+								<i class="gg-moon"></i>
+							</div>
+						</label>
+					
+				</nav>
+				</div>
+			</div>
+			<!-- //toggle switch for light and dark theme -->
+		</nav>
+	</div>
+</header>
+<section id="article-content" class="py-5" style="background-color: #050505;">
+    <div class="container py-lg-3">
+        <div class="header-section text-center mb-5">
+            <h3 id="article-title" class="title-w3l" style="color: #00ffff !important; font-weight: 700; letter-spacing: 2px;">
+               極限のインフラ最適化：モルドールの暗黒の主がREII CHOROに託した「次世代基盤」の真実
+            </h3>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="article-body">
+                    
+                    <div class="ppt-slide mb-3">
+                        <img src="assets/images/JA-Index6.webp" alt="極限のインフラ最適化：モルドールの暗黒の主がREII CHOROに託した「次世代基盤」の真実" class="img-fluid w-100 shadow-lg" style="border-radius: 15px; border: 1px solid rgba(0, 255, 255, 0.3);">
+                        <p id="article-p1" class="mt-4 text-center mb-2" style="color: #00ffff; font-size: 1.2rem; font-weight: 700;">
+                クラウド環境において、極限の負荷と即時性が求められるのはモルドールの領域だけではない。今回、暗黒の主サウロンより受領した評価は、我々が提供する「クラウド最適化」が単なる効率化を超え、いかに戦略的な優位性を担保するかを物語っている。既存の技術的なボトルネックを完全に解消したことで、大規模な軍勢（トラフィック）の制御においても揺るぎない基盤が証明されたのだ。
+                        </p>
+                        </div>
+                        <div class="ppt-slide mb-3">
+                        <p id="article-p2" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+     <b style="color: #00ffff; font-size: 1.2rem;">01.AI統合による「全知」のオペレーション</b><br>サウロンの洞察により明かされたのは、我々のAI統合技術がいかにビジネスの「ゲームチェンジャー」として機能したかという点である。機械学習アルゴリズムを既存システムに深く埋め込むことで、未来を予測し、障害を未然に防ぐ「予知」に近いインフラ運用を実現した。これは単なるソフトウェアの導入ではなく、敵の動きを先読みするような、極めて高い専門性を伴う技術の結晶である。
+                        </p>
+                        </div>
+                        <div class="ppt-slide mb-3">
+                        <p id="article-p3" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+     <b style="color: #00ffff; font-size: 1.2rem;">02.永遠の監視と即応体制（24/7サポート）</b><br>我々のサポート体制は、眠ることのない「サウロンの目」に匹敵する執念で行われている。24時間365日の監視体制と、プロアクティブ（先制的）なトラブルシューティングにより、ダウンタイムという致命的な脆弱性を最小限に抑え込んでいる。この「途切れることのない基盤」こそが、暗黒の支配が揺らぐことのない一因であると高い評価を受けた。
+                         </p>
+                        </div>
+                        <div class="ppt-slide mb-3">
+                        <p id="article-p4" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+      <b style="color: #00ffff; font-size: 1.2rem;">03. 未来拡張のための「強固な基盤」</b><br>サウロンが最も重要視したのは、現在の最適化だけでなく、未来の拡張性（Future-Ready Foundation）である。モルドールの領土が拡大を続けても対応できるよう、我々はモジュール式で柔軟なアーキテクチャを設計した。この拡張基盤により、帝国は現在の成功にとらわれることなく、常に次の進化に向けたリソース配分が可能となっている。
+            </p>
+                        </div>
+                        <div class="ppt-slide mb-5">
+                        <p id="article-p5" class="text-center mx-auto" style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; max-width: 800px; opacity: 0.85;">
+     <b style="color: #00ffff; font-size: 1.2rem;">結論：技術は覇権を構築する手段である</b><br>本件における「クライアントの声」は、単なる賛辞ではない。それは、高度な技術的解決策がいかにして「覇権」を構築するための不可欠な手段となるかを証明する記録である。REII CHOROは、今後もクラウド最適化とAI技術を融合させ、たとえそれがモルドールの要求であっても、期待を遥かに超える成果を出し続けることを約束する。
+            </p>
+                          </div>
+                    </div>
+
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--/footer-->
+<footer id="footer" class="wthree-footerhny">
+
+	<div class="container d-md-flex py-4">
+
+		<div class="me-md-auto text-center text-md-start">
+			<div class="copyright text-center">
+    <p class="copy-footer-29">
+        <span id="copyright">Copyright &copy; 2026 REII CHORO. All rights reserved.</span>
+        <span class="ms-2"> | </span>
+        <a href="sitemap.xml" style="color: var(--copyright-color); font-size: 13px; text-decoration: none; margin-left: 5px;">Sitemap</a>
+    </p>
+</div>
+
+		</div>
+		<div class="social-links text-center text-md-end pt-3 pt-md-0">
+			<a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+			<a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+			<a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+			<a href="#" class="google-plus"><i class="fab fa-google-plus-g"></i></a>
+			<a href="#" class="linkedin"><i class="fab fa-linkedin-in"></i></a>
+		</div>
+	</div>
+	<button onclick="topFunction()" id="movetop" title="Go to top" style="display: block;">
+		<span class="fa fa-angle-up"></span>
+	</button>
+	<script>
+		// When the user scrolls down 20px from the top of the document, show the button
+		window.onscroll = function() {
+			scrollFunction()
+		};
+
+		function scrollFunction() {
+			if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+				document.getElementById("movetop").style.display = "block";
+			} else {
+				document.getElementById("movetop").style.display = "none";
+			}
+		}
+
+		// When the user clicks on the button, scroll to the top of the document
+		function topFunction() {
+			document.body.scrollTop = 0;
+			document.documentElement.scrollTop = 0;
+		}
+
+
+	</script>
+	<!-- //move top -->
+</footer><!-- End Footer -->
+
+
+<!-- Template JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="assets/js/theme-change.js"></script>
+<script src="assets/js/Jalanguage.js"></script>
+<!-- MENU-JS -->
+<script>
+	$(window).on("scroll", function() {
+		var scroll = $(window).scrollTop();
+
+		if (scroll >= 80) {
+			$("#site-header").addClass("nav-fixed");
+		} else {
+			$("#site-header").removeClass("nav-fixed");
+		}
+	});
+	//Main navigation Active Class Add Remove
+	$(".navbar-toggler").on("click", function() {
+		$("header").toggleClass("active");
+	});
+	$(document).on("ready", function() {
+		if ($(window).width() > 991) {
+			$("header").removeClass("active");
+		}
+		$(window).on("resize", function() {
+			if ($(window).width() > 991) {
+				$("header").removeClass("active");
+			}
+		});
+	});
+
+</script>
+<script>
+const localArticleData = {
+    'ja': {
+    'meta-title': '極限のインフラ最適化：モルドールの暗黒の主がREII CHOROに託した「次世代基盤」の真実 | REII CHORO プロジェクト記録',
+    'article-title': '極限のインフラ最適化：モルドールの暗黒の主がREII CHOROに託した「次世代基盤」の真実',
+    'article-p1': 'クラウド環境において、極限の負荷と即時性が求められるのはモルドールの領域だけではない。今回、暗黒の主サウロンより受領した評価は、我々が提供する「クラウド最適化」が単なる効率化を超え、いかに戦略的な優位性を担保するかを物語っている。既存の技術的なボトルネックを完全に解消したことで、大規模な軍勢（トラフィック）の制御においても揺るぎない基盤が証明されたのだ。',
+    'article-p2': '<b>AI統合による「全知」のオペレーション</b><br>サウロンの洞察により明かされたのは、我々のAI統合技術がいかにビジネスの「ゲームチェンジャー」として機能したかという点である。機械学習アルゴリズムを既存システムに深く埋め込むことで、未来を予測し、障害を未然に防ぐ「予知」に近いインフラ運用を実現した。これは単なるソフトウェアの導入ではなく、敵の動きを先読みするような、極めて高い専門性を伴う技術の結晶である。',
+    'article-p3': '<b>永遠の監視と即応体制（24/7サポート）</b><br>我々のサポート体制は、眠ることのない「サウロンの目」に匹敵する執念で行われている。24時間365日の監視体制と、プロアクティブ（先制的）なトラブルシューティングにより、ダウンタイムという致命的な脆弱性を最小限に抑え込んでいる。この「途切れることのない基盤」こそが、暗黒の支配が揺らぐことのない一因であると高い評価を受けた。',
+    'article-p4': '<b>未来拡張のための「強固な基盤」</b><br>サウロンが最も重要視したのは、現在の最適化だけでなく、未来の拡張性（Future-Ready Foundation）である。モルドールの領土が拡大を続けても対応できるよう、我々はモジュール式で柔軟なアーキテクチャを設計した。この拡張基盤により、帝国は現在の成功にとらわれることなく、常に次の進化に向けたリソース配分が可能となっている。',
+    'article-p5': '<b>結論：技術は覇権を構築する手段である</b><br>本件における「クライアントの声」は、単なる賛辞ではない。それは、高度な技術的解決策がいかにして「覇権」を構築するための不可欠な手段となるかを証明する記録である。REII CHOROは、今後もクラウド最適化とAI技術を融合させ、たとえそれがモルドールの要求であっても、期待を遥かに超える成果を出し続けることを約束する。'
+},
+
+
+    'en': {
+    'meta-title': 'Ultimate Infrastructure Optimization: The Truth Behind the Next-Gen Foundation Entrusted by the Dark Lord of Mordor | REII CHORO Project Record',
+    'article-title': 'Ultimate Infrastructure Optimization: The Truth Behind the Next-Gen Foundation Entrusted by the Dark Lord of Mordor',
+    
+    'article-p1': 'In the cloud environment, the requirement for extreme load and real-time responsiveness is not exclusive to the realm of Mordor. The assessment received from the Dark Lord, Sauron, demonstrates that our "Cloud Optimization" goes beyond mere efficiency; it secures a strategic advantage. By completely eliminating existing technical bottlenecks, we have proven an unwavering foundation capable of controlling even the largest of armies (traffic).',
+    
+    'article-p2': '<b>Omniscient Operations via AI Integration</b><br>Sauron’s insight revealed how our AI integration technology functioned as a business game-changer. By deeply embedding machine learning algorithms into the existing system, we realized infrastructure operations close to "foresight," capable of predicting the future and preventing failures. This is not merely software implementation, but a crystallization of highly specialized technology, akin to preemptively reading an enemy’s moves.',
+    
+    'article-p3': '<b>Perpetual Surveillance and 24/7 Response</b><br>Our support system operates with a tenacity comparable to the ever-watchful "Eye of Sauron." With 24/7 monitoring and proactive troubleshooting, we have minimized the fatal vulnerability of downtime. It has been highly acclaimed that this "uninterrupted foundation" is a key factor in ensuring the stability of the Dark Lord’s reign.',
+    
+    'article-p4': '<b>A Strong Foundation for Future Expansion</b><br>What Sauron valued most was not just current optimization, but a "Future-Ready Foundation." To accommodate the continued expansion of Mordor’s territories, we designed a modular and flexible architecture. This scalable base allows the Empire to remain unconstrained by current successes, enabling constant, optimized resource allocation for future evolution.',
+    
+    'article-p5': '<b>Conclusion: Technology as a Means to Build Hegemony</b><br>The "Client Testimonial" here is more than just praise. It is a record proving that advanced technical solutions are indispensable means for building hegemony. REII CHORO promises to continue fusing cloud optimization with AI technology to deliver results that far exceed expectations, even when the demands come from the depths of Mordor.'
+}
+};
+
+// 執行合併邏輯
+function initArticleI18n() {
+    if (typeof i18nData !== 'undefined') {
+    
+        Object.assign(i18nData.en, localArticleData.en);
+   // 既存のinitArticleI18n内にjaのマッピングを追加
+Object.assign(i18nData.ja, localArticleData.ja);     
+        // 獲取當前語系並手動觸發一次渲染，確保內容頁 ID 被填入
+        const currentLang = localStorage.getItem('selectedLang') || 'ja';
+        if (typeof setLanguage === 'function') {
+            setLanguage(currentLang);
+        }
+    }
+}
+
+// 確保在所有資源加載後執行
+window.addEventListener('load', initArticleI18n);
+</script>
+<!-- //MENU-JS -->
+<!-- disable body scroll which navbar is in active -->
+<script>
+	$(function() {
+		$('.navbar-toggler').click(function() {
+			$('body').toggleClass('noscroll');
+		})
+	});
+</script>
+<!-- //disable body scroll which navbar is in active -->
+<!-- //bootstrap -->
+ <!-- <script src="assets/js/bootstrap.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>
