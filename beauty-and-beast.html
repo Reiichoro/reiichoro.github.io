@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美女と野獣 解析</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --en:#1a3a6b;--en-bg:#e8f0ff;
+  --ja:#5c1a1a;--ja-bg:#fff0e8;
+  --zh:#1a5c2a;--zh-bg:#e8f8ee;
+  --kanji:#1a3a5c;--kanji-bg:#e8f4ff;
+  --rose:#8b1a3a;--rose-bg:#ffe8f0;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0e0a14;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,28px);font-weight:800;color:#f5e6c0;letter-spacing:5px;margin-bottom:4px;text-align:center;text-shadow:0 0 20px rgba(255,200,100,0.3);}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:980px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.25;pointer-events:none;}
+.card::after{content:'';position:absolute;left:48px;top:0;bottom:0;width:1.5px;background:rgba(180,40,40,0.15);}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(139,26,58,0.07);border-left:3px solid var(--rose);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--rose);}
+.ja{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+
+/* ── 三列歌詞 ── */
+.col-headers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-bottom:2px;border-radius:4px;overflow:hidden;}
+.ch{padding:8px 10px;text-align:center;font-family:'Shippori Mincho',serif;font-size:11px;letter-spacing:2px;font-weight:600;}
+.ch-en{background:var(--en);color:#f5e6c0;}
+.ch-ja{background:var(--ja);color:#f5e6c0;}
+.ch-zh{background:var(--zh);color:#f5e6c0;}
+
+.lyric-block{margin-bottom:20px;}
+.para-tag{font-family:'Shippori Mincho',serif;font-size:11px;color:var(--gold);letter-spacing:3px;margin-bottom:6px;padding:3px 10px;background:#2d1a10;border-radius:3px;display:inline-block;}
+.lyric-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-bottom:2px;border-radius:3px;overflow:hidden;}
+.lr-en{padding:9px 11px;font-size:13px;color:var(--en);font-style:italic;line-height:1.6;border-right:1px solid var(--rule);}
+.lr-ja{padding:9px 11px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--ja);line-height:1.6;border-right:1px solid var(--rule);}
+.lr-zh{padding:9px 11px;font-size:12.5px;color:var(--zh);line-height:1.6;}
+.lyric-row:nth-child(odd) .lr-en{background:#f0f4ff;}
+.lyric-row:nth-child(odd) .lr-ja{background:#fff8f0;}
+.lyric-row:nth-child(odd) .lr-zh{background:#f0fff4;}
+.lyric-row:nth-child(even) .lr-en{background:#e8ecff;}
+.lyric-row:nth-child(even) .lr-ja{background:#fff0e4;}
+.lyric-row:nth-child(even) .lr-zh{background:#e8ffee;}
+.gap-row{height:8px;}
+
+/* ── 漢字解析 ── */
+.kanji-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.kj-card{border-radius:6px;padding:13px 13px;border:1.5px solid var(--kanji);background:var(--kanji-bg);}
+.kj-char{font-family:'Noto Sans JP',sans-serif;font-size:38px;font-weight:700;line-height:1;margin-bottom:4px;color:var(--kanji);}
+.kj-read{font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;color:var(--kanji);margin-bottom:2px;}
+.kj-zh{font-size:12px;color:#444;font-weight:700;margin-bottom:5px;}
+.kj-in{font-size:11px;color:#555;line-height:1.75;padding-top:5px;border-top:1px dashed #a0b8d0;}
+.kj-eg{font-family:'Noto Sans JP',sans-serif;font-weight:700;color:var(--ja);}
+
+/* ── 重點句型 ── */
+.pattern-list{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+.pt-item{border-radius:4px;padding:12px 14px;background:var(--rose-bg);border:1.5px solid var(--rose);}
+.pt-ja{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ja);margin-bottom:3px;}
+.pt-en{font-size:12px;color:var(--en);font-style:italic;margin-bottom:3px;}
+.pt-zh{font-size:13px;color:var(--zh);margin-bottom:4px;}
+.pt-note{font-size:11.5px;color:var(--accent);font-weight:700;}
+
+/* ── 對比表 ── */
+.compare-box{background:linear-gradient(135deg,var(--en-bg),var(--ja-bg));border:2px solid #9090a0;border-radius:6px;padding:16px 18px;margin-bottom:14px;}
+.compare-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:#4a4a6a;letter-spacing:3px;margin-bottom:12px;}
+.compare-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+.cr-en{background:var(--en-bg);border-radius:4px;padding:10px 12px;border:1px solid #a0b0d0;}
+.cr-ja{background:var(--ja-bg);border-radius:4px;padding:10px 12px;border:1px solid #d0a090;}
+.cr-label{font-size:10px;font-weight:700;letter-spacing:2px;margin-bottom:5px;font-family:'Noto Sans TC',sans-serif;}
+.cr-en .cr-label{color:var(--en);}.cr-ja .cr-label{color:var(--ja);}
+.cr-text{font-size:13px;color:var(--ink);line-height:1.7;}
+.cr-en .cr-text{font-style:italic;}.cr-ja .cr-text{font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+.cr-sub{font-size:11px;color:#888;margin-top:3px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">🌹 美女と野獣</div>
+<div class="page-sub">Beauty and the Beast · 三語解析 ＋ 漢字 ＋ 重點句型</div>
+
+<div class="card">
+
+<!-- ══ 背景 ══ -->
+<div class="sec">
+  <div class="sec-title">① 這首歌的背景</div>
+  <div style="background:linear-gradient(135deg,#1a1020,#2d1830);border:2px solid var(--gold);border-radius:6px;padding:16px 18px;margin-bottom:14px;color:#f5e6c0;">
+    <div style="font-family:'Shippori Mincho',serif;font-size:16px;font-weight:800;letter-spacing:4px;margin-bottom:8px;">🌹 美女と野獣（びじょとやじゅう）</div>
+    <div style="font-size:13px;line-height:1.95;color:#d4c090;">
+      原曲：<strong style="color:#f5e6c0;">Beauty and the Beast</strong> — Disney 1991年映画主題曲<br>
+      原唱：Celine Dion ＆ Peabo Bryson<br>
+      日語版：宝塚歌劇団・劇団四季 等がカバー<br>
+      作詞：Howard Ashman ／ 作曲：Alan Menken<br><br>
+      你記的是：<strong style="color:#f5a070;">英語原文 ＋ 日語翻譯版</strong>，筆記最後頁還有乾淨的抄寫版，說明這首歌對你很重要。<br>
+      特別之處：日語翻譯非常優美，「語り継がれる物語」這句翻得比英語還詩意。
+    </div>
+  </div>
+</div>
+
+<!-- ══ 三語対照 ══ -->
+<div class="sec">
+  <div class="sec-title">② 三語逐行對照 — 英語 ／ 日語 ／ 中文大意</div>
+
+  <div class="col-headers">
+    <div class="ch ch-en">🔵 English</div>
+    <div class="ch ch-ja">🔴 日本語</div>
+    <div class="ch ch-zh">🟢 中文大意</div>
+  </div>
+
+  <!-- Verse 1 -->
+  <div class="lyric-block">
+    <div class="para-tag">Verse 1 — 第一段</div>
+    <div class="lyric-row">
+      <div class="lr-en">Tale as old as time</div>
+      <div class="lr-ja">これは遠い昔の物語</div>
+      <div class="lr-zh">這是一個遙遠古老的故事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">True as it can be</div>
+      <div class="lr-ja">そして真実の物語</div>
+      <div class="lr-zh">同時也是真實的故事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Barely even friends</div>
+      <div class="lr-ja">友達ですらなかったのに</div>
+      <div class="lr-zh">甚至連朋友都算不上</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Then somebody bends unexpectedly</div>
+      <div class="lr-ja">二人の未来は思いがけず変わっていく</div>
+      <div class="lr-zh">兩人的未來卻出乎意料地改變了</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-en">Just a little change</div>
+      <div class="lr-ja">ほんの少しの変化</div>
+      <div class="lr-zh">只是一點小小的改變</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Small to say the least</div>
+      <div class="lr-ja">ほんのわずかな変化に</div>
+      <div class="lr-zh">微不足道的小小變化</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Both a little scared</div>
+      <div class="lr-ja">二人とも少し恐れていて</div>
+      <div class="lr-zh">兩個人都有一點害怕</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Neither one prepared</div>
+      <div class="lr-ja">心の準備をできなかった</div>
+      <div class="lr-zh">都沒有做好心理準備</div>
+    </div>
+  </div>
+
+  <!-- Chorus 1 -->
+  <div class="lyric-block">
+    <div class="para-tag">Chorus — サビ（副歌）</div>
+    <div class="lyric-row">
+      <div class="lr-en">Beauty and the Beast</div>
+      <div class="lr-ja">美女と野獣</div>
+      <div class="lr-zh">美女與野獸</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Ever just the same</div>
+      <div class="lr-ja">いつの時代も変わらない</div>
+      <div class="lr-zh">無論哪個時代都不會改變</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Ever a surprise</div>
+      <div class="lr-ja">いつだって思いがけなく</div>
+      <div class="lr-zh">總是那麼出乎意料</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Ever as before</div>
+      <div class="lr-ja">これからも変わることはなくて</div>
+      <div class="lr-zh">今後也不會有任何改變</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Ever just as sure</div>
+      <div class="lr-ja">確かなこと</div>
+      <div class="lr-zh">這是確定無疑的事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">As the sun will rise</div>
+      <div class="lr-ja">太陽が必ず昇るのと同じように</div>
+      <div class="lr-zh">就像太陽必定會升起一樣</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-en">Tale as old as time</div>
+      <div class="lr-ja">昔から語り継がれる物語</div>
+      <div class="lr-zh">從古至今代代相傳的故事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Song as old as rhyme</div>
+      <div class="lr-ja">昔から歌い継がれる歌のように</div>
+      <div class="lr-zh">就像從古至今代代傳唱的歌</div>
+    </div>
+  </div>
+
+  <!-- Verse 2 -->
+  <div class="lyric-block">
+    <div class="para-tag">Verse 2 — 第二段</div>
+    <div class="lyric-row">
+      <div class="lr-en">Bittersweet and strange</div>
+      <div class="lr-ja">切なくて甘い不思議な物語</div>
+      <div class="lr-zh">又苦澀又甘甜、不可思議的故事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Finding you can change</div>
+      <div class="lr-ja">あなたは自分が自身を変えられることを知り</div>
+      <div class="lr-zh">你發現自己其實可以改變自己</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Learning you were wrong</div>
+      <div class="lr-ja">自分が間違っていたと気づく</div>
+      <div class="lr-zh">意識到自己曾經是錯的</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-en">Certain as the sun</div>
+      <div class="lr-ja">太陽が</div>
+      <div class="lr-zh">就像太陽</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Rising in the east</div>
+      <div class="lr-ja">必ず東から昇るのと同じように</div>
+      <div class="lr-zh">必定從東方升起一樣</div>
+    </div>
+    <div class="gap-row"></div>
+    <div class="lyric-row">
+      <div class="lr-en">Tale as old as time</div>
+      <div class="lr-ja">昔から語り継がれてきた物語</div>
+      <div class="lr-zh">從古至今代代相傳的故事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Song as old as rhyme</div>
+      <div class="lr-ja">そして歌い継がれてきた歌</div>
+      <div class="lr-zh">以及代代傳唱下來的歌</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Beauty and the Beast</div>
+      <div class="lr-ja">美女と野獣</div>
+      <div class="lr-zh">美女與野獸</div>
+    </div>
+  </div>
+
+  <!-- Final -->
+  <div class="lyric-block">
+    <div class="para-tag">最後一頁（乾淨版 Page 4）</div>
+    <div class="lyric-row">
+      <div class="lr-en">Tale as old as time</div>
+      <div class="lr-ja">語り継がれる物語</div>
+      <div class="lr-zh">代代相傳的故事</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Song as old as rhyme</div>
+      <div class="lr-ja">歌い継がれる歌</div>
+      <div class="lr-zh">代代傳唱的歌</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Beauty and the Beast</div>
+      <div class="lr-ja">美女と野獣</div>
+      <div class="lr-zh">美女與野獸</div>
+    </div>
+    <div class="lyric-row">
+      <div class="lr-en">Beauty and the Beast</div>
+      <div class="lr-ja">美女と野獣の物語</div>
+      <div class="lr-zh">美女與野獸的故事</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 漢字 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 重要漢字拆解</div>
+
+  <div class="kanji-grid">
+    <div class="kj-card">
+      <div class="kj-char">野獣</div>
+      <div class="kj-read">やじゅう</div>
+      <div class="kj-zh">野獸、猛獸</div>
+      <div class="kj-in">
+        <span class="kj-eg">美女と野獣</span><br>
+        野（や）＝野生<br>
+        獣（じゅう）＝獸<br>
+        Beauty and the Beast的直譯
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">物語</div>
+      <div class="kj-read">ものがたり</div>
+      <div class="kj-zh">故事、物語</div>
+      <div class="kj-in">
+        <span class="kj-eg">遠い昔の物語</span><br>
+        物（もの）＝事物<br>
+        語り（かたり）＝述說<br>
+        源氏物語＝日本最古老小說
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">真実</div>
+      <div class="kj-read">しんじつ</div>
+      <div class="kj-zh">真實、真相</div>
+      <div class="kj-in">
+        <span class="kj-eg">真実の物語</span><br>
+        真（しん）＝真<br>
+        実（じつ）＝實際<br>
+        真実の愛＝真實的愛
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">思いがけず</div>
+      <div class="kj-read">おもいがけず</div>
+      <div class="kj-zh">出乎意料、意想不到</div>
+      <div class="kj-in">
+        <span class="kj-eg">思いがけず変わっていく</span><br>
+        思い（おもい）＝想法<br>
+        がけず＝沒有預料到<br>
+        ＝unexpectedly
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">恐れる</div>
+      <div class="kj-read">おそれる</div>
+      <div class="kj-zh">害怕、恐懼</div>
+      <div class="kj-in">
+        <span class="kj-eg">二人とも少し恐れていて</span><br>
+        兩人都有點害怕<br>
+        怖い（こわい）より文語的<br>
+        恐怖（きょうふ）と同じ語源
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">準備</div>
+      <div class="kj-read">じゅんび</div>
+      <div class="kj-zh">準備</div>
+      <div class="kj-in">
+        <span class="kj-eg">心の準備をできなかった</span><br>
+        沒做好心理準備<br>
+        準備する＝準備<br>
+        心の準備＝心理準備
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">語り継ぐ</div>
+      <div class="kj-read">かたりつぐ</div>
+      <div class="kj-zh">代代相傳、口耳相傳</div>
+      <div class="kj-in">
+        <span class="kj-eg">昔から語り継がれる物語</span><br>
+        語り（かたり）＝述說<br>
+        継ぐ（つぐ）＝傳承・繼承<br>
+        複合動詞：傳承下去
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">歌い継ぐ</div>
+      <div class="kj-read">うたいつぐ</div>
+      <div class="kj-zh">代代傳唱</div>
+      <div class="kj-in">
+        <span class="kj-eg">昔から歌い継がれる歌</span><br>
+        歌う（うたう）＝唱歌<br>
+        継ぐ（つぐ）＝傳承<br>
+        語り継ぐと同じ構造
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">不思議</div>
+      <div class="kj-read">ふしぎ</div>
+      <div class="kj-zh">不可思議、奇妙</div>
+      <div class="kj-in">
+        <span class="kj-eg">切なくて甘い不思議な物語</span><br>
+        不（ふ）＝不<br>
+        思議（しぎ）＝可以理解的<br>
+        な形容詞：不思議な〜
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">気づく</div>
+      <div class="kj-read">きづく</div>
+      <div class="kj-zh">意識到、發現</div>
+      <div class="kj-in">
+        <span class="kj-eg">自分が間違っていたと気づく</span><br>
+        意識到自己錯了<br>
+        気（き）＝氣・注意<br>
+        〜と気づく＝意識到〜
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">切ない</div>
+      <div class="kj-read">せつない</div>
+      <div class="kj-zh">苦澀心酸、難受</div>
+      <div class="kj-in">
+        <span class="kj-eg">切なくて甘い</span><br>
+        苦澀又甘甜（矛盾的美）<br>
+        切ない＝心痛・難受的感覺<br>
+        bittersweet的完美對應
+      </div>
+    </div>
+
+    <div class="kj-card">
+      <div class="kj-char">確か</div>
+      <div class="kj-read">たしか</div>
+      <div class="kj-zh">確定的、確實的</div>
+      <div class="kj-in">
+        <span class="kj-eg">確かなこと</span><br>
+        確定的事情<br>
+        な形容詞：確かな〜<br>
+        確かに（副詞）＝確實地
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 重點句型 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 重點句型解說</div>
+
+  <div class="pattern-list">
+    <div class="pt-item">
+      <div class="pt-ja">友達ですらなかったのに</div>
+      <div class="pt-en">Barely even friends</div>
+      <div class="pt-zh">連朋友都算不上，但是…</div>
+      <div class="pt-note">
+        ですら＝連〜都（強調最低限度）<br>
+        なかったのに＝明明沒有（逆接・意外感）<br>
+        → 「連〜都不是，卻竟然…」的語氣
+      </div>
+    </div>
+
+    <div class="pt-item">
+      <div class="pt-ja">〜継がれる（〜つがれる）</div>
+      <div class="pt-en">as old as time / as old as rhyme</div>
+      <div class="pt-zh">被代代傳承下去</div>
+      <div class="pt-note">
+        語り継がれる＝被口耳相傳（被動＋繼承）<br>
+        歌い継がれる＝被代代傳唱<br>
+        → 動詞＋継ぐ＋られる（被動）＝代代相傳的〜
+      </div>
+    </div>
+
+    <div class="pt-item">
+      <div class="pt-ja">太陽が必ず昇るのと同じように</div>
+      <div class="pt-en">As the sun will rise / Certain as the sun</div>
+      <div class="pt-zh">就像太陽必定升起一樣</div>
+      <div class="pt-note">
+        〜のと同じように＝和〜一樣（比喻結構）<br>
+        必ず（かならず）＝必定、一定<br>
+        → 這個比喻結構很常用：AのようにB＝像A一樣B
+      </div>
+    </div>
+
+    <div class="pt-item">
+      <div class="pt-ja">いつの時代も変わらない</div>
+      <div class="pt-en">Ever just the same</div>
+      <div class="pt-zh">無論哪個時代都不會改變</div>
+      <div class="pt-note">
+        いつの時代も＝無論哪個時代<br>
+        も＝也（全面肯定）<br>
+        → いつも（always）的強調版：連時代都不變
+      </div>
+    </div>
+
+    <div class="pt-item">
+      <div class="pt-ja">自分が間違っていたと気づく</div>
+      <div class="pt-en">Learning you were wrong</div>
+      <div class="pt-zh">意識到自己曾經是錯的</div>
+      <div class="pt-note">
+        間違っていた＝曾經是錯的（過去進行→完了）<br>
+        〜と気づく＝意識到〜（と＝引用助詞）<br>
+        → 這是成長的關鍵句：承認錯誤
+      </div>
+    </div>
+  </div>
+
+  <!-- 英日対比 -->
+  <div class="compare-box">
+    <h4>⭐ 最美的翻譯對比 — 英日語詩意的差別</h4>
+    <div class="compare-row">
+      <div class="cr-en">
+        <div class="cr-label">🔵 English</div>
+        <div class="cr-text">Tale as old as time<br>Song as old as rhyme</div>
+        <div class="cr-sub">時間一樣古老的故事<br>押韻一樣古老的歌</div>
+      </div>
+      <div class="cr-ja">
+        <div class="cr-label">🔴 日本語</div>
+        <div class="cr-text">昔から語り継がれる物語<br>昔から歌い継がれる歌</div>
+        <div class="cr-sub">從古至今代代相傳的故事<br>從古至今代代傳唱的歌</div>
+      </div>
+    </div>
+    <div style="font-size:12.5px;color:#333;line-height:1.85;background:white;border-radius:4px;padding:10px 12px;border:1px solid #d8c8a0;">
+      💡 英語用「as old as time / rhyme」的押韻，日語用「語り継がれる / 歌い継がれる」的對稱結構。<br>
+      兩種語言都在追求同樣的美感——<strong>「永恆」</strong>——但方法完全不同。這就是翻譯之美。
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  美女と野獣 · Beauty and the Beast · Disney 1991 · 三語解析 ＋ 漢字 ＋ 句型 · おにひめ學習筆記（最終頁）
+</div>
+</div>
+</body>
+</html>
