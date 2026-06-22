@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五十音完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --a:#8b1a1a;--a-bg:#fff0f0;
+  --k:#1a3a6b;--k-bg:#e8f0ff;
+  --s:#1a5c2a;--s-bg:#e8f8ee;
+  --t:#5c3a00;--t-bg:#fff4e0;
+  --n:#4a1a6b;--n-bg:#f0e8ff;
+  --h:#1a5c5c;--h-bg:#e0f8f8;
+  --m:#6b3a1a;--m-bg:#fff8e8;
+  --y:#3a5c1a;--y-bg:#eef8e0;
+  --r:#5c1a3a;--r-bg:#ffe8f4;
+  --w:#1a3a5c;--w-bg:#e8f4ff;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,32px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1060px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.22;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+
+/* ── 五十音大表 ── */
+.goju-table{overflow-x:auto;margin-bottom:16px;}
+.gt-inner{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;min-width:600px;}
+
+/* 列ヘッダー */
+.col-head{padding:6px 4px;text-align:center;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;font-weight:600;border-radius:4px;}
+.ch-vowel{background:#2d2416;color:#f5e6c0;}
+.ch-a{background:var(--a);color:white;}
+.ch-i{background:#6b1a4a;color:white;}
+.ch-u{background:#1a3a6b;color:white;}
+.ch-e{background:#1a5c2a;color:white;}
+.ch-o{background:#5c3a00;color:white;}
+
+/* 行ヘッダー */
+.row-head{padding:8px 4px;text-align:center;font-family:'Shippori Mincho',serif;font-size:11px;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.rh-label{font-size:11px;font-weight:700;}
+.rh-rom{font-size:9px;color:#888;}
+
+/* 仮名セル */
+.kana-cell{border-radius:4px;padding:8px 4px;text-align:center;border:1.5px solid;}
+.kana-cell .hira{font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:700;line-height:1;margin-bottom:2px;}
+.kana-cell .kata{font-family:'Noto Sans JP',sans-serif;font-size:15px;color:#666;margin-bottom:2px;}
+.kana-cell .rom{font-size:10px;color:#aaa;font-family:'Noto Sans TC',sans-serif;}
+.kana-cell .kanji-origin{font-size:9px;color:#bbb;margin-top:1px;}
+
+/* 行ごとの色 */
+.row-a .kana-cell{background:var(--a-bg);border-color:#d09090;}
+.row-k .kana-cell{background:var(--k-bg);border-color:#8090c0;}
+.row-s .kana-cell{background:var(--s-bg);border-color:#80b090;}
+.row-t .kana-cell{background:var(--t-bg);border-color:#c09050;}
+.row-n .kana-cell{background:var(--n-bg);border-color:#9080c0;}
+.row-h .kana-cell{background:var(--h-bg);border-color:#7090b0;}
+.row-m .kana-cell{background:var(--m-bg);border-color:#b08060;}
+.row-y .kana-cell{background:var(--y-bg);border-color:#80a060;}
+.row-r .kana-cell{background:var(--r-bg);border-color:#c07090;}
+.row-w .kana-cell{background:var(--w-bg);border-color:#6090b0;}
+.row-n2 .kana-cell{background:#f8f4ee;border-color:#c0b090;}
+
+.kana-cell.empty{background:var(--paper2)!important;border-color:#e0d4bc!important;opacity:0.4;}
+.kana-cell.special{border-width:2px!important;border-style:dashed!important;}
+
+/* 行ヘッダー色 */
+.row-a .row-head{background:var(--a-bg);}
+.row-k .row-head{background:var(--k-bg);}
+.row-s .row-head{background:var(--s-bg);}
+.row-t .row-head{background:var(--t-bg);}
+.row-n .row-head{background:var(--n-bg);}
+.row-h .row-head{background:var(--h-bg);}
+.row-m .row-head{background:var(--m-bg);}
+.row-y .row-head{background:var(--y-bg);}
+.row-r .row-head{background:var(--r-bg);}
+.row-w .row-head{background:var(--w-bg);}
+.row-n2 .row-head{background:#f8f4ee;}
+
+/* ── 特別注意 ── */
+.special-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.sp-box{border-radius:6px;padding:14px 16px;border:2px solid;}
+.sp-box h4{font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:2px;margin-bottom:10px;}
+
+/* ── 発音ガイド ── */
+.pron-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.pron-row{display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:start;padding:9px 12px;border-radius:4px;background:var(--paper2);border:1px solid #d8ccb8;}
+.pr-kana{font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:700;text-align:center;}
+.pr-body{}
+.pr-title{font-size:12px;font-weight:700;color:#444;margin-bottom:3px;}
+.pr-note{font-size:11.5px;color:#555;line-height:1.75;}
+.pr-note strong{color:var(--accent);}
+
+/* ── ソ vs ン ── */
+.confusion-box{background:linear-gradient(135deg,#fff8e8,#fff0d0);border:2px solid var(--gold);border-radius:8px;padding:18px 20px;margin-bottom:14px;}
+.confusion-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold);letter-spacing:3px;margin-bottom:14px;}
+.cf-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cf-box{border-radius:4px;padding:14px 16px;border:2px solid;text-align:center;}
+.cf-so{background:#e8f8ee;border-color:var(--s);}
+.cf-n{background:#f0e8ff;border-color:var(--n);}
+.cf-char{font-family:'Noto Sans JP',sans-serif;font-size:64px;font-weight:700;line-height:1;margin-bottom:8px;}
+.cf-so .cf-char{color:var(--s);}
+.cf-n .cf-char{color:var(--n);}
+.cf-title{font-size:13px;font-weight:700;margin-bottom:8px;letter-spacing:2px;}
+.cf-so .cf-title{color:var(--s);}
+.cf-n .cf-title{color:var(--n);}
+.cf-rule{font-size:12px;color:#333;line-height:1.85;text-align:left;background:white;border-radius:4px;padding:8px 10px;}
+
+/* 五母音 */
+.vowel-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;}
+.vs-item{border-radius:6px;padding:14px 10px;text-align:center;border:2px solid;}
+.vs-a{background:var(--a-bg);border-color:var(--a);}
+.vs-i{background:#ffe8f4;border-color:#8b1a5c;}
+.vs-u{background:var(--k-bg);border-color:var(--k);}
+.vs-e{background:var(--s-bg);border-color:var(--s);}
+.vs-o{background:var(--t-bg);border-color:var(--t);}
+.vs-item .big{font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:800;line-height:1;margin-bottom:4px;}
+.vs-a .big{color:var(--a);}.vs-i .big{color:#8b1a5c;}
+.vs-u .big{color:var(--k);}.vs-e .big{color:var(--s);}
+.vs-o .big{color:var(--t);}
+.vs-item .kata{font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:700;color:#666;margin-bottom:3px;}
+.vs-item .rom{font-size:12px;color:#999;}
+.vs-item .zh{font-size:12px;color:#555;margin-top:4px;line-height:1.6;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">日語五十音 完全版</div>
+<div class="page-sub">平假名 ＋ 片假名 ＋ 漢字起源 ＋ 發音要訣 ＋ ソ vs ン</div>
+
+<div class="card">
+
+<!-- ══ ソ vs ン 先說這個 ══ -->
+<div class="sec">
+  <div class="sec-title">① 你說的「so被記成n」——先解決這個世紀難題</div>
+
+  <div class="confusion-box">
+    <h4>⭐ ソ vs ン — 你一年前踩過的坑，今天徹底解決</h4>
+    <div class="cf-compare">
+      <div class="cf-box cf-so">
+        <div class="cf-char">ソ</div>
+        <div class="cf-title">ソ（so）</div>
+        <div class="cf-rule">
+          <strong>兩筆都向右下↘</strong><br>
+          像雨滴 // 平行落下<br>
+          兩筆方向<strong>相同</strong><br>
+          「さ行」的「そ」的片假名<br><br>
+          記憶：<strong>ソ ＝ 雨落下</strong><br>
+          そ → ソ（取漢字「曾」上部）
+        </div>
+      </div>
+      <div class="cf-box cf-n">
+        <div class="cf-char">ン</div>
+        <div class="cf-title">ン（n）</div>
+        <div class="cf-rule">
+          <strong>點在右上，線向左下↙</strong><br>
+          兩筆方向<strong>相反</strong><br>
+          不是「そ」，是鼻音「ん」<br>
+          唯一不能單獨使用的假名<br><br>
+          記憶：<strong>ン ＝ 方向反轉</strong><br>
+          ん → ン（取漢字「爾」變形）
+        </div>
+      </div>
+    </div>
+    <div style="background:white;border-radius:4px;padding:12px 14px;margin-top:12px;border:1px solid #e8d890;font-size:13px;color:#333;line-height:1.9;">
+      💡 <strong>終極記憶法：</strong><br>
+      ソ ＝ 兩筆<strong>同向</strong>（都往右下）→ so<br>
+      ン ＝ 點在右上，大線<strong>反向</strong>往左下 → n<br>
+      <strong>「ン」比「ソ」多一個點，而且點的位置在右上角，不是左邊」</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 五母音 ══ -->
+<div class="sec">
+  <div class="sec-title">② 五個母音 — 所有音的基礎</div>
+
+  <div class="vowel-strip">
+    <div class="vs-item vs-a">
+      <div class="big">あ</div>
+      <div class="kata">ア</div>
+      <div class="rom">a</div>
+      <div class="zh">類似「哦」但嘴型比「哦」小，更接近「阿」的短音</div>
+    </div>
+    <div class="vs-item vs-i">
+      <div class="big">い</div>
+      <div class="kata">イ</div>
+      <div class="rom">i</div>
+      <div class="zh">類似「衣」，雙唇略鬆，嘴角拉開較小，舌尖抵下齒</div>
+    </div>
+    <div class="vs-item vs-u">
+      <div class="big">う</div>
+      <div class="kata">ウ</div>
+      <div class="rom">u</div>
+      <div class="zh">嘴唇動，咬住上下牙齒，發出類似「嗚」的音，但更輕</div>
+    </div>
+    <div class="vs-item vs-e">
+      <div class="big">え</div>
+      <div class="kata">エ</div>
+      <div class="rom">e</div>
+      <div class="zh">雙唇稍向左右咧開，舌面放平，類似「誒」</div>
+    </div>
+    <div class="vs-item vs-o">
+      <div class="big">お</div>
+      <div class="kata">オ</div>
+      <div class="rom">o</div>
+      <div class="zh">將嘴唇微微隆圓，自然地發出「哦」的音，不要變成「喔」</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 五十音大表 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 五十音完整表 — 平假名 ／ 片假名 ／ 漢字起源</div>
+
+  <div class="goju-table">
+    <div class="gt-inner">
+
+      <!-- 列ヘッダー -->
+      <div class="col-head ch-vowel">行＼段</div>
+      <div class="col-head ch-a">あ段 a</div>
+      <div class="col-head ch-i">い段 i</div>
+      <div class="col-head ch-u">う段 u</div>
+      <div class="col-head ch-e">え段 e</div>
+      <div class="col-head ch-o">お段 o</div>
+
+      <!-- あ行 -->
+      <div class="row-head row-a"><span class="rh-label" style="color:var(--a);">あ行</span><span class="rh-rom">a行</span></div>
+      <div class="kana-cell row-a"><div class="hira">あ</div><div class="kata">ア</div><div class="rom">a</div><div class="kanji-origin">安→ア</div></div>
+      <div class="kana-cell row-a"><div class="hira">い</div><div class="kata">イ</div><div class="rom">i</div><div class="kanji-origin">以→イ(左側)</div></div>
+      <div class="kana-cell row-a"><div class="hira">う</div><div class="kata">ウ</div><div class="rom">u</div><div class="kanji-origin">宇→ウ(上側)</div></div>
+      <div class="kana-cell row-a"><div class="hira">え</div><div class="kata">エ</div><div class="rom">e</div><div class="kanji-origin">江→エ(右側)</div></div>
+      <div class="kana-cell row-a"><div class="hira">お</div><div class="kata">オ</div><div class="rom">o</div><div class="kanji-origin">於→オ(左側)</div></div>
+
+      <!-- か行 -->
+      <div class="row-head row-k"><span class="rh-label" style="color:var(--k);">か行</span><span class="rh-rom">k行</span></div>
+      <div class="kana-cell row-k"><div class="hira">か</div><div class="kata">カ</div><div class="rom">ka</div><div class="kanji-origin">加→カ(左側)</div></div>
+      <div class="kana-cell row-k"><div class="hira">き</div><div class="kata">キ</div><div class="rom">ki</div><div class="kanji-origin">幾→キ(上部)</div></div>
+      <div class="kana-cell row-k"><div class="hira">く</div><div class="kata">ク</div><div class="rom">ku</div><div class="kanji-origin">久→ク(左半部)</div></div>
+      <div class="kana-cell row-k"><div class="hira">け</div><div class="kata">ケ</div><div class="rom">ke</div><div class="kanji-origin">計→ケ(右部)</div></div>
+      <div class="kana-cell row-k"><div class="hira">こ</div><div class="kata">コ</div><div class="rom">ko</div><div class="kanji-origin">己→コ(上半部)</div></div>
+
+      <!-- さ行 -->
+      <div class="row-head row-s"><span class="rh-label" style="color:var(--s);">さ行</span><span class="rh-rom">s行</span></div>
+      <div class="kana-cell row-s"><div class="hira">さ</div><div class="kata">サ</div><div class="rom">sa</div><div class="kanji-origin">散→サ(左上角)</div></div>
+      <div class="kana-cell row-s" style="border-color:#c44b00;border-width:2px;"><div class="hira" style="color:#c44b00;">し</div><div class="kata" style="color:#c44b00;">シ</div><div class="rom">shi⚠️</div><div class="kanji-origin">之→シ(變型)</div></div>
+      <div class="kana-cell row-s"><div class="hira">す</div><div class="kata">ス</div><div class="rom">su</div><div class="kanji-origin">須→ス(右部)</div></div>
+      <div class="kana-cell row-s"><div class="hira">せ</div><div class="kata">セ</div><div class="rom">se</div><div class="kanji-origin">世→セ(簡寫)</div></div>
+      <div class="kana-cell row-s" style="border-color:#c44b00;border-width:2px;"><div class="hira" style="color:#c44b00;">そ</div><div class="kata" style="color:#c44b00;">ソ</div><div class="rom">so⚠️</div><div class="kanji-origin">曾→ソ(上部)</div></div>
+
+      <!-- た行 -->
+      <div class="row-head row-t"><span class="rh-label" style="color:var(--t);">た行</span><span class="rh-rom">t行</span></div>
+      <div class="kana-cell row-t"><div class="hira">た</div><div class="kata">タ</div><div class="rom">ta</div><div class="kanji-origin">太→タ(上部)</div></div>
+      <div class="kana-cell row-t" style="border-color:#c44b00;border-width:2px;"><div class="hira" style="color:#c44b00;">ち</div><div class="kata" style="color:#c44b00;">チ</div><div class="rom">chi⚠️</div><div class="kanji-origin">千→チ(變形)</div></div>
+      <div class="kana-cell row-t" style="border-color:#c44b00;border-width:2px;"><div class="hira" style="color:#c44b00;">つ</div><div class="kata" style="color:#c44b00;">ツ</div><div class="rom">tsu⚠️</div><div class="kanji-origin">川→ツ(變形)</div></div>
+      <div class="kana-cell row-t"><div class="hira">て</div><div class="kata">テ</div><div class="rom">te</div><div class="kanji-origin">天→テ(省略)</div></div>
+      <div class="kana-cell row-t"><div class="hira">と</div><div class="kata">ト</div><div class="rom">to</div><div class="kanji-origin">止→ト(右柱)</div></div>
+
+      <!-- な行 -->
+      <div class="row-head row-n"><span class="rh-label" style="color:var(--n);">な行</span><span class="rh-rom">n行</span></div>
+      <div class="kana-cell row-n"><div class="hira">な</div><div class="kata">ナ</div><div class="rom">na</div><div class="kanji-origin">奈→ナ(上半部)</div></div>
+      <div class="kana-cell row-n"><div class="hira">に</div><div class="kata">ニ</div><div class="rom">ni</div><div class="kanji-origin">仁→ニ(漢字二)</div></div>
+      <div class="kana-cell row-n"><div class="hira">ぬ</div><div class="kata">ヌ</div><div class="rom">nu</div><div class="kanji-origin">奴→ヌ(右部)</div></div>
+      <div class="kana-cell row-n"><div class="hira">ね</div><div class="kata">ネ</div><div class="rom">ne</div><div class="kanji-origin">祢→ネ(左部)</div></div>
+      <div class="kana-cell row-n"><div class="hira">の</div><div class="kata">ノ</div><div class="rom">no</div><div class="kanji-origin">乃→ノ(撇筆部)</div></div>
+
+      <!-- は行 -->
+      <div class="row-head row-h"><span class="rh-label" style="color:var(--h);">は行</span><span class="rh-rom">h行</span></div>
+      <div class="kana-cell row-h"><div class="hira">は</div><div class="kata">ハ</div><div class="rom">ha/wa</div><div class="kanji-origin">波→ハ(八)</div></div>
+      <div class="kana-cell row-h"><div class="hira">ひ</div><div class="kata">ヒ</div><div class="rom">hi</div><div class="kanji-origin">比→ヒ(比的右半)</div></div>
+      <div class="kana-cell row-h" style="border-color:#c44b00;border-width:2px;"><div class="hira" style="color:#c44b00;">ふ</div><div class="kata" style="color:#c44b00;">フ</div><div class="rom">fu⚠️</div><div class="kanji-origin">不→フ(左半)</div></div>
+      <div class="kana-cell row-h"><div class="hira">へ</div><div class="kata">ヘ</div><div class="rom">he/e</div><div class="kanji-origin">部→ヘ(左部)</div></div>
+      <div class="kana-cell row-h"><div class="hira">ほ</div><div class="kata">ホ</div><div class="rom">ho</div><div class="kanji-origin">保→ホ(右部)</div></div>
+
+      <!-- ま行 -->
+      <div class="row-head row-m"><span class="rh-label" style="color:var(--m);">ま行</span><span class="rh-rom">m行</span></div>
+      <div class="kana-cell row-m"><div class="hira">ま</div><div class="kata">マ</div><div class="rom">ma</div><div class="kanji-origin">末→マ(簡化)</div></div>
+      <div class="kana-cell row-m"><div class="hira">み</div><div class="kata">ミ</div><div class="rom">mi</div><div class="kanji-origin">美→ミ(三變形)</div></div>
+      <div class="kana-cell row-m"><div class="hira">む</div><div class="kata">ム</div><div class="rom">mu</div><div class="kanji-origin">武→ム(半部)</div></div>
+      <div class="kana-cell row-m"><div class="hira">め</div><div class="kata">メ</div><div class="rom">me</div><div class="kanji-origin">女→メ(變形)</div></div>
+      <div class="kana-cell row-m"><div class="hira">も</div><div class="kata">モ</div><div class="rom">mo</div><div class="kanji-origin">毛→モ(簡化)</div></div>
+
+      <!-- や行 -->
+      <div class="row-head row-y"><span class="rh-label" style="color:var(--y);">や行</span><span class="rh-rom">y行</span></div>
+      <div class="kana-cell row-y"><div class="hira">や</div><div class="kata">ヤ</div><div class="rom">ya</div><div class="kanji-origin">也→ヤ(簡化)</div></div>
+      <div class="kana-cell row-y empty"><div class="hira">—</div><div class="kata">—</div><div class="rom">(i)</div></div>
+      <div class="kana-cell row-y"><div class="hira">ゆ</div><div class="kata">ユ</div><div class="rom">yu</div><div class="kanji-origin">由→ユ(省略)</div></div>
+      <div class="kana-cell row-y empty"><div class="hira">—</div><div class="kata">—</div><div class="rom">(e)</div></div>
+      <div class="kana-cell row-y"><div class="hira">よ</div><div class="kata">ヨ</div><div class="rom">yo</div><div class="kanji-origin">与→ヨ(變形)</div></div>
+
+      <!-- ら行 -->
+      <div class="row-head row-r"><span class="rh-label" style="color:var(--r);">ら行</span><span class="rh-rom">r行</span></div>
+      <div class="kana-cell row-r"><div class="hira">ら</div><div class="kata">ラ</div><div class="rom">ra</div><div class="kanji-origin">良→ラ(左上)</div></div>
+      <div class="kana-cell row-r"><div class="hira">り</div><div class="kata">リ</div><div class="rom">ri</div><div class="kanji-origin">利→リ(旁)</div></div>
+      <div class="kana-cell row-r"><div class="hira">る</div><div class="kata">ル</div><div class="rom">ru</div><div class="kanji-origin">留→ル(旁)</div></div>
+      <div class="kana-cell row-r"><div class="hira">れ</div><div class="kata">レ</div><div class="rom">re</div><div class="kanji-origin">礼→レ(旁)</div></div>
+      <div class="kana-cell row-r"><div class="hira">ろ</div><div class="kata">ロ</div><div class="rom">ro</div><div class="kanji-origin">呂→ロ(簡形)</div></div>
+
+      <!-- わ行 -->
+      <div class="row-head row-w"><span class="rh-label" style="color:var(--w);">わ行</span><span class="rh-rom">w行</span></div>
+      <div class="kana-cell row-w"><div class="hira">わ</div><div class="kata">ワ</div><div class="rom">wa</div><div class="kanji-origin">和→ワ(右側)</div></div>
+      <div class="kana-cell row-w empty"><div class="hira">—</div><div class="kata">—</div><div class="rom">(i)</div></div>
+      <div class="kana-cell row-w empty"><div class="hira">—</div><div class="kata">—</div><div class="rom">(u)</div></div>
+      <div class="kana-cell row-w empty"><div class="hira">—</div><div class="kata">—</div><div class="rom">(e)</div></div>
+      <div class="kana-cell row-w"><div class="hira">を</div><div class="kata">ヲ</div><div class="rom">o/wo</div><div class="kanji-origin">遠→ヲ(變形)</div></div>
+
+      <!-- ん -->
+      <div class="row-head row-n2"><span class="rh-label">ん</span><span class="rh-rom">鼻音</span></div>
+      <div class="kana-cell row-n2" style="grid-column:span 5;"><div style="font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:700;margin-bottom:3px;">ん　　ン</div><div style="font-size:11px;color:#888;">n（鼻音）— 唯一不能單獨使用的假名，必須接在其他假名後面</div></div>
+
+    </div>
+  </div>
+
+  <div class="tip">
+    ⚠️ <strong>橙色標注的特殊發音：</strong><br>
+    し＝shi（不是si）　ち＝chi（不是ti）　つ＝tsu（不是tu）<br>
+    ふ＝fu（不是hu）　そ＝so（不是so的片假名ソ，不要和ン搞混！）<br>
+    は在助詞時讀wa　へ在助詞時讀e
+  </div>
+</div>
+
+<!-- ══ 発音要訣 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 你筆記中的發音要訣整理</div>
+
+  <div class="pron-grid">
+    <div class="pron-row">
+      <div class="pr-kana" style="color:var(--a);">ふ</div>
+      <div class="pr-body">
+        <div class="pr-title">ふ（fu）— 最特別！</div>
+        <div class="pr-note">雙唇放鬆，氣流從唇間輕輕摩擦通過。<strong>像吹滅蠟燭的輕聲</strong>，不像中文的「夫」，也不像英語的「fu」。雙唇的摩擦感。</div>
+      </div>
+    </div>
+    <div class="pron-row">
+      <div class="pr-kana" style="color:var(--s);">し</div>
+      <div class="pr-body">
+        <div class="pr-title">し（shi）— 不是「西」</div>
+        <div class="pr-note">發音類似中文的「西」，<strong>而不是「師」</strong>。嘴角向兩側稍微伸展。是shi，氣流從舌面和上顎之間流出。</div>
+      </div>
+    </div>
+    <div class="pron-row">
+      <div class="pr-kana" style="color:var(--t);">ち</div>
+      <div class="pr-body">
+        <div class="pr-title">ち（chi）— 不是「吃」</div>
+        <div class="pr-note">類似中文的「七」，<strong>而不是「吃」</strong>。嘴角向兩側稍微伸展，是chi「七」，舌尖抵住下齒。</div>
+      </div>
+    </div>
+    <div class="pron-row">
+      <div class="pr-kana" style="color:var(--t);">つ</div>
+      <div class="pr-body">
+        <div class="pr-title">つ（tsu）— 類似「次」</div>
+        <div class="pr-note">發音時雙唇略微向前突，聲音輕短，類似中文「次」的輕聲。是tsu「次」。</div>
+      </div>
+    </div>
+    <div class="pron-row">
+      <div class="pr-kana" style="color:var(--h);">は</div>
+      <div class="pr-body">
+        <div class="pr-title">は — 兩種讀音</div>
+        <div class="pr-note">作為假名本身讀「ha」；<strong>作為助詞時讀「wa」</strong>。例：私は（わたしwa）、今日は（きょうwa）。</div>
+      </div>
+    </div>
+    <div class="pron-row">
+      <div class="pr-kana" style="color:var(--n);">ん</div>
+      <div class="pr-body">
+        <div class="pr-title">ん — 唯一的鼻音</div>
+        <div class="pr-note">唯一不能單獨使用的假名，<strong>必須接在其他假名後面</strong>。例：にほん、さんぽ。片假名ン要和ソ分清楚！</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 字形混淆注意 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 容易混淆的字形 — 你筆記特別標注的</div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+    <div style="background:#fff8e8;border:2px solid var(--gold);border-radius:6px;padding:14px 14px;text-align:center;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;color:var(--s);">ソ</div>
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;color:var(--n);">ン</div>
+      <div style="font-size:11.5px;color:#555;margin-top:6px;">ソ(so)＝兩筆同向↘<br>ン(n)＝點右上，線向↙</div>
+    </div>
+    <div style="background:#fff8e8;border:2px solid var(--gold);border-radius:6px;padding:14px 14px;text-align:center;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;color:var(--t);">ツ</div>
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;color:var(--r);">シ</div>
+      <div style="font-size:11.5px;color:#555;margin-top:6px;">ツ(tsu)＝兩點橫排··<br>シ(shi)＝兩點縱排：</div>
+    </div>
+    <div style="background:#fff8e8;border:2px solid var(--gold);border-radius:6px;padding:14px 14px;text-align:center;">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;color:var(--m);">め</div>
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:36px;font-weight:700;color:var(--n);">ぬ</div>
+      <div style="font-size:11.5px;color:#555;margin-top:6px;">め(me)＝嘴角向兩側拉<br>ぬ(nu)＝帶有輕微「u」音<br>筆畫不同，注意區分</div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  日語五十音完全版 · 平假名＋片假名＋漢字起源＋發音要訣 · ソvsン完全解決 · おにひめ學習筆記
+</div>
+</div>
+</body>
+</html>
