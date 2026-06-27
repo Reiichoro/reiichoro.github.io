@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拗音 完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+:root{
+  --ink:#1a1208;--paper:#faf6ee;--paper2:#f3ede0;--rule:#c8b89a;--gold:#b8860b;
+  --kya:#1a3a6b;--kya-bg:#e8f0ff;
+  --sha:#1a5c2a;--sha-bg:#e8f8ee;
+  --cha:#8b5c00;--cha-bg:#fff8e0;
+  --nya:#5c1a5c;--nya-bg:#f8e8ff;
+  --hya:#1a5c5c;--hya-bg:#e0f8f8;
+  --mya:#6b1a1a;--mya-bg:#ffe8e8;
+  --rya:#3a1a6b;--rya-bg:#ede8ff;
+  --gya:#1a5c1a;--gya-bg:#e8ffe8;
+  --ja:#1a1a6b;--ja-bg:#e8e8ff;
+  --bya:#5c1a5c;--bya-bg:#f0e8ff;
+  --pya:#8b5000;--pya-bg:#fff4d0;
+  --accent:#c44b00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#14100c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(20px,4vw,30px);font-weight:800;color:#f5e6c0;letter-spacing:6px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#907860;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.6),0 2px 0 #b8860b;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.22;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:4px;border-bottom:1.5px solid var(--gold);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--accent);}
+
+/* ── 概念 ── */
+.concept-box{background:linear-gradient(135deg,#1a140e,#2d2010);border:2px solid var(--gold);border-radius:8px;padding:18px 20px;margin-bottom:16px;color:#f5e6c0;}
+.concept-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--gold);letter-spacing:3px;margin-bottom:12px;}
+.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.rule-box{background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,60,0.3);border-radius:4px;padding:12px 14px;}
+.rule-box h5{font-size:11px;letter-spacing:2px;margin-bottom:8px;color:var(--gold);}
+.rule-box p{font-size:12px;color:#c8b880;line-height:1.85;}
+.rule-box .ja{font-family:'Noto Sans JP',sans-serif;font-size:18px;font-weight:700;margin:4px 0;}
+
+/* ── 拗音大表 ── */
+.youon-section{margin-bottom:20px;}
+.ys-label{font-family:'Shippori Mincho',serif;font-size:11px;letter-spacing:2px;margin-bottom:6px;padding:3px 10px;border-radius:3px;display:inline-block;color:white;}
+.youon-row{display:grid;grid-template-columns:90px repeat(3,1fr);gap:4px;margin-bottom:4px;}
+.yr-label{border-radius:4px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.yr-label .yl-name{font-size:11px;font-weight:700;}
+.yr-label .yl-base{font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;}
+.yr-label .yl-rom{font-size:9px;color:#888;}
+
+.kana-cell{border-radius:4px;padding:9px 6px;text-align:center;border:1.5px solid;}
+.kana-cell .formula{font-size:9px;color:#aaa;margin-bottom:2px;}
+.kana-cell .hira{font-family:'Noto Sans JP',sans-serif;font-size:22px;font-weight:700;line-height:1;margin-bottom:2px;}
+.kana-cell .kata{font-family:'Noto Sans JP',sans-serif;font-size:14px;color:#555;margin-bottom:2px;}
+.kana-cell .rom{font-size:11px;font-weight:700;color:#888;}
+.kana-cell .zh{font-size:10px;color:#aaa;margin-top:2px;}
+
+/* 行ごとの色 */
+.kya-row .yr-label,.kya-row .kana-cell{background:var(--kya-bg);border-color:#8090c0;}
+.kya-row .yr-label .yl-name,.kya-row .yr-label .yl-base{color:var(--kya);}
+.sha-row .yr-label,.sha-row .kana-cell{background:var(--sha-bg);border-color:#80b090;}
+.sha-row .yr-label .yl-name,.sha-row .yr-label .yl-base{color:var(--sha);}
+.cha-row .yr-label,.cha-row .kana-cell{background:var(--cha-bg);border-color:#c0a050;}
+.cha-row .yr-label .yl-name,.cha-row .yr-label .yl-base{color:var(--cha);}
+.nya-row .yr-label,.nya-row .kana-cell{background:var(--nya-bg);border-color:#b080b0;}
+.nya-row .yr-label .yl-name,.nya-row .yr-label .yl-base{color:var(--nya);}
+.hya-row .yr-label,.hya-row .kana-cell{background:var(--hya-bg);border-color:#70a0a0;}
+.hya-row .yr-label .yl-name,.hya-row .yr-label .yl-base{color:var(--hya);}
+.mya-row .yr-label,.mya-row .kana-cell{background:var(--mya-bg);border-color:#c09090;}
+.mya-row .yr-label .yl-name,.mya-row .yr-label .yl-base{color:var(--mya);}
+.rya-row .yr-label,.rya-row .kana-cell{background:var(--rya-bg);border-color:#9080c0;}
+.rya-row .yr-label .yl-name,.rya-row .yr-label .yl-base{color:var(--rya);}
+.gya-row .yr-label,.gya-row .kana-cell{background:var(--gya-bg);border-color:#80c080;}
+.gya-row .yr-label .yl-name,.gya-row .yr-label .yl-base{color:var(--gya);}
+.ja-row .yr-label,.ja-row .kana-cell{background:var(--ja-bg);border-color:#8080c0;}
+.ja-row .yr-label .yl-name,.ja-row .yr-label .yl-base{color:var(--ja);}
+.bya-row .yr-label,.bya-row .kana-cell{background:var(--bya-bg);border-color:#b080c0;}
+.bya-row .yr-label .yl-name,.bya-row .yr-label .yl-base{color:var(--bya);}
+.pya-row .yr-label,.pya-row .kana-cell{background:var(--pya-bg);border-color:#c0a030;}
+.pya-row .yr-label .yl-name,.pya-row .yr-label .yl-base{color:var(--pya);}
+
+/* 特別行 */
+.kana-cell.special{border-color:var(--accent)!important;border-width:2px!important;}
+.kana-cell.special .hira,.kana-cell.special .kata{color:var(--accent)!important;}
+
+/* ── 実例 ── */
+.example-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.eg-item{border-radius:4px;padding:10px 10px;background:white;border:1px solid #d8ccb8;text-align:center;}
+.eg-item .ej{font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.eg-item .er{font-size:11px;color:#aaa;margin-bottom:2px;}
+.eg-item .ez{font-size:11.5px;color:#555;}
+
+/* ── 発音ガイド ── */
+.pron-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.pron-item{border-radius:4px;padding:10px 13px;display:grid;grid-template-columns:55px 1fr;gap:8px;align-items:start;border:1px solid;}
+.pi-kana{font-family:'Noto Sans JP',sans-serif;font-size:26px;font-weight:700;text-align:center;line-height:1;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">拗音（ようおん）完全版</div>
+<div class="page-sub">清音拗音 ＋ 濁音拗音 ＋ 半濁音拗音 · 平假名＋片假名完整對照</div>
+
+<div class="card">
+
+<!-- ══ 概念 ══ -->
+<div class="sec">
+  <div class="sec-title">① 拗音とは — 什麼是拗音？</div>
+  <div class="concept-box">
+    <h4>拗音的構成原理</h4>
+    <div class="rule-grid">
+      <div class="rule-box">
+        <h5>📐 構成規則</h5>
+        <p>
+          「い段假名」（き・し・ち・に・ひ・み・り）<br>
+          ＋ 小寫的「や・ゆ・よ」<br>
+          → 組合成一個音節<br><br>
+          <span class="ja">き＋ゃ → きゃ（kya）</span><br>
+          <span class="ja">し＋ゅ → しゅ（shu）</span><br>
+          <span class="ja">ち＋ょ → ちょ（cho）</span>
+        </p>
+      </div>
+      <div class="rule-box">
+        <h5>✍️ 書寫規則</h5>
+        <p>
+          第二個假名（や・ゆ・よ）<br>
+          要寫得比正常<strong style="color:#f5d870;">小一號</strong><br>
+          小寫是關鍵！寫成大字就變成兩個音<br><br>
+          <span class="ja">きや（ki-ya 兩個音）</span><br>
+          <span class="ja">きゃ（kya 一個音）✅</span><br>
+          <span style="font-size:11px;">← 這兩個看起來像，但是完全不同！</span>
+        </p>
+      </div>
+      <div class="rule-box">
+        <h5>🔊 發音特點</h5>
+        <p>
+          兩個假名要<strong style="color:#f5d870;">快速連讀</strong>，<br>
+          形成<strong style="color:#f5d870;">一個音節</strong>（不是兩個）<br><br>
+          <span class="ja">き（ki）＋ゃ（ya）</span><br>
+          快速連讀 →「kya」一個拍子<br>
+          不是「ki-ya」兩個拍子
+        </p>
+      </div>
+      <div class="rule-box">
+        <h5>📊 數量</h5>
+        <p>
+          清音拗音：7行 × 3＝21個<br>
+          濁音拗音：4行 × 3＝12個<br>
+          半濁音拗音：1行 × 3＝3個<br>
+          <strong style="color:#f5d870;">合計：36個拗音</strong><br><br>
+          你的筆記只記了きゃ・しゃ・ちゃ三行，<br>今天把全部36個補完！
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 清音拗音 ══ -->
+<div class="sec">
+  <div class="sec-title">② 清音拗音 — 21個（你的筆記有記的3行）</div>
+
+  <!-- きゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--kya);">き行拗音（你的筆記）</div>
+    <div class="youon-row kya-row">
+      <div class="yr-label"><span class="yl-name">き行</span><span class="yl-base">き</span><span class="yl-rom">ki</span></div>
+      <div class="kana-cell"><div class="formula">き＋ゃ</div><div class="hira">きゃ</div><div class="kata">キャ</div><div class="rom">kya</div><div class="zh">類似「kia」快讀</div></div>
+      <div class="kana-cell"><div class="formula">き＋ゅ</div><div class="hira">きゅ</div><div class="kata">キュ</div><div class="rom">kyu</div><div class="zh">類似「kiu」快讀</div></div>
+      <div class="kana-cell"><div class="formula">き＋ょ</div><div class="hira">きょ</div><div class="kata">キョ</div><div class="rom">kyo</div><div class="zh">類似「kio」快讀</div></div>
+    </div>
+  </div>
+
+  <!-- しゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--sha);">し行拗音（你的筆記）</div>
+    <div class="youon-row sha-row">
+      <div class="yr-label"><span class="yl-name">し行</span><span class="yl-base">し</span><span class="yl-rom">shi</span></div>
+      <div class="kana-cell special"><div class="formula">し＋ゃ</div><div class="hira">しゃ</div><div class="kata">シャ</div><div class="rom">sha⚠️</div><div class="zh">不是「sya」！</div></div>
+      <div class="kana-cell special"><div class="formula">し＋ゅ</div><div class="hira">しゅ</div><div class="kata">シュ</div><div class="rom">shu⚠️</div><div class="zh">類似「休」快讀</div></div>
+      <div class="kana-cell special"><div class="formula">し＋ょ</div><div class="hira">しょ</div><div class="kata">ショ</div><div class="rom">sho⚠️</div><div class="zh">類似「消」快讀</div></div>
+    </div>
+  </div>
+
+  <!-- ちゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--cha);">ち行拗音（你的筆記）</div>
+    <div class="youon-row cha-row">
+      <div class="yr-label"><span class="yl-name">ち行</span><span class="yl-base">ち</span><span class="yl-rom">chi</span></div>
+      <div class="kana-cell special"><div class="formula">ち＋ゃ</div><div class="hira">ちゃ</div><div class="kata">チャ</div><div class="rom">cha⚠️</div><div class="zh">類似「恰」快讀</div></div>
+      <div class="kana-cell special"><div class="formula">ち＋ゅ</div><div class="hira">ちゅ</div><div class="kata">チュ</div><div class="rom">chu⚠️</div><div class="zh">類似「秋」快讀</div></div>
+      <div class="kana-cell special"><div class="formula">ち＋ょ</div><div class="hira">ちょ</div><div class="kata">チョ</div><div class="rom">cho⚠️</div><div class="zh">類似「巧」快讀</div></div>
+    </div>
+  </div>
+
+  <!-- にゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--nya);">に行拗音（補完）</div>
+    <div class="youon-row nya-row">
+      <div class="yr-label"><span class="yl-name">に行</span><span class="yl-base">に</span><span class="yl-rom">ni</span></div>
+      <div class="kana-cell"><div class="formula">に＋ゃ</div><div class="hira">にゃ</div><div class="kata">ニャ</div><div class="rom">nya</div><div class="zh">「妮亞」快讀</div></div>
+      <div class="kana-cell"><div class="formula">に＋ゅ</div><div class="hira">にゅ</div><div class="kata">ニュ</div><div class="rom">nyu</div><div class="zh">「妮優」快讀</div></div>
+      <div class="kana-cell"><div class="formula">に＋ょ</div><div class="hira">にょ</div><div class="kata">ニョ</div><div class="rom">nyo</div><div class="zh">「妮喲」快讀</div></div>
+    </div>
+  </div>
+
+  <!-- ひゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--hya);">ひ行拗音（補完）</div>
+    <div class="youon-row hya-row">
+      <div class="yr-label"><span class="yl-name">ひ行</span><span class="yl-base">ひ</span><span class="yl-rom">hi</span></div>
+      <div class="kana-cell"><div class="formula">ひ＋ゃ</div><div class="hira">ひゃ</div><div class="kata">ヒャ</div><div class="rom">hya</div><div class="zh">「希亞」快讀</div></div>
+      <div class="kana-cell"><div class="formula">ひ＋ゅ</div><div class="hira">ひゅ</div><div class="kata">ヒュ</div><div class="rom">hyu</div><div class="zh">「希優」快讀</div></div>
+      <div class="kana-cell"><div class="formula">ひ＋ょ</div><div class="hira">ひょ</div><div class="kata">ヒョ</div><div class="rom">hyo</div><div class="zh">「希喲」快讀</div></div>
+    </div>
+  </div>
+
+  <!-- みゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--mya);">み行拗音（補完）</div>
+    <div class="youon-row mya-row">
+      <div class="yr-label"><span class="yl-name">み行</span><span class="yl-base">み</span><span class="yl-rom">mi</span></div>
+      <div class="kana-cell"><div class="formula">み＋ゃ</div><div class="hira">みゃ</div><div class="kata">ミャ</div><div class="rom">mya</div><div class="zh">「咪亞」快讀</div></div>
+      <div class="kana-cell"><div class="formula">み＋ゅ</div><div class="hira">みゅ</div><div class="kata">ミュ</div><div class="rom">myu</div><div class="zh">「咪優」快讀</div></div>
+      <div class="kana-cell"><div class="formula">み＋ょ</div><div class="hira">みょ</div><div class="kata">ミョ</div><div class="rom">myo</div><div class="zh">「咪喲」快讀</div></div>
+    </div>
+  </div>
+
+  <!-- りゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--rya);">り行拗音（補完）</div>
+    <div class="youon-row rya-row">
+      <div class="yr-label"><span class="yl-name">り行</span><span class="yl-base">り</span><span class="yl-rom">ri</span></div>
+      <div class="kana-cell"><div class="formula">り＋ゃ</div><div class="hira">りゃ</div><div class="kata">リャ</div><div class="rom">rya</div><div class="zh">「裡亞」快讀</div></div>
+      <div class="kana-cell"><div class="formula">り＋ゅ</div><div class="hira">りゅ</div><div class="kata">リュ</div><div class="rom">ryu</div><div class="zh">「裡優」快讀</div></div>
+      <div class="kana-cell"><div class="formula">り＋ょ</div><div class="hira">りょ</div><div class="kata">リョ</div><div class="rom">ryo</div><div class="zh">「裡喲」快讀</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 濁音拗音 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 濁音拗音（補完）— 12個</div>
+
+  <!-- ぎゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--gya);">ぎ行拗音</div>
+    <div class="youon-row gya-row">
+      <div class="yr-label"><span class="yl-name">ぎ行</span><span class="yl-base">ぎ</span><span class="yl-rom">gi</span></div>
+      <div class="kana-cell"><div class="formula">ぎ＋ゃ</div><div class="hira">ぎゃ</div><div class="kata">ギャ</div><div class="rom">gya</div><div class="zh">き行加゛</div></div>
+      <div class="kana-cell"><div class="formula">ぎ＋ゅ</div><div class="hira">ぎゅ</div><div class="kata">ギュ</div><div class="rom">gyu</div><div class="zh">ぎゅっと（緊緊）</div></div>
+      <div class="kana-cell"><div class="formula">ぎ＋ょ</div><div class="hira">ぎょ</div><div class="kata">ギョ</div><div class="rom">gyo</div><div class="zh">魚（ぎょ）</div></div>
+    </div>
+  </div>
+
+  <!-- じゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--ja);">じ行拗音</div>
+    <div class="youon-row ja-row">
+      <div class="yr-label"><span class="yl-name">じ行</span><span class="yl-base">じ</span><span class="yl-rom">ji</span></div>
+      <div class="kana-cell special"><div class="formula">じ＋ゃ</div><div class="hira">じゃ</div><div class="kata">ジャ</div><div class="rom">ja⚠️</div><div class="zh">Jazz等外來語</div></div>
+      <div class="kana-cell special"><div class="formula">じ＋ゅ</div><div class="hira">じゅ</div><div class="kata">ジュ</div><div class="rom">ju⚠️</div><div class="zh">Juice等外來語</div></div>
+      <div class="kana-cell special"><div class="formula">じ＋ょ</div><div class="hira">じょ</div><div class="kata">ジョ</div><div class="rom">jo⚠️</div><div class="zh">情報（じょうほう）</div></div>
+    </div>
+  </div>
+
+  <!-- びゃ行 -->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--bya);">びゃ行拗音</div>
+    <div class="youon-row bya-row">
+      <div class="yr-label"><span class="yl-name">び行</span><span class="yl-base">び</span><span class="yl-rom">bi</span></div>
+      <div class="kana-cell"><div class="formula">び＋ゃ</div><div class="hira">びゃ</div><div class="kata">ビャ</div><div class="rom">bya</div><div class="zh">百（びゃく）</div></div>
+      <div class="kana-cell"><div class="formula">び＋ゅ</div><div class="hira">びゅ</div><div class="kata">ビュ</div><div class="rom">byu</div><div class="zh">view等外來語</div></div>
+      <div class="kana-cell"><div class="formula">び＋ょ</div><div class="hira">びょ</div><div class="kata">ビョ</div><div class="rom">byo</div><div class="zh">病院（びょういん）</div></div>
+    </div>
+  </div>
+
+  <!-- ぴゃ行 （半濁音拗音）-->
+  <div class="youon-section">
+    <div class="ys-label" style="background:var(--pya);">ぴゃ行拗音（半濁音）</div>
+    <div class="youon-row pya-row">
+      <div class="yr-label"><span class="yl-name">ぴ行</span><span class="yl-base">ぴ</span><span class="yl-rom">pi</span></div>
+      <div class="kana-cell"><div class="formula">ぴ＋ゃ</div><div class="hira">ぴゃ</div><div class="kata">ピャ</div><div class="rom">pya</div><div class="zh">外來語に多い</div></div>
+      <div class="kana-cell"><div class="formula">ぴ＋ゅ</div><div class="hira">ぴゅ</div><div class="kata">ピュ</div><div class="rom">pyu</div><div class="zh">外來語に多い</div></div>
+      <div class="kana-cell"><div class="formula">ぴ＋ょ</div><div class="hira">ぴょ</div><div class="kata">ピョ</div><div class="rom">pyo</div><div class="zh">ぴょんと跳ぶ</div></div>
+    </div>
+  </div>
+
+  <div class="tip">⚠️ <strong>じゃ・じゅ・じょ は最常用！</strong><br>じゃ（ja）：じゃあ（那麼）、じゃない（不是）— 口語最高頻！<br>じゅ（ju）：ジュース（juice）、授業（じゅぎょう）<br>じょ（jo）：情報（じょうほう）、女（じょせい）</div>
+</div>
+
+<!-- ══ 全36音一覧 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 全36拗音一覧速查表</div>
+  <div style="overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:14px;">
+    <table style="border-collapse:collapse;width:100%;min-width:600px;">
+      <thead>
+        <tr style="background:var(--ink);">
+          <th style="padding:8px 10px;font-family:'Shippori Mincho',serif;font-size:11px;color:#f5e6c0;text-align:center;border-right:1px solid #3a3020;">行</th>
+          <th style="padding:8px 10px;font-family:'Shippori Mincho',serif;font-size:11px;color:#f5e6c0;text-align:center;border-right:1px solid #3a3020;">〜や（a）</th>
+          <th style="padding:8px 10px;font-family:'Shippori Mincho',serif;font-size:11px;color:#f5e6c0;text-align:center;border-right:1px solid #3a3020;">〜ゆ（u）</th>
+          <th style="padding:8px 10px;font-family:'Shippori Mincho',serif;font-size:11px;color:#f5e6c0;text-align:center;border-right:1px solid #3a3020;">〜よ（o）</th>
+          <th style="padding:8px 10px;font-family:'Shippori Mincho',serif;font-size:11px;color:#f5e6c0;text-align:center;">種類</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:var(--kya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--kya);">き</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">きゃ kya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">きゅ kyu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">きょ kyo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--sha-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--sha);">し</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">しゃ sha⚠️</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">しゅ shu⚠️</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">しょ sho⚠️</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--cha-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--cha);">ち</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">ちゃ cha⚠️</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">ちゅ chu⚠️</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">ちょ cho⚠️</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--nya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--nya);">に</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">にゃ nya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">にゅ nyu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">にょ nyo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--hya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--hya);">ひ</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ひゃ hya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ひゅ hyu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ひょ hyo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--mya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--mya);">み</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">みゃ mya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">みゅ myu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">みょ myo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--rya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--rya);">り</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">りゃ rya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">りゅ ryu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">りょ ryo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:#888;">清音</td>
+        </tr>
+        <tr style="background:var(--gya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--gya);">ぎ</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ぎゃ gya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ぎゅ gyu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ぎょ gyo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:var(--gya);">濁音</td>
+        </tr>
+        <tr style="background:var(--ja-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--ja);">じ</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">じゃ ja⚠️</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">じゅ ju⚠️</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;color:var(--accent);">じょ jo⚠️</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:var(--ja);">濁音</td>
+        </tr>
+        <tr style="background:var(--bya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--bya);">び</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">びゃ bya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">びゅ byu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">びょ byo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:var(--bya);">濁音</td>
+        </tr>
+        <tr style="background:var(--pya-bg);">
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;color:var(--pya);">ぴ</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ぴゃ pya</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ぴゅ pyu</td>
+          <td style="padding:7px 10px;text-align:center;border-right:1px solid #e0d4bc;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;">ぴょ pyo</td>
+          <td style="padding:7px 10px;text-align:center;font-size:11px;color:var(--pya);">半濁音</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 実例 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 拗音実例 — 生活中最常見的拗音詞</div>
+  <div class="example-grid">
+    <div class="eg-item"><div class="ej">しゃしん</div><div class="er">shashin</div><div class="ez">寫真（照片）</div></div>
+    <div class="eg-item"><div class="ej">しゅくだい</div><div class="er">shukudai</div><div class="ez">宿題（作業）</div></div>
+    <div class="eg-item"><div class="ej">ちゃいろ</div><div class="er">chairo</div><div class="ez">茶色（棕色）</div></div>
+    <div class="eg-item"><div class="ej">ちょっと</div><div class="er">chotto</div><div class="ez">稍等一下</div></div>
+    <div class="eg-item"><div class="ej">きゅうり</div><div class="er">kyuri</div><div class="ez">黃瓜</div></div>
+    <div class="eg-item"><div class="ej">きょう</div><div class="er">kyo</div><div class="ez">今日（今天）</div></div>
+    <div class="eg-item"><div class="ej">じゃあ</div><div class="er">jaa</div><div class="ez">那麼（口語）</div></div>
+    <div class="eg-item"><div class="ej">りょこう</div><div class="er">ryoko</div><div class="ez">旅行</div></div>
+    <div class="eg-item"><div class="ej">にょき</div><div class="er">nyoki</div><div class="ez">破土而出（狀聲詞）</div></div>
+    <div class="eg-item"><div class="ej">ぎゅうにゅう</div><div class="er">gyunyu</div><div class="ez">牛奶</div></div>
+    <div class="eg-item"><div class="ej">びょういん</div><div class="er">byoin</div><div class="ez">病院（醫院）</div></div>
+    <div class="eg-item"><div class="ej">ひゃく</div><div class="er">hyaku</div><div class="ez">百（100）</div></div>
+  </div>
+</div>
+
+<div class="card-footer">拗音（ようおん）完全版 · 清音21＋濁音12＋半濁音3＝全36個 · 平假名＋片假名完整對照 · おにひめ學習筆記</div>
+</div>
+</body>
+</html>
