@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot 框架完整復習</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --ctrl:#1a3a6b;--ctrl-bg:#e8f0ff;
+  --svc:#8b5c00;--svc-bg:#fff8e0;
+  --repo:#5c1a5c;--repo-bg:#f8e8ff;
+  --entity:#1a5c5c;--entity-bg:#e0f8f8;
+  --dto:#6b1a1a;--dto-bg:#ffe8e8;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c140c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,28px);font-weight:800;color:#c8f0c8;letter-spacing:5px;margin-bottom:4px;text-align:center;text-shadow:0 0 20px rgba(109,179,63,0.4);}
+.page-sub{font-size:11px;color:#708060;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--spring);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--spring-dark);letter-spacing:4px;border-bottom:1.5px solid var(--spring);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+
+/* ── 代碼塊 ── */
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;margin-bottom:12px;overflow-x:auto;border:1px solid #2d3a2d;}
+.code-block .c-green{color:#a8ff78;}
+.code-block .c-blue{color:#89dcff;}
+.code-block .c-yellow{color:#f9e2af;}
+.code-block .c-purple{color:#cba6f7;}
+.code-block .c-red{color:#f38ba8;}
+.code-block .c-gray{color:#6c7086;}
+.code-block .c-white{color:#cdd6f4;}
+.code-block .c-orange{color:#fab387;}
+
+/* ── 介紹ボックス ── */
+.intro-box{background:linear-gradient(135deg,#0c1a0c,#1a2d1a);border:2px solid var(--spring);border-radius:8px;padding:18px 20px;margin-bottom:16px;color:#c8f0c8;}
+.intro-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:#a8e090;letter-spacing:3px;margin-bottom:12px;}
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ig-box{background:rgba(109,179,63,0.08);border:1px solid rgba(109,179,63,0.3);border-radius:4px;padding:10px 12px;}
+.ig-box h5{font-size:11px;letter-spacing:2px;color:#a8e090;margin-bottom:6px;}
+.ig-box p{font-size:12px;color:#90c080;line-height:1.75;}
+
+/* ── 層次架構 ── */
+.layer-flow{display:flex;flex-direction:column;gap:4px;margin-bottom:16px;}
+.layer-box{border-radius:6px;padding:14px 18px;border:2px solid;display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:start;}
+.lb-ctrl{background:var(--ctrl-bg);border-color:var(--ctrl);}
+.lb-svc{background:var(--svc-bg);border-color:var(--svc);}
+.lb-repo{background:var(--repo-bg);border-color:var(--repo);}
+.lb-entity{background:var(--entity-bg);border-color:var(--entity);}
+.lb-dto{background:var(--dto-bg);border-color:var(--dto);}
+
+.layer-name{text-align:center;}
+.ln-icon{font-size:28px;margin-bottom:4px;}
+.ln-label{font-size:14px;font-weight:700;margin-bottom:2px;}
+.lb-ctrl .ln-label{color:var(--ctrl);}
+.lb-svc .ln-label{color:var(--svc);}
+.lb-repo .ln-label{color:var(--repo);}
+.lb-entity .ln-label{color:var(--entity);}
+.lb-dto .ln-label{color:var(--dto);}
+.ln-eng{font-size:10px;color:#aaa;}
+
+.layer-desc{}
+.ld-title{font-size:12px;font-weight:700;color:#444;margin-bottom:6px;letter-spacing:1px;}
+.ld-note{font-size:12px;color:#555;line-height:1.8;margin-bottom:6px;}
+.ld-anno{font-family:'DM Mono',monospace;font-size:11px;color:var(--spring-dark);background:var(--spring-bg);padding:4px 8px;border-radius:3px;display:inline-block;margin-top:3px;}
+
+.layer-arrow{text-align:center;font-size:18px;color:#90b890;padding:2px 0;}
+
+/* ── 流程圖 ── */
+.flow-box{background:var(--paper2);border:1px solid #d8ccb8;border-radius:6px;padding:16px 18px;margin-bottom:14px;}
+.flow-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--spring-dark);letter-spacing:3px;margin-bottom:14px;}
+.flow-steps{display:flex;flex-direction:column;gap:4px;}
+.fs-row{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;}
+.fs-node{border-radius:4px;padding:8px 10px;text-align:center;font-size:12.5px;font-weight:700;}
+.fsn-client{background:#d0e8ff;color:var(--ctrl);border:1.5px solid var(--ctrl);}
+.fsn-ctrl{background:var(--ctrl-bg);color:var(--ctrl);border:1.5px solid var(--ctrl);}
+.fsn-svc{background:var(--svc-bg);color:var(--svc);border:1.5px solid var(--svc);}
+.fsn-repo{background:var(--repo-bg);color:var(--repo);border:1.5px solid var(--repo);}
+.fsn-db{background:#f0f0f0;color:#444;border:1.5px solid #aaa;}
+.fs-arrow{text-align:center;font-size:16px;color:#90b890;padding:2px 0;}
+.fs-desc{font-size:12px;color:#555;}
+.fs-desc strong{color:var(--accent);}
+
+/* ── pom.xml ── */
+.pom-section{background:#f8f8f8;border:1px solid #d8d8d8;border-radius:6px;padding:14px 16px;margin-bottom:12px;}
+.pom-section h4{font-size:12px;font-weight:700;color:#555;letter-spacing:2px;margin-bottom:10px;}
+
+/* ── 筆記要點 ── */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.note-item{border-radius:4px;padding:12px 14px;background:white;border:1.5px solid #d8ccb8;}
+.note-item h5{font-size:11.5px;font-weight:700;color:var(--spring-dark);letter-spacing:2px;margin-bottom:6px;}
+.note-item p{font-size:12px;color:#444;line-height:1.8;}
+.note-item .code{font-family:'DM Mono',monospace;font-size:11px;background:#f0f0f0;padding:2px 6px;border-radius:2px;color:#333;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">Spring Boot 框架完整復習</div>
+<div class="page-sub">性能介紹 · 三層架構 · 完整請求流程 · 代碼結構</div>
+
+<div class="card">
+
+<!-- ══ 1. 性能與定位 ══ -->
+<div class="sec">
+  <div class="sec-title">① JAVA性能慢嗎？— 你筆記的核心問題</div>
+  <div class="intro-box">
+    <h4>筆記整理：JAVA性能的真相</h4>
+    <div class="intro-grid">
+      <div class="ig-box">
+        <h5>🔍 實際情況</h5>
+        <p>性能問題預估物相，架構設計如資源調度才是關鍵，而不是語言本身。<br>JAVA在高並發、長時間運行場景下分配更穩定，這也是很多大型系統長期選擇它的原因。</p>
+      </div>
+      <div class="ig-box">
+        <h5>🏗️ 框架選擇</h5>
+        <p>我們基於主流JAVA服務端框架做標準化封裝，重點不在具體框架，而是在主流規範、可維護性、加二次開發成本、生態考量，更注重工程層面的穩定性，而不是單個技術點。</p>
+      </div>
+      <div class="ig-box">
+        <h5>🔌 對接能力</h5>
+        <p>JAVA體系下對接非常成熟，通常通過標準接口、兒一鑒如數據交換來翻譯，對原系統影響降到最小。<br>（我懂集成，有不主動你充當系統）</p>
+      </div>
+      <div class="ig-box">
+        <h5>✨ 真正亮點</h5>
+        <p>JAVA不是亮點，是底盤。<br>真正亮點是：<strong style="color:#a8e090;">架構設計＋業務抽象＋持變交付</strong><br><br>「您能來臨，我很榮幸。您只需知道：交給我，不出事。」</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--spring-bg);border:2px solid var(--spring);border-radius:6px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:12.5px;color:#333;line-height:1.9;">
+      <strong style="color:var(--spring-dark);">在JAVA服務端這塊，最關注的是：</strong><br>
+      ✅ <strong>可回滾</strong>——出問題能退回去<br>
+      ✅ <strong>可監控</strong>——能看到系統狀態<br>
+      ✅ <strong>可定問題</strong>——故障可以快速定位<br>
+      而不是單點技術指標
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. Spring Boot 是什麼 ══ -->
+<div class="sec">
+  <div class="sec-title">② Spring Boot 是什麼</div>
+  <div class="notes-grid">
+    <div class="note-item">
+      <h5>📦 Spring Boot 定義</h5>
+      <p>基於Spring框架的快速開發腳手架。<br>自動配置、內嵌伺服器、約定大於配置。<br>讓開發者專注業務邏輯，減少XML配置。</p>
+    </div>
+    <div class="note-item">
+      <h5>🎯 核心特點</h5>
+      <p>開箱即用：<span class="code">@SpringBootApplication</span>一個注解啟動<br>自動配置：根據依賴自動設置<br>內嵌Tomcat：不需要單獨部署伺服器</p>
+    </div>
+    <div class="note-item">
+      <h5>🏗️ 三層架構核心</h5>
+      <p>Controller（接收請求）<br>↓ Service（處理業務）<br>↓ Repository（操作數據庫）<br>每層職責分明，相互解耦</p>
+    </div>
+    <div class="note-item">
+      <h5>📋 穩定性保障（你的筆記）</h5>
+      <p>完整的異常處理、日誌追蹤、服務降級熔斷策略。JAVA在這方面的工具鏈非常成熟。<br>技術對接前要先討論方案可行性和整體風險控制層面。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. 項目結構 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 項目目錄結構（你的筆記完整還原）</div>
+  <div class="code-block">
+<span class="c-yellow">項目根目錄/</span>
+├── <span class="c-blue">src/</span>
+│   └── <span class="c-blue">main/</span>
+│       └── <span class="c-blue">java/</span>
+│           └── <span class="c-blue">com/example/</span>
+│               ├── <span class="c-green">Application.java</span>        <span class="c-gray">← 啟動入口</span>
+│               ├── <span class="c-blue">controller/</span>
+│               │   └── <span class="c-green">UserController.java</span>   <span class="c-gray">← 接收請求，API口</span>
+│               ├── <span class="c-blue">service/</span>
+│               │   ├── <span class="c-green">UserService.java</span>      <span class="c-gray">← 業務接口</span>
+│               │   └── <span class="c-blue">impl/</span>
+│               │       └── <span class="c-green">UserServiceImpl.java</span>  <span class="c-gray">← 業務實現（接口）</span>
+│               ├── <span class="c-blue">mapper/</span>
+│               │   └── <span class="c-green">UserMapper.java</span>       <span class="c-gray">← 數據庫操作</span>
+│               └── <span class="c-blue">entity/</span>
+│                   └── <span class="c-green">User.java</span>             <span class="c-gray">← 數據庫實體</span>
+│
+└── <span class="c-blue">resources/</span>
+    ├── <span class="c-green">application.yml</span>           <span class="c-gray">← 主設置</span>
+    ├── <span class="c-blue">mapper/</span>
+    │   └── <span class="c-green">UserMapper.xml</span>           <span class="c-gray">← SQL語句</span>
+    └── <span class="c-blue">static/</span>                   <span class="c-gray">← 靜態資源</span>
+│
+├── <span class="c-orange">test/</span>                         <span class="c-gray">← 測試代碼</span>
+└── <span class="c-yellow">pom.xml</span>                       <span class="c-gray">← 依賴管理</span>
+  </div>
+</div>
+
+<!-- ══ 4. 三層架構 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 三層架構詳解</div>
+
+  <div class="layer-flow">
+
+    <div class="layer-box lb-ctrl">
+      <div class="layer-name">
+        <div class="ln-icon">🌐</div>
+        <div class="ln-label">Controller層</div>
+        <div class="ln-eng">表現層</div>
+      </div>
+      <div class="layer-desc">
+        <div class="ld-title">職責：接收HTTP請求，返回響應</div>
+        <div class="ld-note">
+          接收客戶端的HTTP請求，驗證請求參數，調用Service層處理業務，將結果轉換為VO返回給客戶端。<strong>不寫業務邏輯</strong>。
+        </div>
+        <span class="ld-anno">@RestController</span>
+        <span class="ld-anno">@RequestMapping</span>
+        <span class="ld-anno">@GetMapping / @PostMapping</span>
+      </div>
+    </div>
+
+    <div class="layer-arrow">↕</div>
+
+    <div class="layer-box lb-svc">
+      <div class="layer-name">
+        <div class="ln-icon">⚙️</div>
+        <div class="ln-label">Service層</div>
+        <div class="ln-eng">業務邏輯層</div>
+      </div>
+      <div class="layer-desc">
+        <div class="ld-title">職責：處理業務邏輯</div>
+        <div class="ld-note">
+          核心業務邏輯在這裡。接口（UserService）定義行為，實現類（UserServiceImpl）實現具體邏輯，調用Repository操作數據庫。
+        </div>
+        <span class="ld-anno">@Service</span>
+        <span class="ld-anno">@Transactional（事務管理）</span>
+        <span class="ld-anno">@Autowired（依賴注入）</span>
+      </div>
+    </div>
+
+    <div class="layer-arrow">↕</div>
+
+    <div class="layer-box lb-repo">
+      <div class="layer-name">
+        <div class="ln-icon">🗄️</div>
+        <div class="ln-label">Repository層</div>
+        <div class="ln-eng">數據訪問層</div>
+      </div>
+      <div class="layer-desc">
+        <div class="ld-title">職責：操作數據庫</div>
+        <div class="ld-note">
+          直接和數據庫交互。使用MyBatis通過Mapper接口和XML文件定義SQL查詢。<strong>不包含業務判斷</strong>，只負責數據的增刪改查。
+        </div>
+        <span class="ld-anno">@Mapper</span>
+        <span class="ld-anno">UserMapper.xml（SQL定義）</span>
+      </div>
+    </div>
+
+    <div class="layer-arrow">↕</div>
+
+    <div class="layer-box lb-entity">
+      <div class="layer-name">
+        <div class="ln-icon">📋</div>
+        <div class="ln-label">Entity</div>
+        <div class="ln-eng">實體類</div>
+      </div>
+      <div class="layer-desc">
+        <div class="ld-title">數據庫表的Java映射</div>
+        <div class="ld-note">與數據庫表一一對應，用Lombok簡化Getter/Setter的編寫。</div>
+        <span class="ld-anno">@Entity / Private long id</span>
+        <span class="ld-anno">@Data（Lombok自動生成）</span>
+      </div>
+    </div>
+
+    <div class="layer-arrow">↕</div>
+
+    <div class="layer-box lb-dto">
+      <div class="layer-name">
+        <div class="ln-icon">📦</div>
+        <div class="ln-label">DTO / VO</div>
+        <div class="ln-eng">數據傳輸物件</div>
+      </div>
+      <div class="layer-desc">
+        <div class="ld-title">請求體和響應體的數據封裝</div>
+        <div class="ld-note">
+          DTO（Data Transfer Object）：客戶端傳來的請求數據<br>
+          VO（View Object）：返回給客戶端的響應數據<br>
+          與Entity分離，避免直接暴露數據庫結構。
+        </div>
+        <span class="ld-anno">UserDTO（請求體）</span>
+        <span class="ld-anno">UserVO（響應體）</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ 5. 代碼範例 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 核心代碼範例（你的筆記還原）</div>
+
+  <div style="font-size:12px;color:#888;letter-spacing:2px;margin-bottom:8px;">Entity — 數據庫實體</div>
+  <div class="code-block">
+<span class="c-purple">Public class</span> <span class="c-yellow">User</span> {
+    <span class="c-gray">// 私有欄位</span>
+    <span class="c-purple">Private</span> <span class="c-blue">long</span> id;
+    <span class="c-purple">Private</span> <span class="c-blue">String</span> name;
+
+    <span class="c-gray">// Getter/Setter（用Lombok可自動生成）</span>
+    <span class="c-purple">Public</span> <span class="c-blue">long</span> <span class="c-green">getId</span>() { ... }
+    <span class="c-purple">Public</span> <span class="c-blue">void</span> <span class="c-green">setName</span>(<span class="c-blue">String</span> name) {
+        <span class="c-orange">this</span>.name = name;   <span class="c-gray">← 賦值給屬性</span>
+    }
+    <span class="c-purple">Public</span> <span class="c-blue">void</span> <span class="c-green">setId</span>(<span class="c-blue">long</span> id) { ... }
+}
+  </div>
+
+  <div style="font-size:12px;color:#888;letter-spacing:2px;margin-bottom:8px;">Controller層 — HTTP請求如何進入系統</div>
+  <div class="code-block">
+<span class="c-green">@RestController</span>                          <span class="c-gray">← 標識為REST控制器</span>
+<span class="c-green">@RequestMapping</span>(<span class="c-orange">"/api/users"</span>)             <span class="c-gray">← 基礎路徑</span>
+<span class="c-purple">Public class</span> <span class="c-yellow">UserController</span> {
+
+    <span class="c-green">@Autowired</span>                             <span class="c-gray">← 自動注入Service</span>
+    <span class="c-purple">Private</span> <span class="c-blue">UserService</span> userService;
+
+    <span class="c-gray">// GET /api/users</span>
+    <span class="c-green">@GetMapping</span>
+    <span class="c-purple">Public</span> List&lt;<span class="c-blue">User</span>&gt; <span class="c-green">getAllUsers</span>() { ... }
+
+    <span class="c-gray">// GET /api/users/{id}  ← 路徑參數</span>
+    <span class="c-green">@GetMapping</span>(<span class="c-orange">"{id}"</span>)
+    <span class="c-purple">Public</span> <span class="c-blue">User</span> <span class="c-green">getUser</span>(<span class="c-green">@PathVariable</span> <span class="c-blue">Long</span> id) { ... }
+
+    <span class="c-gray">// POST /api/users</span>
+    <span class="c-green">@PostMapping</span>
+    <span class="c-purple">Public</span> <span class="c-blue">User</span> <span class="c-green">createUser</span>(<span class="c-green">@RequestBody</span> <span class="c-blue">UserDTO</span> dto) { ... }  <span class="c-gray">← 請求體參數</span>
+
+    <span class="c-gray">// DELETE /api/users/{id}</span>
+    <span class="c-green">@DeleteMapping</span>(<span class="c-orange">"{id}"</span>)
+    <span class="c-purple">Public</span> <span class="c-blue">void</span> <span class="c-green">deleteUser</span>(<span class="c-green">@PathVariable</span> <span class="c-blue">Long</span> id) { ... }
+}
+  </div>
+
+  <div style="font-size:12px;color:#888;letter-spacing:2px;margin-bottom:8px;">Service層 — 業務邏輯（接口＋實現）</div>
+  <div class="code-block">
+<span class="c-gray">// 接口定義</span>
+<span class="c-purple">Public interface</span> <span class="c-yellow">UserService</span> {
+    User <span class="c-green">findById</span>(<span class="c-blue">Long</span> id);
+    List&lt;<span class="c-blue">User</span>&gt; <span class="c-green">findAll</span>();
+    User <span class="c-green">create</span>(<span class="c-blue">UserDTO</span> userDTO);
+    User <span class="c-green">update</span>(<span class="c-blue">Long</span> id, <span class="c-blue">UserDTO</span> userDTO);
+    <span class="c-blue">void</span> <span class="c-green">delete</span>(<span class="c-blue">Long</span> id);
+}
+
+<span class="c-gray">// 實現類</span>
+<span class="c-green">@Service</span>                               <span class="c-gray">← 注冊為Bean</span>
+<span class="c-green">@Transactional</span>                         <span class="c-gray">← 事務管理</span>
+<span class="c-purple">Public class</span> <span class="c-yellow">UserServiceImpl</span> <span class="c-purple">implements</span> <span class="c-blue">UserService</span> {
+
+    <span class="c-green">@Autowired</span>                         <span class="c-gray">← 注入數據層</span>
+    <span class="c-purple">Private</span> <span class="c-blue">UserRepository</span> userRepository;
+
+    <span class="c-green">@Override</span>
+    <span class="c-purple">Public</span> <span class="c-blue">User</span> <span class="c-green">findById</span>(<span class="c-blue">Long</span> id) {
+        <span class="c-gray">// 記錄日誌</span>
+        log.info(<span class="c-orange">"查詢用戶ID: {}"</span>, id);
+        <span class="c-gray">// 二次查詢</span>
+        <span class="c-purple">return</span> userRepository.<span class="c-green">findById</span>(id)
+            .orElseThrow(() -> <span class="c-purple">new</span> <span class="c-yellow">BusinessException</span>(<span class="c-orange">"用戶不存在"</span>));
+    }
+}
+  </div>
+</div>
+
+<!-- ══ 6. 完整請求流程 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 完整請求響應流程（你的筆記最後一頁）</div>
+
+  <div class="flow-box">
+    <h4>一個API請求的完整旅程</h4>
+    <div class="flow-steps">
+      <div class="fs-row">
+        <div class="fs-node fsn-client">客戶端</div>
+        <div class="fs-desc">發送HTTP請求（GET/POST/DELETE等）</div>
+      </div>
+      <div class="fs-row" style="text-align:center;">
+        <div style="font-size:16px;color:#90b890;padding:2px 0;">↓（發送HTTP請求）</div>
+        <div></div>
+      </div>
+      <div class="fs-row">
+        <div class="fs-node fsn-ctrl">Controller</div>
+        <div class="fs-desc"><strong>接收請求，調用Service</strong> — 驗證參數，路由到對應方法</div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↓</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-svc">Service</div>
+        <div class="fs-desc"><strong>處理業務邏輯，調用Repository</strong> — 執行核心業務規則</div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↓</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-repo">Repository</div>
+        <div class="fs-desc"><strong>操作數據庫</strong> — 執行SQL查詢</div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↓</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-db">數據庫</div>
+        <div class="fs-desc">返回數據</div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↑（返回）</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-repo">Repository</div>
+        <div class="fs-desc"><strong>返回數據實體（Entity）</strong></div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↑</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-svc">Service</div>
+        <div class="fs-desc"><strong>處理數據，返回業務對象</strong></div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↑</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-ctrl">Controller</div>
+        <div class="fs-desc"><strong>轉換為VO，返回給客戶端</strong>（返回HTTP響應）</div>
+      </div>
+      <div class="fs-row" style="text-align:center;"><div style="font-size:16px;color:#90b890;">↑（返回HTTP響應）</div><div></div></div>
+      <div class="fs-row">
+        <div class="fs-node fsn-client">客戶端</div>
+        <div class="fs-desc">收到JSON響應數據</div>
+      </div>
+    </div>
+
+    <div style="background:#f0f8f0;border-radius:4px;padding:10px 12px;margin-top:12px;border:1px solid #b0d8b0;font-size:12.5px;color:#333;line-height:1.9;">
+      <strong style="color:var(--spring-dark);">數據流轉（你筆記的最後一行）：</strong><br>
+      請求DTO → Service處理 → 實體Entity → 數據庫<br>
+      客戶端 ← 響應VO ← Controller轉換 ← 實體Entity ←
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7. pom.xml ══ -->
+<div class="sec">
+  <div class="sec-title">⑦ pom.xml 依賴配置（你的筆記完整還原）</div>
+  <div class="code-block">
+<span class="c-blue">&lt;project&gt;</span>
+    <span class="c-gray">// 項目基本信息</span>
+    <span class="c-green">&lt;groupId&gt;</span>com.example<span class="c-green">&lt;/groupId&gt;</span>       <span class="c-gray">← 組織標識</span>
+    <span class="c-green">&lt;artifactId&gt;</span>demo<span class="c-green">&lt;/artifactId&gt;</span>       <span class="c-gray">← 項目標識</span>
+    <span class="c-green">&lt;version&gt;</span>1.0.0<span class="c-green">&lt;/version&gt;</span>           <span class="c-gray">← 版本號</span>
+
+    <span class="c-gray">// 繼承Spring Boot</span>
+    <span class="c-blue">&lt;parent&gt;</span>
+        <span class="c-green">&lt;groupId&gt;</span>org.springframework.boot<span class="c-green">&lt;/groupId&gt;</span>
+        <span class="c-green">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="c-green">&lt;/artifactId&gt;</span>
+        <span class="c-green">&lt;version&gt;</span>2.7.0<span class="c-green">&lt;/version&gt;</span>              <span class="c-gray">← 內含最佳依賴版本</span>
+    <span class="c-blue">&lt;/parent&gt;</span>
+
+    <span class="c-blue">&lt;dependencies&gt;</span>                              <span class="c-gray">← 項目依賴</span>
+        <span class="c-gray">// Web框架</span>
+        <span class="c-blue">&lt;dependency&gt;</span>
+            <span class="c-green">&lt;groupId&gt;</span>org.springframework.boot<span class="c-green">&lt;/groupId&gt;</span>
+            <span class="c-green">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="c-green">&lt;/artifactId&gt;</span>
+        <span class="c-blue">&lt;/dependency&gt;</span>                            <span class="c-gray">← Web需求</span>
+
+        <span class="c-gray">// 數據庫操作</span>
+        <span class="c-blue">&lt;dependency&gt;</span>
+            <span class="c-green">&lt;groupId&gt;</span>org.mybatis.spring.boot<span class="c-green">&lt;/groupId&gt;</span>
+            <span class="c-green">&lt;artifactId&gt;</span>mybatis-spring-boot-starter<span class="c-green">&lt;/artifactId&gt;</span>
+        <span class="c-blue">&lt;/dependency&gt;</span>                            <span class="c-gray">← 數據庫連結</span>
+
+        <span class="c-gray">// 代碼簡化</span>
+        <span class="c-blue">&lt;dependency&gt;</span>
+            <span class="c-green">&lt;groupId&gt;</span>org.projectlombok<span class="c-green">&lt;/groupId&gt;</span>
+            <span class="c-green">&lt;artifactId&gt;</span>lombok<span class="c-green">&lt;/artifactId&gt;</span>
+            <span class="c-green">&lt;scope&gt;</span>provided<span class="c-green">&lt;/scope&gt;</span>               <span class="c-gray">← 編譯期生效</span>
+        <span class="c-blue">&lt;/dependency&gt;</span>
+    <span class="c-blue">&lt;/dependencies&gt;</span>
+<span class="c-blue">&lt;/project&gt;</span>
+  </div>
+</div>
+
+<div class="card-footer">
+  Spring Boot 框架完整復習 · 三層架構 · 完整請求流程 · pom.xml · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
