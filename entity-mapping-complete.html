@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>實體類與數據庫映射完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --entity:#1a5c5c;--entity-bg:#e0f8f8;
+  --relation:#8b5c00;--relation-bg:#fff8e0;
+  --mybatis:#5c1a5c;--mybatis-bg:#f8e8ff;
+  --jpa:#1a3a6b;--jpa-bg:#e8f0ff;
+  --jdbc:#6b1a1a;--jdbc-bg:#ffe8e8;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c140c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#c8f0c8;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#708060;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--spring);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--spring-dark);letter-spacing:4px;border-bottom:1.5px solid var(--spring);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+.warn{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.warn strong{color:var(--accent);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #2d3a2d;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-red{color:#f38ba8;}.c-gray{color:#6c7086;}
+.c-white{color:#cdd6f4;}.c-orange{color:#fab387;}.c-teal{color:#94e2d5;}
+
+/* ── 映射說明 ── */
+.mapping-visual{display:grid;grid-template-columns:1fr 60px 1fr;gap:10px;align-items:center;margin-bottom:16px;}
+.mv-java{background:var(--entity-bg);border:2px solid var(--entity);border-radius:6px;padding:14px 16px;}
+.mv-db{background:#f0f0f8;border:2px solid #8080c0;border-radius:6px;padding:14px 16px;}
+.mv-mid{text-align:center;font-size:22px;color:var(--spring-dark);}
+.mv-java h4{color:var(--entity);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.mv-db h4{color:#5050b0;font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.mv-row{display:flex;justify-content:space-between;padding:4px 6px;background:white;border-radius:3px;margin-bottom:3px;font-size:12px;}
+.mv-row .field{font-family:'DM Mono',monospace;font-weight:700;}
+.mv-row .type{color:#888;font-size:11px;}
+
+/* ── 關係映射 ── */
+.relation-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.rel-box{border-radius:6px;padding:14px 16px;border:2px solid var(--relation);background:var(--relation-bg);}
+.rel-box h4{color:var(--relation);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.rel-diagram{background:white;border-radius:4px;padding:10px 12px;margin-bottom:8px;text-align:center;font-size:13px;color:#333;line-height:1.8;}
+.rel-note{font-size:12px;color:#555;line-height:1.75;}
+.rel-note strong{color:var(--accent);}
+
+/* ── 對比表 ── */
+.compare-table{overflow-x:auto;border:1px solid #d8ccb8;border-radius:6px;margin-bottom:14px;}
+table{border-collapse:collapse;width:100%;min-width:700px;}
+thead tr{background:var(--ink);}
+thead th{padding:10px 12px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:1px;color:#f5e6c0;text-align:center;}
+.th-item{background:#2d2416!important;width:120px;}
+.th-jdbc{background:var(--jdbc)!important;}
+.th-mybatis{background:var(--mybatis)!important;}
+.th-jpa{background:var(--jpa)!important;}
+tbody tr:nth-child(even){background:var(--paper2);}
+tbody tr:nth-child(odd){background:var(--paper);}
+td{padding:9px 12px;border-right:1px solid #e0d4bc;font-size:12px;vertical-align:top;line-height:1.65;}
+td:last-child{border-right:none;}
+td.item-label{font-weight:700;color:#444;font-family:'Noto Sans TC',sans-serif;width:100px;}
+td.jdbc-cell{color:var(--jdbc);}
+td.mybatis-cell{color:var(--mybatis);}
+td.jpa-cell{color:var(--jpa);}
+td .mono{font-family:'DM Mono',monospace;font-size:11px;background:#f0f0f0;padding:1px 4px;border-radius:2px;color:#333;}
+td .good{color:var(--spring-dark);font-weight:700;}
+td .bad{color:var(--accent);font-weight:700;}
+
+/* ── 模式卡片 ── */
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.pattern-box{border-radius:6px;padding:14px 16px;border:2px solid;}
+.pb-repo{background:var(--jpa-bg);border-color:var(--jpa);}
+.pb-dao{background:var(--mybatis-bg);border-color:var(--mybatis);}
+.pb-active{background:var(--entity-bg);border-color:var(--entity);}
+.pb-qb{background:var(--relation-bg);border-color:var(--relation);}
+.pattern-box h4{font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.pb-repo h4{color:var(--jpa);}.pb-dao h4{color:var(--mybatis);}
+.pb-active h4{color:var(--entity);}.pb-qb h4{color:var(--relation);}
+.pattern-box p{font-size:12px;color:#444;line-height:1.8;margin-bottom:8px;}
+.pattern-box .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;font-family:'Noto Sans TC',sans-serif;}
+.pb-repo .tag{background:var(--jpa-bg);color:var(--jpa);}
+.pb-dao .tag{background:var(--mybatis-bg);color:var(--mybatis);}
+.pb-active .tag{background:var(--entity-bg);color:var(--entity);}
+.pb-qb .tag{background:var(--relation-bg);color:var(--relation);}
+
+/* ── 推薦場景 ── */
+.scenario-box{background:linear-gradient(135deg,#f0fff0,#e8f8e8);border:2px solid var(--spring);border-radius:6px;padding:16px 18px;margin-bottom:14px;}
+.scenario-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--spring-dark);letter-spacing:3px;margin-bottom:12px;}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.sc-item{background:white;border-radius:4px;padding:10px 12px;border:1px solid #b8d8b8;}
+.sc-item h5{font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:6px;}
+.sc-item p{font-size:12px;color:#444;line-height:1.7;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">實體類與數據庫映射完全版</div>
+<div class="page-sub">ORM映射 · 關係映射 · JDBC vs MyBatis vs JPA · 數據訪問層模式</div>
+
+<div class="card">
+
+<!-- ══ 1. 實體類與數據庫映射 ══ -->
+<div class="sec">
+  <div class="sec-title">① 實體類與數據庫映射 — Java類 對應 數據庫表</div>
+
+  <div class="mapping-visual">
+    <div class="mv-java">
+      <h4>☕ Java實體類（Entity）</h4>
+      <div class="mv-row"><span class="field" style="color:var(--entity);">Long id</span><span class="type">長整數</span></div>
+      <div class="mv-row"><span class="field" style="color:var(--entity);">String name</span><span class="type">字串</span></div>
+      <div class="mv-row"><span class="field" style="color:var(--entity);">String email</span><span class="type">字串</span></div>
+      <div class="mv-row"><span class="field" style="color:var(--entity);">Integer age</span><span class="type">整數</span></div>
+      <div class="mv-row"><span class="field" style="color:var(--entity);">LocalDateTime createdAt</span><span class="type">時間</span></div>
+    </div>
+    <div class="mv-mid">⟺<br><small style="font-size:10px;color:#888;">ORM映射</small></div>
+    <div class="mv-db">
+      <h4>🗄️ 數據庫表（users）</h4>
+      <div class="mv-row"><span class="field" style="color:#5050b0;">id</span><span class="type">BIGINT PK</span></div>
+      <div class="mv-row"><span class="field" style="color:#5050b0;">name</span><span class="type">VARCHAR(50)</span></div>
+      <div class="mv-row"><span class="field" style="color:#5050b0;">email</span><span class="type">VARCHAR(100)</span></div>
+      <div class="mv-row"><span class="field" style="color:#5050b0;">age</span><span class="type">INT</span></div>
+      <div class="mv-row"><span class="field" style="color:#5050b0;">created_at</span><span class="type">DATETIME</span></div>
+    </div>
+  </div>
+
+  <div class="tip">💡 <strong>ORM（物件關聯映射）的核心思想：</strong><br>
+  一個Java類 ↔ 一張數據庫表 ／ 一個Java物件 ↔ 表中的一條記錄 ／ 類的屬性 ↔ 表的欄位<br>
+  開發者操作Java物件，框架自動生成對應SQL，不需要手寫SQL。</div>
+
+  <div class="code-block">
+<span class="c-gray">// 完整實體類範例（使用Lombok + JPA注解）</span>
+<span class="c-green">@Entity</span>                                    <span class="c-gray">← 標識這是數據庫實體</span>
+<span class="c-green">@Table</span>(name = <span class="c-orange">"users"</span>)                    <span class="c-gray">← 對應數據庫表名</span>
+<span class="c-green">@Data</span>                                       <span class="c-gray">← Lombok自動生成Getter/Setter</span>
+<span class="c-green">@NoArgsConstructor</span>                          <span class="c-gray">← 自動生成無參構造函數</span>
+<span class="c-purple">public class</span> <span class="c-yellow">User</span> {
+
+    <span class="c-green">@Id</span>                                     <span class="c-gray">← 主鍵標識</span>
+    <span class="c-green">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)  <span class="c-gray">← 自動遞增</span>
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> id;
+
+    <span class="c-green">@Column</span>(name = <span class="c-orange">"name"</span>, nullable = <span class="c-purple">false</span>, length = 50)
+    <span class="c-purple">private</span> <span class="c-blue">String</span> name;
+
+    <span class="c-green">@Column</span>(unique = <span class="c-purple">true</span>)                  <span class="c-gray">← 唯一約束</span>
+    <span class="c-purple">private</span> <span class="c-blue">String</span> email;
+
+    <span class="c-green">@Column</span>(name = <span class="c-orange">"created_at"</span>)           <span class="c-gray">← 欄位名和屬性名不同時使用</span>
+    <span class="c-purple">private</span> <span class="c-blue">LocalDateTime</span> createdAt;
+}
+  </div>
+</div>
+
+<!-- ══ 2. 關係映射 ══ -->
+<div class="sec">
+  <div class="sec-title">② 關係映射 — 表與表之間的關聯</div>
+
+  <div class="relation-grid">
+    <div class="rel-box">
+      <h4>1️⃣ 一對一（One-to-One）</h4>
+      <div class="rel-diagram">
+        User ──── UserProfile<br>
+        一個用戶 對應 一份資料
+      </div>
+      <div class="rel-note">
+        <strong>@OneToOne</strong><br>
+        例：用戶 ↔ 用戶詳細資料<br>
+        通常用外鍵或共享主鍵實現
+      </div>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-green">@OneToOne</span>(cascade = CascadeType.ALL)
+<span class="c-green">@JoinColumn</span>(name = <span class="c-orange">"profile_id"</span>)
+<span class="c-purple">private</span> <span class="c-blue">UserProfile</span> profile;
+      </div>
+    </div>
+
+    <div class="rel-box">
+      <h4>2️⃣ 一對多（One-to-Many）</h4>
+      <div class="rel-diagram">
+        User ──── List&lt;Order&gt;<br>
+        一個用戶 對應 多個訂單
+      </div>
+      <div class="rel-note">
+        <strong>@OneToMany / @ManyToOne</strong><br>
+        例：用戶 ↔ 訂單（最常見）<br>
+        外鍵放在「多」的那一側
+      </div>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-gray">// User端</span>
+<span class="c-green">@OneToMany</span>(mappedBy = <span class="c-orange">"user"</span>)
+<span class="c-purple">private</span> List&lt;<span class="c-blue">Order</span>&gt; orders;
+
+<span class="c-gray">// Order端</span>
+<span class="c-green">@ManyToOne</span>
+<span class="c-green">@JoinColumn</span>(name = <span class="c-orange">"user_id"</span>)
+<span class="c-purple">private</span> <span class="c-blue">User</span> user;
+      </div>
+    </div>
+
+    <div class="rel-box">
+      <h4>3️⃣ 多對多（Many-to-Many）</h4>
+      <div class="rel-diagram">
+        User ──── Role<br>
+        多個用戶 可以有 多個角色
+      </div>
+      <div class="rel-note">
+        <strong>@ManyToMany</strong><br>
+        例：用戶 ↔ 角色（權限系統）<br>
+        需要中間關聯表 user_role
+      </div>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-green">@ManyToMany</span>
+<span class="c-green">@JoinTable</span>(name = <span class="c-orange">"user_role"</span>,
+    joinColumns = <span class="c-green">@JoinColumn</span>(name=<span class="c-orange">"user_id"</span>),
+    inverseJoinColumns = <span class="c-green">@JoinColumn</span>(name=<span class="c-orange">"role_id"</span>))
+<span class="c-purple">private</span> List&lt;<span class="c-blue">Role</span>&gt; roles;
+      </div>
+    </div>
+
+    <div class="rel-box">
+      <h4>4️⃣ 懶加載 vs 急加載</h4>
+      <div class="rel-diagram">
+        LAZY（懶）vs EAGER（急）<br>
+        何時從數據庫加載關聯數據？
+      </div>
+      <div class="rel-note">
+        <strong>FetchType.LAZY</strong>（默認・推薦）<br>
+        → 用到時才查詢，節省性能<br><br>
+        <strong>FetchType.EAGER</strong><br>
+        → 主實體查詢時立刻一起查<br>
+        → 可能導致N+1問題，<strong>謹慎使用</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">⚠️ <strong>N+1問題：</strong>查詢10個用戶，每個用戶又各自查一次訂單 = 執行了11次SQL。<br>解決方案：使用 <code>JOIN FETCH</code> 或 MyBatis的一次性聯表查詢。</div>
+</div>
+
+<!-- ══ 3. 三大數據訪問方式對比 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 常見數據訪問方式對比 — JDBC vs MyBatis vs JPA</div>
+
+  <div class="compare-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="th-item">比較項目</th>
+          <th class="th-jdbc">🔌 JDBC（原生）</th>
+          <th class="th-mybatis">🗺️ MyBatis（半自動）</th>
+          <th class="th-jpa">✨ JPA/Hibernate（全自動）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="item-label">SQL控制</td>
+          <td class="jdbc-cell"><span class="good">完全手寫</span><br>100%掌控SQL</td>
+          <td class="mybatis-cell"><span class="good">手寫SQL</span><br>在XML或注解中定義</td>
+          <td class="jpa-cell"><span class="bad">自動生成SQL</span><br>開發者不直接寫SQL</td>
+        </tr>
+        <tr>
+          <td class="item-label">代碼量</td>
+          <td class="jdbc-cell"><span class="bad">最多</span><br>連接、查詢、關閉全手動</td>
+          <td class="mybatis-cell">中等<br>Mapper接口+XML</td>
+          <td class="jpa-cell"><span class="good">最少</span><br>繼承JpaRepository即可</td>
+        </tr>
+        <tr>
+          <td class="item-label">靈活性</td>
+          <td class="jdbc-cell"><span class="good">最高</span></td>
+          <td class="mybatis-cell"><span class="good">高</span><br>複雜SQL輕鬆實現</td>
+          <td class="jpa-cell">低<br>複雜查詢需要JPQL/原生SQL</td>
+        </tr>
+        <tr>
+          <td class="item-label">性能</td>
+          <td class="jdbc-cell"><span class="good">最高</span></td>
+          <td class="mybatis-cell"><span class="good">高</span><br>SQL優化空間大</td>
+          <td class="jpa-cell">中<br>自動生成SQL可能非最優</td>
+        </tr>
+        <tr>
+          <td class="item-label">學習難度</td>
+          <td class="jdbc-cell">低（但繁瑣）</td>
+          <td class="mybatis-cell">中</td>
+          <td class="jpa-cell"><span class="bad">高</span><br>概念多，坑也多</td>
+        </tr>
+        <tr>
+          <td class="item-label">適合場景</td>
+          <td class="jdbc-cell">底層框架開發<br>極致性能要求</td>
+          <td class="mybatis-cell"><span class="good">國內企業首選</span><br>複雜SQL、報表系統</td>
+          <td class="jpa-cell">CRUD為主<br>業務邏輯複雜度低</td>
+        </tr>
+        <tr>
+          <td class="item-label">代碼範例</td>
+          <td class="jdbc-cell">
+            <span class="mono">Connection conn = ...</span><br>
+            <span class="mono">PreparedStatement ps = ...</span><br>
+            <span class="mono">ResultSet rs = ps.execute()</span>
+          </td>
+          <td class="mybatis-cell">
+            <span class="mono">@Select("SELECT * FROM users WHERE id=#{id}")</span><br>
+            <span class="mono">User findById(Long id);</span>
+          </td>
+          <td class="jpa-cell">
+            <span class="mono">extends JpaRepository&lt;User, Long&gt;</span><br>
+            <span class="mono">// findById已自動實現！</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">💡 <strong>你的筆記用的是 MyBatis</strong>——這是中國企業最主流的選擇，可以完全控制SQL，性能好，與Spring Boot整合成熟。</div>
+</div>
+
+<!-- ══ 4. 數據訪問層模式 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 數據訪問層模式 — Repository vs DAO vs 其他</div>
+
+  <div class="pattern-grid">
+    <div class="pattern-box pb-repo">
+      <h4>📁 Repository模式（Spring推薦）</h4>
+      <p>將數據訪問邏輯封裝在Repository接口中，繼承JpaRepository或自定義。<br>強調「集合」的概念，像操作內存中的集合一樣操作數據庫。</p>
+      <span class="tag">Spring Data JPA</span>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-purple">public interface</span> <span class="c-yellow">UserRepository</span>
+    <span class="c-purple">extends</span> <span class="c-blue">JpaRepository</span>&lt;<span class="c-teal">User</span>, <span class="c-blue">Long</span>&gt; {
+    <span class="c-gray">// 自動實現：findById、save、delete等</span>
+    List&lt;<span class="c-teal">User</span>&gt; <span class="c-green">findByName</span>(<span class="c-blue">String</span> name);
+}
+      </div>
+    </div>
+
+    <div class="pattern-box pb-dao">
+      <h4>🗃️ DAO模式（Data Access Object）</h4>
+      <p>傳統模式，定義接口描述所有數據操作，再提供實現類。<br>MyBatis的Mapper本質上就是DAO模式。職責單一，測試容易。</p>
+      <span class="tag">MyBatis Mapper</span>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-green">@Mapper</span>
+<span class="c-purple">public interface</span> <span class="c-yellow">UserMapper</span> {
+    <span class="c-teal">User</span> <span class="c-green">findById</span>(<span class="c-blue">Long</span> id);
+    <span class="c-blue">void</span> <span class="c-green">insert</span>(<span class="c-teal">User</span> user);
+    <span class="c-blue">void</span> <span class="c-green">update</span>(<span class="c-teal">User</span> user);
+    <span class="c-blue">void</span> <span class="c-green">deleteById</span>(<span class="c-blue">Long</span> id);
+}
+      </div>
+    </div>
+
+    <div class="pattern-box pb-active">
+      <h4>🔄 Active Record模式</h4>
+      <p>實體類本身包含數據庫操作方法，物件可以自己保存、刪除。<br>Ruby on Rails的風格，Java中較少見（jOOQ支持）。</p>
+      <span class="tag">較少使用</span>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-gray">// 物件自己操作數據庫（非主流）</span>
+<span class="c-teal">User</span> user = <span class="c-purple">new</span> <span class="c-teal">User</span>();
+user.name = <span class="c-orange">"Alice"</span>;
+user.<span class="c-green">save</span>();   <span class="c-gray">← 物件自己存入數據庫</span>
+user.<span class="c-green">delete</span>();
+      </div>
+    </div>
+
+    <div class="pattern-box pb-qb">
+      <h4>🔧 Query Builder模式</h4>
+      <p>用Java代碼動態構建SQL查詢，避免字串拼接的安全問題。<br>MyBatis-Plus的LambdaQueryWrapper就是這種模式。</p>
+      <span class="tag">MyBatis-Plus</span>
+      <div class="code-block" style="margin-top:8px;margin-bottom:0;font-size:11px;">
+<span class="c-gray">// 動態構建查詢條件（MyBatis-Plus）</span>
+LambdaQueryWrapper&lt;<span class="c-teal">User</span>&gt; wrapper =
+    <span class="c-purple">new</span> LambdaQueryWrapper&lt;&gt;()
+        .<span class="c-green">eq</span>(<span class="c-teal">User</span>::getName, <span class="c-orange">"Alice"</span>)
+        .<span class="c-green">gt</span>(<span class="c-teal">User</span>::getAge, 18)
+        .<span class="c-green">orderByDesc</span>(<span class="c-teal">User</span>::getCreatedAt);
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 推薦使用場景 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 實際項目推薦搭配</div>
+  <div class="scenario-box">
+    <h4>根據場景選擇最合適的方式</h4>
+    <div class="sc-grid">
+      <div class="sc-item">
+        <h5 style="color:var(--mybatis);">🏢 企業後台系統</h5>
+        <p>MyBatis ＋ DAO模式<br>複雜報表、聯表查詢多，需要完全控制SQL。<br><strong>你的筆記就是這種！</strong></p>
+      </div>
+      <div class="sc-item">
+        <h5 style="color:var(--jpa);">🚀 快速開發原型</h5>
+        <p>Spring Data JPA ＋ Repository模式<br>CRUD為主，快速實現，代碼量少。</p>
+      </div>
+      <div class="sc-item">
+        <h5 style="color:var(--relation);">📊 大數據/高並發</h5>
+        <p>MyBatis-Plus ＋ Query Builder<br>動態查詢靈活，性能好，適合數據量大的場景。</p>
+      </div>
+      <div class="sc-item">
+        <h5 style="color:var(--entity);">🔐 微服務架構</h5>
+        <p>每個服務獨立選擇<br>核心服務用MyBatis，簡單服務用JPA，按需選擇。</p>
+      </div>
+      <div class="sc-item">
+        <h5 style="color:var(--jdbc);">⚡ 極致性能</h5>
+        <p>JDBC Template<br>批量插入、超大數據量處理，手動控制每個SQL。</p>
+      </div>
+      <div class="sc-item">
+        <h5 style="color:var(--spring-dark);">✅ 你的項目</h5>
+        <p>MyBatis ＋ 三層架構<br>Controller → Service → Mapper<br>這是最穩健的選擇！</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-footer">
+  實體類與數據庫映射完全版 · ORM · 關係映射 · JDBC vs MyBatis vs JPA · Repository/DAO模式 · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
