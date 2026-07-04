@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot 分頁查詢完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --ctrl:#1a3a6b;--ctrl-bg:#e8f0ff;
+  --svc:#8b5c00;--svc-bg:#fff8e0;
+  --repo:#5c1a5c;--repo-bg:#f8e8ff;
+  --front:#1a5c5c;--front-bg:#e0f8f8;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c140c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#c8f0c8;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#708060;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--spring);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--spring-dark);letter-spacing:4px;border-bottom:1.5px solid var(--spring);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #2d3a2d;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-gray{color:#6c7086;}.c-orange{color:#fab387;}
+.c-teal{color:#94e2d5;}.c-red{color:#f38ba8;}.c-white{color:#cdd6f4;}
+
+/* ── 流程圖 ── */
+.flow-box{background:var(--paper2);border:1px solid #d8ccb8;border-radius:6px;padding:16px 18px;margin-bottom:16px;}
+.flow-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--spring-dark);letter-spacing:3px;margin-bottom:14px;}
+.flow-steps{display:flex;flex-direction:column;gap:3px;}
+.fs-row{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center;}
+.fs-node{border-radius:4px;padding:8px 10px;text-align:center;font-size:12px;font-weight:700;}
+.fsn-front{background:var(--front-bg);color:var(--front);border:1.5px solid var(--front);}
+.fsn-ctrl{background:var(--ctrl-bg);color:var(--ctrl);border:1.5px solid var(--ctrl);}
+.fsn-svc{background:var(--svc-bg);color:var(--svc);border:1.5px solid var(--svc);}
+.fsn-repo{background:var(--repo-bg);color:var(--repo);border:1.5px solid var(--repo);}
+.fsn-db{background:#f0f0f0;color:#444;border:1.5px solid #aaa;}
+.fs-arrow{text-align:center;font-size:16px;color:#90b890;padding:2px 0;}
+.fs-desc{font-size:12px;color:#555;line-height:1.7;}
+.fs-desc strong{color:var(--accent);}
+.fs-desc .mono{font-family:'DM Mono',monospace;font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:2px;}
+
+/* ── JSON構造 ── */
+.json-visual{background:var(--code-bg);border-radius:6px;padding:16px 18px;margin-bottom:14px;border:2px solid var(--spring);}
+.json-visual h4{font-family:'Shippori Mincho',serif;font-size:12px;color:var(--spring);letter-spacing:3px;margin-bottom:12px;}
+.jv-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.jv-key{font-family:'DM Mono',monospace;font-size:12px;color:#f9e2af;margin-bottom:2px;}
+.jv-desc{font-size:11.5px;color:#94e2d5;line-height:1.6;}
+
+/* ── 層別代碼ラベル ── */
+.layer-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:2px;}
+.ll-front{background:var(--front-bg);color:var(--front);}
+.ll-ctrl{background:var(--ctrl-bg);color:var(--ctrl);}
+.ll-svc{background:var(--svc-bg);color:var(--svc);}
+.ll-repo{background:var(--repo-bg);color:var(--repo);}
+.ll-dto{background:#ffe8e8;color:#6b1a1a;}
+
+/* ── 參數表 ── */
+.param-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.param-item{border-radius:4px;padding:10px 12px;background:white;border:1.5px solid #d8ccb8;text-align:center;}
+.param-item .pk{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--ctrl);margin-bottom:3px;}
+.param-item .pv{font-size:12px;color:#888;margin-bottom:3px;}
+.param-item .pz{font-size:11px;color:#555;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">Spring Boot 分頁查詢完全版</div>
+<div class="page-sub">分頁流程 · 前端請求 · 後端實現 · 返回數據結構</div>
+
+<div class="card">
+
+<!-- ══ 1. 什麼是分頁查詢 ══ -->
+<div class="sec">
+  <div class="sec-title">① 什麼是分頁查詢？為什麼需要？</div>
+  <div class="tip">
+    💡 <strong>問題背景：</strong>數據庫有100萬條用戶記錄，一次性全部查出來返回給前端 → 內存爆炸、網路超時、頁面卡死。<br><br>
+    <strong>解決方案：分頁查詢</strong>——每次只查一頁的數據（比如每頁20條），前端翻頁時再請求下一頁。<br>
+    就像書本的頁碼：一次只看一頁，需要時才翻頁。
+  </div>
+
+  <div class="param-grid">
+    <div class="param-item">
+      <div class="pk">pageNum</div>
+      <div class="pv">當前頁碼</div>
+      <div class="pz">從1開始<br>例：第3頁</div>
+    </div>
+    <div class="param-item">
+      <div class="pk">pageSize</div>
+      <div class="pv">每頁條數</div>
+      <div class="pz">通常10或20<br>例：每頁20條</div>
+    </div>
+    <div class="param-item">
+      <div class="pk">total</div>
+      <div class="pv">總記錄數</div>
+      <div class="pz">讓前端知道<br>共有多少頁</div>
+    </div>
+    <div class="param-item">
+      <div class="pk">pages</div>
+      <div class="pv">總頁數</div>
+      <div class="pz">= ceil(total/pageSize)<br>例：50頁</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. 完整流程 ══ -->
+<div class="sec">
+  <div class="sec-title">② 分頁查詢完整流程</div>
+
+  <div class="flow-box">
+    <h4>一次分頁請求的完整旅程</h4>
+    <div class="flow-steps">
+
+      <div class="fs-row">
+        <div class="fs-node fsn-front">前端（Browser）</div>
+        <div class="fs-desc">用戶點擊「第2頁」，發送請求：<span class="mono">GET /api/users?pageNum=2&pageSize=20</span></div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↓</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-ctrl">Controller層</div>
+        <div class="fs-desc"><strong>接收請求參數</strong>：用<span class="mono">@RequestParam</span>接收pageNum和pageSize，傳給Service</div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↓</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-svc">Service層</div>
+        <div class="fs-desc"><strong>構建分頁對象</strong>：創建<span class="mono">PageHelper.startPage(pageNum, pageSize)</span>或<span class="mono">PageRequest</span>，調用Mapper查詢</div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↓</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-repo">Mapper / Repository</div>
+        <div class="fs-desc"><strong>執行SQL</strong>：MyBatis自動在SQL後加上<span class="mono">LIMIT 20 OFFSET 20</span>（第2頁從第21條開始）</div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↓</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-db">數據庫</div>
+        <div class="fs-desc">執行：<span class="mono">SELECT * FROM users LIMIT 20 OFFSET 20</span><br>同時執行：<span class="mono">SELECT COUNT(*) FROM users</span>（算總數）</div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↑（返回數據）</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-svc">Service層</div>
+        <div class="fs-desc"><strong>封裝分頁結果</strong>：把數據列表、總數、總頁數封裝成<span class="mono">PageResult</span>物件返回</div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↑</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-ctrl">Controller層</div>
+        <div class="fs-desc"><strong>返回JSON響應</strong>給前端，包含數據列表和分頁信息</div>
+      </div>
+      <div class="fs-row"><div style="font-size:16px;color:#90b890;text-align:center;">↑（HTTP響應）</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-front">前端（Browser）</div>
+        <div class="fs-desc">收到JSON，渲染表格數據，更新分頁導航（共50頁，當前第2頁）</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. 前端請求格式 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 前端請求格式</div>
+
+  <div class="layer-label ll-front">🌐 前端發送的請求</div>
+  <div class="code-block">
+<span class="c-gray">// 基本分頁請求</span>
+GET /api/users<span class="c-green">?pageNum=1&pageSize=20</span>
+
+<span class="c-gray">// 帶條件的分頁查詢（搜索+分頁）</span>
+GET /api/users<span class="c-green">?pageNum=1&pageSize=20&name=Alice&status=active</span>
+
+<span class="c-gray">// 帶排序的分頁查詢</span>
+GET /api/users<span class="c-green">?pageNum=2&pageSize=10&sortBy=createdAt&sortDir=desc</span>
+
+<span class="c-gray">// POST請求（複雜查詢條件放Body）</span>
+POST /api/users/page
+Content-Type: application/json
+{
+    <span class="c-orange">"pageNum"</span>: 1,
+    <span class="c-orange">"pageSize"</span>: 20,
+    <span class="c-orange">"name"</span>: <span class="c-orange">"Alice"</span>,
+    <span class="c-orange">"startDate"</span>: <span class="c-orange">"2024-01-01"</span>,
+    <span class="c-orange">"endDate"</span>: <span class="c-orange">"2024-12-31"</span>
+}
+  </div>
+</div>
+
+<!-- ══ 4. 返回的分頁數據結構 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 返回的分頁數據結構（JSON）</div>
+
+  <div class="code-block">
+<span class="c-gray">// 標準分頁響應結構</span>
+{
+    <span class="c-orange">"code"</span>: <span class="c-teal">200</span>,                    <span class="c-gray">← 狀態碼</span>
+    <span class="c-orange">"message"</span>: <span class="c-orange">"success"</span>,          <span class="c-gray">← 提示信息</span>
+    <span class="c-orange">"data"</span>: {
+        <span class="c-orange">"records"</span>: [              <span class="c-gray">← 當前頁的數據列表</span>
+            {
+                <span class="c-orange">"id"</span>: <span class="c-teal">21</span>,
+                <span class="c-orange">"name"</span>: <span class="c-orange">"Alice"</span>,
+                <span class="c-orange">"email"</span>: <span class="c-orange">"alice@example.com"</span>,
+                <span class="c-orange">"createdAt"</span>: <span class="c-orange">"2024-03-15"</span>
+            },
+            <span class="c-gray">// ... 共20條</span>
+        ],
+        <span class="c-orange">"pageNum"</span>: <span class="c-teal">2</span>,              <span class="c-gray">← 當前頁碼</span>
+        <span class="c-orange">"pageSize"</span>: <span class="c-teal">20</span>,             <span class="c-gray">← 每頁條數</span>
+        <span class="c-orange">"total"</span>: <span class="c-teal">1000</span>,              <span class="c-gray">← 總記錄數</span>
+        <span class="c-orange">"pages"</span>: <span class="c-teal">50</span>,               <span class="c-gray">← 總頁數 = ceil(1000/20)</span>
+        <span class="c-orange">"hasPrevious"</span>: <span class="c-purple">true</span>,        <span class="c-gray">← 是否有上一頁</span>
+        <span class="c-orange">"hasNext"</span>: <span class="c-purple">true</span>             <span class="c-gray">← 是否有下一頁</span>
+    }
+}
+  </div>
+
+  <div class="json-visual">
+    <h4>🔑 各字段的用途說明</h4>
+    <div class="jv-row">
+      <div><div class="jv-key">"records": [...]</div><div class="jv-desc">當前頁的實際數據，前端渲染表格用這個</div></div>
+      <div><div class="jv-key">"total": 1000</div><div class="jv-desc">總記錄數，告訴前端「共有多少條數據」</div></div>
+      <div><div class="jv-key">"pages": 50</div><div class="jv-desc">總頁數，前端分頁導航需要這個數字</div></div>
+      <div><div class="jv-key">"pageNum": 2</div><div class="jv-desc">當前第幾頁，前端高亮顯示當前頁用</div></div>
+      <div><div class="jv-key">"hasNext": true</div><div class="jv-desc">是否有下一頁，控制「下一頁」按鈕是否可點</div></div>
+      <div><div class="jv-key">"hasPrevious": true</div><div class="jv-desc">是否有上一頁，控制「上一頁」按鈕是否可點</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 後端完整實現 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 後端完整實現代碼</div>
+
+  <div class="layer-label ll-dto">📦 PageRequest（請求DTO）</div>
+  <div class="code-block">
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">PageRequest</span> {
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> pageNum = <span class="c-teal">1</span>;    <span class="c-gray">← 默認第1頁</span>
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> pageSize = <span class="c-teal">20</span>;  <span class="c-gray">← 默認每頁20條</span>
+    <span class="c-purple">private</span> <span class="c-blue">String</span> name;            <span class="c-gray">← 查詢條件（可選）</span>
+    <span class="c-purple">private</span> <span class="c-blue">String</span> status;
+}
+  </div>
+
+  <div class="layer-label ll-dto">📤 PageResult（響應DTO）</div>
+  <div class="code-block">
+<span class="c-green">@Data</span>
+<span class="c-green">@AllArgsConstructor</span>
+<span class="c-purple">public class</span> <span class="c-yellow">PageResult</span>&lt;<span class="c-teal">T</span>&gt; {
+    <span class="c-purple">private</span> List&lt;<span class="c-teal">T</span>&gt; records;     <span class="c-gray">← 數據列表（泛型，可復用）</span>
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> total;           <span class="c-gray">← 總記錄數</span>
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> pages;        <span class="c-gray">← 總頁數</span>
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> pageNum;      <span class="c-gray">← 當前頁</span>
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> pageSize;     <span class="c-gray">← 每頁條數</span>
+    <span class="c-purple">private</span> <span class="c-blue">Boolean</span> hasNext;      <span class="c-gray">← 是否有下一頁</span>
+    <span class="c-purple">private</span> <span class="c-blue">Boolean</span> hasPrevious;  <span class="c-gray">← 是否有上一頁</span>
+}
+  </div>
+
+  <div class="layer-label ll-ctrl">🌐 Controller層</div>
+  <div class="code-block">
+<span class="c-green">@RestController</span>
+<span class="c-green">@RequestMapping</span>(<span class="c-orange">"/api/users"</span>)
+<span class="c-purple">public class</span> <span class="c-yellow">UserController</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">UserService</span> userService;
+
+    <span class="c-gray">// GET請求分頁（簡單查詢）</span>
+    <span class="c-green">@GetMapping</span>
+    <span class="c-purple">public</span> Result&lt;PageResult&lt;<span class="c-teal">UserVO</span>&gt;&gt; <span class="c-green">getUsers</span>(
+        <span class="c-green">@RequestParam</span>(defaultValue = <span class="c-orange">"1"</span>) <span class="c-blue">Integer</span> pageNum,
+        <span class="c-green">@RequestParam</span>(defaultValue = <span class="c-orange">"20"</span>) <span class="c-blue">Integer</span> pageSize,
+        <span class="c-green">@RequestParam</span>(required = <span class="c-purple">false</span>) <span class="c-blue">String</span> name
+    ) {
+        <span class="c-purple">return</span> Result.<span class="c-green">success</span>(userService.<span class="c-green">getUsers</span>(pageNum, pageSize, name));
+    }
+
+    <span class="c-gray">// POST請求分頁（複雜查詢條件）</span>
+    <span class="c-green">@PostMapping</span>(<span class="c-orange">"/page"</span>)
+    <span class="c-purple">public</span> Result&lt;PageResult&lt;<span class="c-teal">UserVO</span>&gt;&gt; <span class="c-green">pageUsers</span>(
+        <span class="c-green">@RequestBody</span> <span class="c-blue">PageRequest</span> request
+    ) {
+        <span class="c-purple">return</span> Result.<span class="c-green">success</span>(userService.<span class="c-green">pageUsers</span>(request));
+    }
+}
+  </div>
+
+  <div class="layer-label ll-svc">⚙️ Service層（使用MyBatis PageHelper）</div>
+  <div class="code-block">
+<span class="c-green">@Service</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserServiceImpl</span> <span class="c-purple">implements</span> <span class="c-blue">UserService</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">UserMapper</span> userMapper;
+
+    <span class="c-green">@Override</span>
+    <span class="c-purple">public</span> PageResult&lt;<span class="c-teal">UserVO</span>&gt; <span class="c-green">getUsers</span>(<span class="c-blue">Integer</span> pageNum, <span class="c-blue">Integer</span> pageSize, <span class="c-blue">String</span> name) {
+
+        <span class="c-gray">// ⭐ 關鍵：在查詢前設置分頁，PageHelper會自動加LIMIT</span>
+        PageHelper.<span class="c-green">startPage</span>(pageNum, pageSize);
+
+        <span class="c-gray">// 執行查詢（PageHelper自動攔截，加上LIMIT OFFSET）</span>
+        List&lt;<span class="c-teal">User</span>&gt; users = userMapper.<span class="c-green">findByName</span>(name);
+
+        <span class="c-gray">// 轉換為PageInfo，包含分頁信息</span>
+        PageInfo&lt;<span class="c-teal">User</span>&gt; pageInfo = <span class="c-purple">new</span> PageInfo&lt;&gt;(users);
+
+        <span class="c-gray">// 封裝返回結果</span>
+        <span class="c-purple">return new</span> PageResult&lt;&gt;(
+            <span class="c-green">convertToVO</span>(pageInfo.getList()),  <span class="c-gray">← 轉換為VO</span>
+            pageInfo.<span class="c-green">getTotal</span>(),
+            pageInfo.<span class="c-green">getPages</span>(),
+            pageInfo.<span class="c-green">getPageNum</span>(),
+            pageInfo.<span class="c-green">getPageSize</span>(),
+            pageInfo.<span class="c-green">isHasNextPage</span>(),
+            pageInfo.<span class="c-green">isHasPreviousPage</span>()
+        );
+    }
+}
+  </div>
+
+  <div class="layer-label ll-repo">🗃️ Mapper層（SQL）</div>
+  <div class="code-block">
+<span class="c-gray">// UserMapper.java</span>
+<span class="c-green">@Mapper</span>
+<span class="c-purple">public interface</span> <span class="c-yellow">UserMapper</span> {
+    <span class="c-gray">// 普通查詢，PageHelper自動加LIMIT</span>
+    List&lt;<span class="c-teal">User</span>&gt; <span class="c-green">findByName</span>(<span class="c-green">@Param</span>(<span class="c-orange">"name"</span>) <span class="c-blue">String</span> name);
+}
+
+<span class="c-gray">// UserMapper.xml（SQL定義）</span>
+&lt;select id=<span class="c-orange">"findByName"</span> resultType=<span class="c-orange">"User"</span>&gt;
+    SELECT * FROM users
+    &lt;where&gt;
+        &lt;if test=<span class="c-orange">"name != null and name != ''"</span>&gt;
+            AND name LIKE CONCAT('%', #{name}, '%')
+        &lt;/if&gt;
+    &lt;/where&gt;
+    ORDER BY created_at DESC
+    <span class="c-gray">← PageHelper自動在這裡加：LIMIT 20 OFFSET 20</span>
+&lt;/select&gt;
+  </div>
+</div>
+
+<!-- ══ 6. pom.xml依賴 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 需要的依賴（pom.xml）</div>
+  <div class="code-block">
+<span class="c-gray">&lt;!-- MyBatis分頁插件 PageHelper --&gt;</span>
+<span class="c-blue">&lt;dependency&gt;</span>
+    <span class="c-green">&lt;groupId&gt;</span>com.github.pagehelper<span class="c-green">&lt;/groupId&gt;</span>
+    <span class="c-green">&lt;artifactId&gt;</span>pagehelper-spring-boot-starter<span class="c-green">&lt;/artifactId&gt;</span>
+    <span class="c-green">&lt;version&gt;</span>1.4.6<span class="c-green">&lt;/version&gt;</span>
+<span class="c-blue">&lt;/dependency&gt;</span>
+
+<span class="c-gray">&lt;!-- application.yml配置 --&gt;</span>
+pagehelper:
+  helper-dialect: mysql      <span class="c-gray">← 數據庫類型</span>
+  reasonable: true           <span class="c-gray">← 頁碼超出自動修正</span>
+  support-methods-arguments: true
+  </div>
+
+  <div class="tip">
+    💡 <strong>PageHelper的魔法：</strong><br>
+    <code>PageHelper.startPage(2, 20)</code> 調用後，<strong>下一條</strong>執行的SQL會自動被攔截，加上 <code>LIMIT 20 OFFSET 20</code>。<br>
+    同時自動執行 <code>SELECT COUNT(*)</code> 來計算總數。<br>
+    開發者只需要寫普通查詢SQL，分頁邏輯完全由PageHelper處理！
+  </div>
+</div>
+
+<!-- ══ 7. 前端使用範例 ══ -->
+<div class="sec">
+  <div class="sec-title">⑦ 前端如何使用分頁數據</div>
+  <div class="layer-label ll-front">🌐 前端JavaScript（偽代碼）</div>
+  <div class="code-block">
+<span class="c-gray">// 請求分頁數據</span>
+<span class="c-purple">async function</span> <span class="c-green">loadUsers</span>(pageNum = <span class="c-teal">1</span>) {
+    <span class="c-purple">const</span> response = <span class="c-purple">await</span> <span class="c-green">fetch</span>(
+        <span class="c-orange">`/api/users?pageNum=${pageNum}&pageSize=20`</span>
+    );
+    <span class="c-purple">const</span> result = <span class="c-purple">await</span> response.<span class="c-green">json</span>();
+
+    <span class="c-purple">const</span> { records, total, pages, hasNext, hasPrevious } = result.data;
+
+    <span class="c-gray">// 渲染表格數據</span>
+    <span class="c-green">renderTable</span>(records);
+
+    <span class="c-gray">// 渲染分頁導航</span>
+    <span class="c-green">renderPagination</span>({
+        currentPage: pageNum,
+        totalPages: pages,        <span class="c-gray">← 共50頁</span>
+        total: total,             <span class="c-gray">← 共1000條</span>
+        hasNext: hasNext,         <span class="c-gray">← 控制「下一頁」按鈕</span>
+        hasPrevious: hasPrevious  <span class="c-gray">← 控制「上一頁」按鈕</span>
+    });
+}
+
+<span class="c-gray">// 點擊下一頁</span>
+<span class="c-green">nextPageBtn</span>.onclick = () => <span class="c-green">loadUsers</span>(currentPage + <span class="c-teal">1</span>);
+<span class="c-green">prevPageBtn</span>.onclick = () => <span class="c-green">loadUsers</span>(currentPage - <span class="c-teal">1</span>);
+  </div>
+</div>
+
+<div class="card-footer">
+  Spring Boot 分頁查詢完全版 · 流程 · 前端請求 · 後端實現 · 數據結構 · PageHelper · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
