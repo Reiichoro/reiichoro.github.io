@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot 多表聯查完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --user:#1a3a6b;--user-bg:#e8f0ff;
+  --order:#8b5c00;--order-bg:#fff8e0;
+  --item:#5c1a5c;--item-bg:#f8e8ff;
+  --sql:#1a5c5c;--sql-bg:#e0f8f8;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c140c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#c8f0c8;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#708060;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--spring);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--spring-dark);letter-spacing:4px;border-bottom:1.5px solid var(--spring);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+.warn{background:rgba(196,75,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.warn strong{color:var(--accent);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #2d3a2d;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-gray{color:#6c7086;}.c-orange{color:#fab387;}
+.c-teal{color:#94e2d5;}.c-red{color:#f38ba8;}.c-white{color:#cdd6f4;}
+.c-pink{color:#f5c2e7;}
+
+.layer-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:2px;}
+.ll-sql{background:var(--sql-bg);color:var(--sql);}
+.ll-user{background:var(--user-bg);color:var(--user);}
+.ll-order{background:var(--order-bg);color:var(--order);}
+.ll-item{background:var(--item-bg);color:var(--item);}
+.ll-java{background:var(--spring-bg);color:var(--spring-dark);}
+.ll-xml{background:#fff0f0;color:#6b1a1a;}
+
+/* ── 表結構視覺化 ── */
+.tables-visual{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.tv-box{border-radius:6px;padding:12px 14px;border:2px solid;}
+.tv-user{background:var(--user-bg);border-color:var(--user);}
+.tv-order{background:var(--order-bg);border-color:var(--order);}
+.tv-item{background:var(--item-bg);border-color:var(--item);}
+.tv-box h4{font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid;}
+.tv-user h4{color:var(--user);border-color:var(--user);}
+.tv-order h4{color:var(--order);border-color:var(--order);}
+.tv-item h4{color:var(--item);border-color:var(--item);}
+.tv-row{display:flex;justify-content:space-between;padding:3px 6px;background:white;border-radius:3px;margin-bottom:3px;font-size:11.5px;}
+.tv-row .fname{font-family:'DM Mono',monospace;font-weight:700;}
+.tv-row.pk .fname{color:var(--spring-dark);}
+.tv-row.fk .fname{color:var(--accent);}
+.tv-row .ftype{color:#aaa;font-size:10px;}
+.tv-row .tag{font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;}
+.tag-pk{background:#d8f0d8;color:var(--spring-dark);}
+.tag-fk{background:#ffe8d8;color:var(--accent);}
+
+/* ── 關係圖 ── */
+.relation-visual{background:var(--paper2);border:1px solid #d8ccb8;border-radius:6px;padding:16px 18px;margin-bottom:14px;text-align:center;}
+.rv-row{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;gap:6px;align-items:center;margin-bottom:8px;}
+.rv-box{border-radius:4px;padding:8px 10px;font-size:12px;font-weight:700;text-align:center;}
+.rv-user{background:var(--user-bg);color:var(--user);border:1.5px solid var(--user);}
+.rv-order{background:var(--order-bg);color:var(--order);border:1.5px solid var(--order);}
+.rv-item{background:var(--item-bg);color:var(--item);border:1.5px solid var(--item);}
+.rv-arrow{text-align:center;font-size:13px;color:#888;}
+
+/* ── JOIN類型 ── */
+.join-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.join-box{border-radius:4px;padding:12px 14px;background:white;border:1.5px solid #d8ccb8;}
+.join-box h5{font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:1px;}
+.join-box p{font-size:11.5px;color:#555;line-height:1.75;}
+.join-box .example{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--sql);margin-top:6px;background:var(--sql-bg);padding:4px 8px;border-radius:3px;}
+
+/* ── 結果結構 ── */
+.result-visual{background:var(--code-bg);border-radius:6px;padding:16px 18px;margin-bottom:14px;border:2px solid var(--spring);}
+.result-visual h4{font-family:'Shippori Mincho',serif;font-size:12px;color:var(--spring);letter-spacing:3px;margin-bottom:12px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">多表聯查完全版</div>
+<div class="page-sub">Users × Orders × Order_items · SQL結構 · Java映射 · MyBatis ResultMap</div>
+
+<div class="card">
+
+<!-- ══ 1. 三表結構 ══ -->
+<div class="sec">
+  <div class="sec-title">① 三張表的結構</div>
+
+  <div class="tables-visual">
+    <div class="tv-box tv-user">
+      <h4>👤 users（用戶表）</h4>
+      <div class="tv-row pk"><span class="fname">id</span><span class="ftype">BIGINT</span><span class="tag tag-pk">PK</span></div>
+      <div class="tv-row"><span class="fname">name</span><span class="ftype">VARCHAR(50)</span></div>
+      <div class="tv-row"><span class="fname">email</span><span class="ftype">VARCHAR(100)</span></div>
+      <div class="tv-row"><span class="fname">phone</span><span class="ftype">VARCHAR(20)</span></div>
+      <div class="tv-row"><span class="fname">created_at</span><span class="ftype">DATETIME</span></div>
+    </div>
+    <div class="tv-box tv-order">
+      <h4>📦 orders（訂單表）</h4>
+      <div class="tv-row pk"><span class="fname">id</span><span class="ftype">BIGINT</span><span class="tag tag-pk">PK</span></div>
+      <div class="tv-row fk"><span class="fname">user_id</span><span class="ftype">BIGINT</span><span class="tag tag-fk">FK</span></div>
+      <div class="tv-row"><span class="fname">order_no</span><span class="ftype">VARCHAR(30)</span></div>
+      <div class="tv-row"><span class="fname">total_amount</span><span class="ftype">DECIMAL(10,2)</span></div>
+      <div class="tv-row"><span class="fname">status</span><span class="ftype">VARCHAR(20)</span></div>
+      <div class="tv-row"><span class="fname">created_at</span><span class="ftype">DATETIME</span></div>
+    </div>
+    <div class="tv-box tv-item">
+      <h4>🛒 order_items（訂單項表）</h4>
+      <div class="tv-row pk"><span class="fname">id</span><span class="ftype">BIGINT</span><span class="tag tag-pk">PK</span></div>
+      <div class="tv-row fk"><span class="fname">order_id</span><span class="ftype">BIGINT</span><span class="tag tag-fk">FK</span></div>
+      <div class="tv-row"><span class="fname">product_name</span><span class="ftype">VARCHAR(100)</span></div>
+      <div class="tv-row"><span class="fname">quantity</span><span class="ftype">INT</span></div>
+      <div class="tv-row"><span class="fname">price</span><span class="ftype">DECIMAL(10,2)</span></div>
+    </div>
+  </div>
+
+  <!-- 關係圖 -->
+  <div class="relation-visual">
+    <div style="font-family:'Shippori Mincho',serif;font-size:12px;color:var(--spring-dark);letter-spacing:3px;margin-bottom:10px;">三表關係</div>
+    <div class="rv-row">
+      <div class="rv-box rv-user">users<br><small>id（主鍵）</small></div>
+      <div class="rv-arrow">1 ──── N<br>user_id</div>
+      <div class="rv-box rv-order">orders<br><small>user_id（外鍵）</small></div>
+      <div class="rv-arrow">1 ──── N<br>order_id</div>
+      <div class="rv-box rv-item">order_items<br><small>order_id（外鍵）</small></div>
+    </div>
+    <div style="font-size:12px;color:#666;margin-top:8px;">
+      一個用戶 可以有 多個訂單 ／ 一個訂單 可以有 多個訂單項
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. SQL建表 ══ -->
+<div class="sec">
+  <div class="sec-title">② SQL建表結構</div>
+  <div class="layer-label ll-sql">🗄️ CREATE TABLE</div>
+  <div class="code-block">
+<span class="c-gray">-- 用戶表</span>
+CREATE TABLE <span class="c-yellow">users</span> (
+    <span class="c-green">id</span>         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    <span class="c-green">name</span>       VARCHAR(50) NOT NULL,
+    <span class="c-green">email</span>      VARCHAR(100) UNIQUE,
+    <span class="c-green">phone</span>      VARCHAR(20),
+    <span class="c-green">created_at</span> DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+<span class="c-gray">-- 訂單表（user_id 關聯 users.id）</span>
+CREATE TABLE <span class="c-yellow">orders</span> (
+    <span class="c-green">id</span>           BIGINT PRIMARY KEY AUTO_INCREMENT,
+    <span class="c-teal">user_id</span>      BIGINT NOT NULL,          <span class="c-gray">← 外鍵：關聯用戶</span>
+    <span class="c-green">order_no</span>     VARCHAR(30) UNIQUE,
+    <span class="c-green">total_amount</span> DECIMAL(10,2),
+    <span class="c-green">status</span>       VARCHAR(20) DEFAULT 'pending',
+    <span class="c-green">created_at</span>   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (<span class="c-teal">user_id</span>) REFERENCES <span class="c-yellow">users</span>(<span class="c-green">id</span>)
+);
+
+<span class="c-gray">-- 訂單項表（order_id 關聯 orders.id）</span>
+CREATE TABLE <span class="c-yellow">order_items</span> (
+    <span class="c-green">id</span>           BIGINT PRIMARY KEY AUTO_INCREMENT,
+    <span class="c-teal">order_id</span>     BIGINT NOT NULL,          <span class="c-gray">← 外鍵：關聯訂單</span>
+    <span class="c-green">product_name</span> VARCHAR(100),
+    <span class="c-green">quantity</span>     INT DEFAULT 1,
+    <span class="c-green">price</span>        DECIMAL(10,2),
+    FOREIGN KEY (<span class="c-teal">order_id</span>) REFERENCES <span class="c-yellow">orders</span>(<span class="c-green">id</span>)
+);
+  </div>
+</div>
+
+<!-- ══ 3. JOIN類型說明 ══ -->
+<div class="sec">
+  <div class="sec-title">③ JOIN類型選擇</div>
+  <div class="join-grid">
+    <div class="join-box">
+      <h5 style="color:var(--spring-dark);">INNER JOIN（內聯）</h5>
+      <p>只返回兩表都有匹配記錄的行。<br>沒有訂單的用戶不會出現。</p>
+      <div class="example">用戶 ∩ 訂單（交集）</div>
+    </div>
+    <div class="join-box">
+      <h5 style="color:var(--user);">LEFT JOIN（左聯）</h5>
+      <p>返回左表所有行，右表無匹配則NULL。<br>沒有訂單的用戶也會顯示。</p>
+      <div class="example">所有用戶，訂單可為空</div>
+    </div>
+    <div class="join-box">
+      <h5 style="color:var(--order);">本例用LEFT JOIN</h5>
+      <p>查詢滿足條件的訂單及用戶信息——用LEFT JOIN確保即使訂單沒有訂單項也能查出來。</p>
+      <div class="example">orders LEFT JOIN items</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 4. 核心SQL ══ -->
+<div class="sec">
+  <div class="sec-title">④ 核心SQL — 三表聯查</div>
+
+  <div class="layer-label ll-sql">🔍 場景1：查詢滿足條件的訂單及用戶信息、訂單項</div>
+  <div class="code-block">
+<span class="c-gray">-- 查詢特定用戶的所有訂單及訂單項（三表聯查）</span>
+SELECT
+    <span class="c-gray">-- 用戶信息</span>
+    u.<span class="c-green">id</span>           AS user_id,
+    u.<span class="c-green">name</span>         AS user_name,
+    u.<span class="c-green">email</span>        AS user_email,
+    <span class="c-gray">-- 訂單信息</span>
+    o.<span class="c-green">id</span>           AS order_id,
+    o.<span class="c-green">order_no</span>     AS order_no,
+    o.<span class="c-green">total_amount</span> AS total_amount,
+    o.<span class="c-green">status</span>       AS order_status,
+    o.<span class="c-green">created_at</span>   AS order_date,
+    <span class="c-gray">-- 訂單項信息</span>
+    oi.<span class="c-green">id</span>          AS item_id,
+    oi.<span class="c-green">product_name</span> AS product_name,
+    oi.<span class="c-green">quantity</span>    AS quantity,
+    oi.<span class="c-green">price</span>       AS price
+
+FROM <span class="c-yellow">orders</span> o
+    <span class="c-teal">INNER JOIN</span> <span class="c-yellow">users</span> u
+        ON o.<span class="c-teal">user_id</span> = u.<span class="c-green">id</span>         <span class="c-gray">← 用戶ID關聯</span>
+    <span class="c-teal">LEFT JOIN</span> <span class="c-yellow">order_items</span> oi
+        ON oi.<span class="c-teal">order_id</span> = o.<span class="c-green">id</span>        <span class="c-gray">← 訂單ID關聯</span>
+
+WHERE
+    o.<span class="c-green">status</span> = <span class="c-orange">'completed'</span>           <span class="c-gray">← 只查已完成訂單</span>
+    AND o.<span class="c-green">total_amount</span> &gt; <span class="c-teal">100</span>          <span class="c-gray">← 金額滿100</span>
+    AND u.<span class="c-green">id</span> = #{userId}              <span class="c-gray">← 指定用戶（參數）</span>
+
+ORDER BY o.<span class="c-green">created_at</span> DESC;
+  </div>
+
+  <div class="layer-label ll-sql">🔍 場景2：查詢所有用戶及其訂單統計（聚合）</div>
+  <div class="code-block">
+<span class="c-gray">-- 查詢每個用戶的訂單數和總消費金額</span>
+SELECT
+    u.<span class="c-green">id</span>,
+    u.<span class="c-green">name</span>,
+    <span class="c-teal">COUNT</span>(o.id)            AS order_count,   <span class="c-gray">← 訂單數量</span>
+    <span class="c-teal">SUM</span>(o.total_amount)    AS total_spent,   <span class="c-gray">← 總消費</span>
+    <span class="c-teal">MAX</span>(o.created_at)      AS last_order_date <span class="c-gray">← 最後一次下單</span>
+
+FROM <span class="c-yellow">users</span> u
+    <span class="c-teal">LEFT JOIN</span> <span class="c-yellow">orders</span> o ON o.<span class="c-teal">user_id</span> = u.<span class="c-green">id</span>
+
+GROUP BY u.<span class="c-green">id</span>, u.<span class="c-green">name</span>
+HAVING <span class="c-teal">COUNT</span>(o.id) &gt; <span class="c-teal">0</span>                      <span class="c-gray">← 只要有訂單的用戶</span>
+ORDER BY total_spent DESC;
+  </div>
+</div>
+
+<!-- ══ 5. Java Entity ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ Java實體類與結果映射物件</div>
+
+  <div class="layer-label ll-user">👤 User實體</div>
+  <div class="code-block">
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">User</span> {
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> id;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> name;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> email;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> phone;
+    <span class="c-purple">private</span> <span class="c-blue">LocalDateTime</span> createdAt;
+}
+  </div>
+
+  <div class="layer-label ll-order">📦 Order實體</div>
+  <div class="code-block">
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">Order</span> {
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> id;
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> userId;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> orderNo;
+    <span class="c-purple">private</span> <span class="c-blue">BigDecimal</span> totalAmount;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> status;
+    <span class="c-purple">private</span> <span class="c-blue">LocalDateTime</span> createdAt;
+}
+  </div>
+
+  <div class="layer-label ll-item">🛒 OrderItem實體</div>
+  <div class="code-block">
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">OrderItem</span> {
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> id;
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> orderId;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> productName;
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> quantity;
+    <span class="c-purple">private</span> <span class="c-blue">BigDecimal</span> price;
+}
+  </div>
+
+  <div class="layer-label ll-java">✨ 聯查結果VO（最重要！）</div>
+  <div class="code-block">
+<span class="c-gray">// 包含「聯結的用戶物件」和「聯結的訂單列表」</span>
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserOrderVO</span> {
+
+    <span class="c-gray">// ── 用戶信息（聯結的用戶物件）──</span>
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> userId;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> userName;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> userEmail;
+
+    <span class="c-gray">// ── 訂單列表（聯結的訂單列表，一對多）──</span>
+    <span class="c-purple">private</span> List&lt;<span class="c-teal">OrderDetailVO</span>&gt; orders;   <span class="c-gray">← 嵌套的訂單列表</span>
+}
+
+<span class="c-gray">// 訂單詳情VO（嵌套在UserOrderVO中）</span>
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">OrderDetailVO</span> {
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> orderId;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> orderNo;
+    <span class="c-purple">private</span> <span class="c-blue">BigDecimal</span> totalAmount;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> status;
+    <span class="c-purple">private</span> <span class="c-blue">LocalDateTime</span> orderDate;
+
+    <span class="c-gray">// ── 訂單項列表（嵌套在訂單中）──</span>
+    <span class="c-purple">private</span> List&lt;<span class="c-teal">OrderItemVO</span>&gt; items;      <span class="c-gray">← 嵌套的訂單項</span>
+}
+
+<span class="c-gray">// 訂單項VO</span>
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">OrderItemVO</span> {
+    <span class="c-purple">private</span> <span class="c-blue">Long</span> itemId;
+    <span class="c-purple">private</span> <span class="c-blue">String</span> productName;
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> quantity;
+    <span class="c-purple">private</span> <span class="c-blue">BigDecimal</span> price;
+}
+  </div>
+</div>
+
+<!-- ══ 6. MyBatis ResultMap ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ MyBatis ResultMap — 最核心的映射配置</div>
+
+  <div class="tip">💡 <strong>為什麼需要ResultMap？</strong><br>
+  SQL聯查返回的是「扁平的行數據」（每行都有user+order+item的欄位），但Java需要的是「嵌套的物件結構」（User裡面有List&lt;Order&gt;，Order裡面有List&lt;OrderItem&gt;）。<br>
+  ResultMap就是告訴MyBatis：如何把扁平行數據組裝成嵌套物件。</div>
+
+  <div class="layer-label ll-xml">📄 UserMapper.xml — ResultMap定義</div>
+  <div class="code-block">
+&lt;<span class="c-green">resultMap</span> id=<span class="c-orange">"UserOrderResultMap"</span> type=<span class="c-orange">"UserOrderVO"</span>&gt;
+
+    <span class="c-gray">&lt;!-- 用戶基本信息映射 --&gt;</span>
+    &lt;<span class="c-teal">id</span>       property=<span class="c-orange">"userId"</span>    column=<span class="c-orange">"user_id"</span>/&gt;
+    &lt;<span class="c-green">result</span>   property=<span class="c-orange">"userName"</span>  column=<span class="c-orange">"user_name"</span>/&gt;
+    &lt;<span class="c-green">result</span>   property=<span class="c-orange">"userEmail"</span> column=<span class="c-orange">"user_email"</span>/&gt;
+
+    <span class="c-gray">&lt;!-- 聯結的訂單列表（一對多） --&gt;</span>
+    &lt;<span class="c-pink">collection</span>
+        property=<span class="c-orange">"orders"</span>           <span class="c-gray">← 對應Java屬性名</span>
+        ofType=<span class="c-orange">"OrderDetailVO"</span>    <span class="c-gray">← 列表元素的類型</span>
+        resultMap=<span class="c-orange">"OrderDetailResultMap"</span>/&gt;
+&lt;/<span class="c-green">resultMap</span>&gt;
+
+<span class="c-gray">&lt;!-- 訂單詳情ResultMap（嵌套） --&gt;</span>
+&lt;<span class="c-green">resultMap</span> id=<span class="c-orange">"OrderDetailResultMap"</span> type=<span class="c-orange">"OrderDetailVO"</span>&gt;
+    &lt;<span class="c-teal">id</span>     property=<span class="c-orange">"orderId"</span>      column=<span class="c-orange">"order_id"</span>/&gt;
+    &lt;<span class="c-green">result</span> property=<span class="c-orange">"orderNo"</span>      column=<span class="c-orange">"order_no"</span>/&gt;
+    &lt;<span class="c-green">result</span> property=<span class="c-orange">"totalAmount"</span>  column=<span class="c-orange">"total_amount"</span>/&gt;
+    &lt;<span class="c-green">result</span> property=<span class="c-orange">"status"</span>       column=<span class="c-orange">"order_status"</span>/&gt;
+    &lt;<span class="c-green">result</span> property=<span class="c-orange">"orderDate"</span>    column=<span class="c-orange">"order_date"</span>/&gt;
+
+    <span class="c-gray">&lt;!-- 聯結的訂單項列表（一對多） --&gt;</span>
+    &lt;<span class="c-pink">collection</span>
+        property=<span class="c-orange">"items"</span>
+        ofType=<span class="c-orange">"OrderItemVO"</span>&gt;
+        &lt;<span class="c-teal">id</span>     property=<span class="c-orange">"itemId"</span>      column=<span class="c-orange">"item_id"</span>/&gt;
+        &lt;<span class="c-green">result</span> property=<span class="c-orange">"productName"</span> column=<span class="c-orange">"product_name"</span>/&gt;
+        &lt;<span class="c-green">result</span> property=<span class="c-orange">"quantity"</span>    column=<span class="c-orange">"quantity"</span>/&gt;
+        &lt;<span class="c-green">result</span> property=<span class="c-orange">"price"</span>       column=<span class="c-orange">"price"</span>/&gt;
+    &lt;/<span class="c-pink">collection</span>&gt;
+&lt;/<span class="c-green">resultMap</span>&gt;
+
+<span class="c-gray">&lt;!-- 使用ResultMap的查詢 --&gt;</span>
+&lt;<span class="c-green">select</span> id=<span class="c-orange">"getUserOrders"</span> resultMap=<span class="c-orange">"UserOrderResultMap"</span>&gt;
+    SELECT
+        u.id AS user_id, u.name AS user_name, u.email AS user_email,
+        o.id AS order_id, o.order_no, o.total_amount,
+        o.status AS order_status, o.created_at AS order_date,
+        oi.id AS item_id, oi.product_name, oi.quantity, oi.price
+    FROM orders o
+        INNER JOIN users u ON o.user_id = u.id
+        LEFT JOIN order_items oi ON oi.order_id = o.id
+    WHERE o.status = #{status}
+        AND o.total_amount &gt; #{minAmount}
+    ORDER BY o.created_at DESC
+&lt;/<span class="c-green">select</span>&gt;
+  </div>
+</div>
+
+<!-- ══ 7. 返回JSON結構 ══ -->
+<div class="sec">
+  <div class="sec-title">⑦ 最終返回的JSON結構</div>
+  <div class="code-block">
+{
+    <span class="c-orange">"code"</span>: <span class="c-teal">200</span>,
+    <span class="c-orange">"data"</span>: {
+        <span class="c-gray">// 聯結的用戶物件</span>
+        <span class="c-orange">"userId"</span>: <span class="c-teal">1</span>,
+        <span class="c-orange">"userName"</span>: <span class="c-orange">"Alice"</span>,
+        <span class="c-orange">"userEmail"</span>: <span class="c-orange">"alice@example.com"</span>,
+
+        <span class="c-gray">// 聯結的訂單列表（一對多）</span>
+        <span class="c-orange">"orders"</span>: [
+            {
+                <span class="c-orange">"orderId"</span>: <span class="c-teal">101</span>,
+                <span class="c-orange">"orderNo"</span>: <span class="c-orange">"ORD-2024-001"</span>,
+                <span class="c-orange">"totalAmount"</span>: <span class="c-teal">350.00</span>,
+                <span class="c-orange">"status"</span>: <span class="c-orange">"completed"</span>,
+                <span class="c-orange">"orderDate"</span>: <span class="c-orange">"2024-03-15"</span>,
+
+                <span class="c-gray">// 嵌套的訂單項列表</span>
+                <span class="c-orange">"items"</span>: [
+                    {
+                        <span class="c-orange">"itemId"</span>: <span class="c-teal">1001</span>,
+                        <span class="c-orange">"productName"</span>: <span class="c-orange">"iPhone 15"</span>,
+                        <span class="c-orange">"quantity"</span>: <span class="c-teal">1</span>,
+                        <span class="c-orange">"price"</span>: <span class="c-teal">300.00</span>
+                    },
+                    {
+                        <span class="c-orange">"itemId"</span>: <span class="c-teal">1002</span>,
+                        <span class="c-orange">"productName"</span>: <span class="c-orange">"手機殼"</span>,
+                        <span class="c-orange">"quantity"</span>: <span class="c-teal">2</span>,
+                        <span class="c-orange">"price"</span>: <span class="c-teal">25.00</span>
+                    }
+                ]
+            },
+            {
+                <span class="c-orange">"orderId"</span>: <span class="c-teal">102</span>,
+                <span class="c-orange">"orderNo"</span>: <span class="c-orange">"ORD-2024-002"</span>,
+                <span class="c-orange">"totalAmount"</span>: <span class="c-teal">150.00</span>,
+                <span class="c-orange">"items"</span>: [ <span class="c-gray">/* ... */</span> ]
+            }
+        ]
+    }
+}
+  </div>
+
+  <div class="warn">
+    ⚠️ <strong>MyBatis ResultMap的關鍵規則：</strong><br>
+    1. <strong>&lt;id&gt;</strong> 必須配置——MyBatis靠id欄位判斷「這兩行是否屬於同一個用戶/訂單」，用來合並重複行<br>
+    2. SQL返回的是扁平數據（多行），ResultMap負責把相同user_id的行合並成一個User物件<br>
+    3. <strong>&lt;collection&gt;</strong> 對應一對多，<strong>&lt;association&gt;</strong> 對應一對一
+  </div>
+</div>
+
+<div class="card-footer">
+  多表聯查完全版 · Users × Orders × Order_items · SQL JOIN · MyBatis ResultMap · 嵌套物件映射 · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
