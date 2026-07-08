@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot 異常處理機制完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --err:#8b1a1a;--err-bg:#fff0f0;
+  --warn:#8b6000;--warn-bg:#fff8e0;
+  --ok:#1a5c1a;--ok-bg:#e8ffe8;
+  --ctrl:#1a3a6b;--ctrl-bg:#e8f0ff;
+  --svc:#5c1a5c;--svc-bg:#f8e8ff;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#140c0c;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#f0c8c8;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#806060;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--err);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--err);letter-spacing:4px;border-bottom:1.5px solid var(--err);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+.warn-box{background:rgba(139,96,0,0.07);border-left:3px solid var(--warn);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.warn-box strong{color:var(--warn);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #3a2d2d;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-gray{color:#6c7086;}.c-orange{color:#fab387;}
+.c-teal{color:#94e2d5;}.c-red{color:#f38ba8;}.c-white{color:#cdd6f4;}
+.c-pink{color:#f5c2e7;}
+
+.layer-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:2px;}
+.ll-err{background:var(--err-bg);color:var(--err);}
+.ll-svc{background:var(--svc-bg);color:var(--svc);}
+.ll-ctrl{background:var(--ctrl-bg);color:var(--ctrl);}
+.ll-global{background:#1a1208;color:#f5d87a;}
+.ll-ok{background:var(--ok-bg);color:var(--ok);}
+
+/* ── 異常階層 ── */
+.exception-hierarchy{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.eh-level{border-radius:4px;padding:10px 14px;border-left:4px solid;display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:center;}
+.eh-base{background:#f8f4ee;border-color:#aaa;}
+.eh-runtime{background:var(--warn-bg);border-color:var(--warn);}
+.eh-business{background:var(--err-bg);border-color:var(--err);}
+.eh-valid{background:var(--svc-bg);border-color:var(--svc);}
+.eh-name{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;}
+.eh-base .eh-name{color:#666;}
+.eh-runtime .eh-name{color:var(--warn);}
+.eh-business .eh-name{color:var(--err);}
+.eh-valid .eh-name{color:var(--svc);}
+.eh-desc{font-size:12px;color:#555;line-height:1.7;}
+
+/* ── 傳播流程 ── */
+.flow-box{background:var(--paper2);border:1px solid #d8c8b8;border-radius:6px;padding:16px 18px;margin-bottom:14px;}
+.flow-box h4{font-family:'Shippori Mincho',serif;font-size:13px;color:var(--err);letter-spacing:3px;margin-bottom:14px;}
+.fs-row{display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:center;margin-bottom:4px;}
+.fs-node{border-radius:4px;padding:8px 10px;text-align:center;font-size:12px;font-weight:700;}
+.fsn-throw{background:var(--err-bg);color:var(--err);border:1.5px solid var(--err);}
+.fsn-svc{background:var(--svc-bg);color:var(--svc);border:1.5px solid var(--svc);}
+.fsn-ctrl{background:var(--ctrl-bg);color:var(--ctrl);border:1.5px solid var(--ctrl);}
+.fsn-global{background:#2d2010;color:#f5d87a;border:1.5px solid #c0a030;}
+.fsn-resp{background:var(--ok-bg);color:var(--ok);border:1.5px solid var(--ok);}
+.fs-arrow{text-align:center;font-size:14px;color:#c08080;padding:2px 0;}
+.fs-desc{font-size:12px;color:#555;line-height:1.7;}
+.fs-desc strong{color:var(--err);}
+.fs-desc .mono{font-family:'DM Mono',monospace;font-size:11px;background:#f0e8e8;padding:1px 5px;border-radius:2px;color:var(--err);}
+
+/* ── HTTP狀態碼 ── */
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.sg-item{border-radius:4px;padding:10px 10px;text-align:center;border:1.5px solid;}
+.sg-2xx{background:#e8ffe8;border-color:var(--ok);}
+.sg-4xx{background:var(--warn-bg);border-color:var(--warn);}
+.sg-5xx{background:var(--err-bg);border-color:var(--err);}
+.sg-item .code{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;margin-bottom:3px;}
+.sg-2xx .code{color:var(--ok);}
+.sg-4xx .code{color:var(--warn);}
+.sg-5xx .code{color:var(--err);}
+.sg-item .label{font-size:11px;color:#555;margin-bottom:3px;}
+.sg-item .desc{font-size:10.5px;color:#888;}
+
+/* ── 統一返回格式 ── */
+.result-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.rc-bad{border-radius:6px;padding:14px 16px;background:var(--err-bg);border:2px solid var(--err);}
+.rc-good{border-radius:6px;padding:14px 16px;background:var(--ok-bg);border:2px solid var(--ok);}
+.rc-bad h4{color:var(--err);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.rc-good h4{color:var(--ok);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">異常處理機制完全版</div>
+<div class="page-sub">自定義異常 · 拋出點 · 傳播路徑 · 全局捕獲 · 統一返回格式</div>
+
+<div class="card">
+
+<!-- ══ 1. 為什麼需要異常處理 ══ -->
+<div class="sec">
+  <div class="sec-title">① 為什麼需要統一異常處理？</div>
+  <div class="result-compare">
+    <div class="rc-bad">
+      <h4>❌ 沒有統一處理（混亂）</h4>
+      <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-gray">// 前端收到各種不同格式的錯誤</span>
+<span class="c-gray">// 有時是Spring默認錯誤：</span>
+{
+  <span class="c-orange">"timestamp"</span>: <span class="c-orange">"2024-03-15"</span>,
+  <span class="c-orange">"status"</span>: <span class="c-teal">500</span>,
+  <span class="c-orange">"error"</span>: <span class="c-orange">"Internal Server Error"</span>,
+  <span class="c-orange">"path"</span>: <span class="c-orange">"/api/users/999"</span>
+}
+<span class="c-gray">// 有時是業務錯誤直接拋異常堆疊</span>
+<span class="c-red">java.lang.NullPointerException</span>
+    at com.example.UserService...
+      </div>
+    </div>
+    <div class="rc-good">
+      <h4>✅ 統一處理（整潔）</h4>
+      <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-gray">// 前端永遠收到固定格式</span>
+{
+  <span class="c-orange">"code"</span>: <span class="c-teal">404</span>,
+  <span class="c-orange">"message"</span>: <span class="c-orange">"用戶不存在"</span>,
+  <span class="c-orange">"data"</span>: <span class="c-purple">null</span>,
+  <span class="c-orange">"timestamp"</span>: <span class="c-orange">"2024-03-15T10:30:00"</span>
+}
+<span class="c-gray">// 成功也是固定格式</span>
+{
+  <span class="c-orange">"code"</span>: <span class="c-teal">200</span>,
+  <span class="c-orange">"message"</span>: <span class="c-orange">"success"</span>,
+  <span class="c-orange">"data"</span>: { ... }
+}
+      </div>
+    </div>
+  </div>
+  <div class="tip">💡 <strong>統一異常處理的三大好處：</strong><br>
+  ① 前端只需要判斷一種格式，不用處理各種奇怪的錯誤結構<br>
+  ② 敏感的堆疊信息不會暴露給用戶（安全性）<br>
+  ③ 日誌集中記錄，方便排查問題</div>
+</div>
+
+<!-- ══ 2. 自定義異常體系 ══ -->
+<div class="sec">
+  <div class="sec-title">② 自定義異常體系 — 異常階層設計</div>
+
+  <div class="exception-hierarchy">
+    <div class="eh-level eh-base">
+      <div class="eh-name">RuntimeException</div>
+      <div class="eh-desc">Java內建，所有運行時異常的父類。不需要強制try-catch。</div>
+    </div>
+    <div class="eh-level eh-runtime" style="margin-left:20px;">
+      <div class="eh-name">BaseException（自定義基礎類）</div>
+      <div class="eh-desc">繼承RuntimeException，添加 code（錯誤碼）和 message（錯誤信息）兩個屬性。所有業務異常繼承它。</div>
+    </div>
+    <div class="eh-level eh-business" style="margin-left:40px;">
+      <div class="eh-name">BusinessException（業務異常）</div>
+      <div class="eh-desc">業務邏輯錯誤：用戶不存在、餘額不足、訂單已取消等。HTTP狀態碼通常是4xx。</div>
+    </div>
+    <div class="eh-level eh-valid" style="margin-left:40px;">
+      <div class="eh-name">ValidationException（參數驗證異常）</div>
+      <div class="eh-desc">請求參數不合法：名稱為空、金額為負數、日期格式錯誤等。HTTP狀態碼400。</div>
+    </div>
+  </div>
+
+  <div class="layer-label ll-err">💥 自定義異常類代碼</div>
+  <div class="code-block">
+<span class="c-gray">// 1. 錯誤碼枚舉（統一管理所有錯誤）</span>
+<span class="c-purple">public enum</span> <span class="c-yellow">ErrorCode</span> {
+    SUCCESS(<span class="c-teal">200</span>, <span class="c-orange">"成功"</span>),
+    BAD_REQUEST(<span class="c-teal">400</span>, <span class="c-orange">"請求參數錯誤"</span>),
+    UNAUTHORIZED(<span class="c-teal">401</span>, <span class="c-orange">"未登錄或Token過期"</span>),
+    FORBIDDEN(<span class="c-teal">403</span>, <span class="c-orange">"無權限訪問"</span>),
+    NOT_FOUND(<span class="c-teal">404</span>, <span class="c-orange">"資源不存在"</span>),
+    SERVER_ERROR(<span class="c-teal">500</span>, <span class="c-orange">"服務器內部錯誤"</span>),
+
+    <span class="c-gray">// 業務錯誤碼（自定義，通常4位數）</span>
+    USER_NOT_FOUND(<span class="c-teal">1001</span>, <span class="c-orange">"用戶不存在"</span>),
+    ORDER_NOT_FOUND(<span class="c-teal">1002</span>, <span class="c-orange">"訂單不存在"</span>),
+    INSUFFICIENT_BALANCE(<span class="c-teal">1003</span>, <span class="c-orange">"餘額不足"</span>),
+    ORDER_ALREADY_CANCELLED(<span class="c-teal">1004</span>, <span class="c-orange">"訂單已取消"</span>);
+
+    <span class="c-purple">private final</span> <span class="c-blue">int</span> code;
+    <span class="c-purple">private final</span> <span class="c-blue">String</span> message;
+    <span class="c-gray">// constructor + getter...</span>
+}
+
+<span class="c-gray">// 2. 基礎異常類</span>
+<span class="c-purple">public class</span> <span class="c-yellow">BaseException</span> <span class="c-purple">extends</span> <span class="c-blue">RuntimeException</span> {
+    <span class="c-purple">private final</span> <span class="c-blue">int</span> code;
+
+    <span class="c-purple">public</span> <span class="c-green">BaseException</span>(<span class="c-blue">ErrorCode</span> errorCode) {
+        <span class="c-purple">super</span>(errorCode.getMessage());
+        <span class="c-purple">this</span>.code = errorCode.getCode();
+    }
+    <span class="c-purple">public</span> <span class="c-green">BaseException</span>(<span class="c-blue">ErrorCode</span> errorCode, <span class="c-blue">String</span> message) {
+        <span class="c-purple">super</span>(message);             <span class="c-gray">← 自定義消息覆蓋默認</span>
+        <span class="c-purple">this</span>.code = errorCode.getCode();
+    }
+}
+
+<span class="c-gray">// 3. 業務異常（直接使用這個）</span>
+<span class="c-purple">public class</span> <span class="c-yellow">BusinessException</span> <span class="c-purple">extends</span> <span class="c-blue">BaseException</span> {
+    <span class="c-purple">public</span> <span class="c-green">BusinessException</span>(<span class="c-blue">ErrorCode</span> errorCode) {
+        <span class="c-purple">super</span>(errorCode);
+    }
+    <span class="c-purple">public</span> <span class="c-green">BusinessException</span>(<span class="c-blue">ErrorCode</span> errorCode, <span class="c-blue">String</span> message) {
+        <span class="c-purple">super</span>(errorCode, message);
+    }
+}
+  </div>
+</div>
+
+<!-- ══ 3. 異常拋出點 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 異常拋出點 — 在哪裡throw？</div>
+
+  <div class="layer-label ll-svc">⚙️ Service層（最主要的拋出點）</div>
+  <div class="code-block">
+<span class="c-green">@Service</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserService</span> {
+
+    <span class="c-purple">public</span> <span class="c-blue">User</span> <span class="c-green">findById</span>(<span class="c-blue">Long</span> id) {
+        <span class="c-blue">User</span> user = userMapper.<span class="c-green">findById</span>(id);
+
+        <span class="c-gray">// ⭐ 異常拋出點1：業務條件不滿足</span>
+        <span class="c-purple">if</span> (user == <span class="c-purple">null</span>) {
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(ErrorCode.USER_NOT_FOUND);
+        }
+        <span class="c-purple">return</span> user;
+    }
+
+    <span class="c-purple">public</span> <span class="c-blue">void</span> <span class="c-green">cancelOrder</span>(<span class="c-blue">Long</span> orderId) {
+        <span class="c-blue">Order</span> order = orderMapper.<span class="c-green">findById</span>(orderId);
+
+        <span class="c-gray">// ⭐ 異常拋出點2：狀態不符合業務規則</span>
+        <span class="c-purple">if</span> (<span class="c-orange">"cancelled"</span>.equals(order.getStatus())) {
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(
+                ErrorCode.ORDER_ALREADY_CANCELLED,
+                <span class="c-orange">"訂單"</span> + orderId + <span class="c-orange">"已取消，無法再次取消"</span>
+            );
+        }
+    }
+
+    <span class="c-purple">public</span> <span class="c-blue">void</span> <span class="c-green">pay</span>(<span class="c-blue">Long</span> userId, <span class="c-blue">BigDecimal</span> amount) {
+        <span class="c-blue">BigDecimal</span> balance = <span class="c-green">getBalance</span>(userId);
+
+        <span class="c-gray">// ⭐ 異常拋出點3：數據不滿足條件</span>
+        <span class="c-purple">if</span> (balance.compareTo(amount) &lt; <span class="c-teal">0</span>) {
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(ErrorCode.INSUFFICIENT_BALANCE);
+        }
+    }
+}
+  </div>
+
+  <div class="layer-label ll-ctrl">🌐 Controller層（參數驗證異常）</div>
+  <div class="code-block">
+<span class="c-green">@RestController</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserController</span> {
+
+    <span class="c-gray">// 使用@Valid自動觸發參數驗證異常</span>
+    <span class="c-green">@PostMapping</span>(<span class="c-orange">"/users"</span>)
+    <span class="c-purple">public</span> Result <span class="c-green">createUser</span>(<span class="c-green">@RequestBody</span> <span class="c-green">@Valid</span> <span class="c-blue">UserDTO</span> dto) {
+        <span class="c-gray">// @Valid會自動驗證，不需要手動throw</span>
+        <span class="c-gray">// 驗證失敗 → 自動拋出 MethodArgumentNotValidException</span>
+        <span class="c-purple">return</span> Result.<span class="c-green">success</span>(userService.<span class="c-green">create</span>(dto));
+    }
+}
+
+<span class="c-gray">// UserDTO的驗證注解</span>
+<span class="c-green">@Data</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserDTO</span> {
+    <span class="c-green">@NotBlank</span>(message = <span class="c-orange">"姓名不能為空"</span>)
+    <span class="c-green">@Length</span>(max = 50, message = <span class="c-orange">"姓名不超過50字"</span>)
+    <span class="c-purple">private</span> <span class="c-blue">String</span> name;
+
+    <span class="c-green">@Email</span>(message = <span class="c-orange">"Email格式不正確"</span>)
+    <span class="c-purple">private</span> <span class="c-blue">String</span> email;
+
+    <span class="c-green">@Min</span>(value = 0, message = <span class="c-orange">"年齡不能為負數"</span>)
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> age;
+}
+  </div>
+</div>
+
+<!-- ══ 4. 異常傳播路徑 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 異常傳播路徑 — 從拋出到捕獲</div>
+
+  <div class="flow-box">
+    <h4>異常從拋出到全局處理器的完整旅程</h4>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+
+      <div class="fs-row">
+        <div class="fs-node fsn-throw">Service層</div>
+        <div class="fs-desc"><strong>throw new BusinessException(ErrorCode.USER_NOT_FOUND)</strong><br>異常在Service的findById方法中拋出</div>
+      </div>
+      <div class="fs-row"><div style="font-size:14px;color:#c08080;text-align:center;">↓ 異常向上傳播（不被攔截）</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-ctrl">Controller層</div>
+        <div class="fs-desc">Controller調用了Service，但<strong>沒有try-catch</strong>，異常繼續向上拋</div>
+      </div>
+      <div class="fs-row"><div style="font-size:14px;color:#c08080;text-align:center;">↓ 異常繼續向上傳播</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-global">@ControllerAdvice（全局處理器）</div>
+        <div class="fs-desc"><strong>攔截！</strong> Spring框架把異常路由到對應的 @ExceptionHandler 方法</div>
+      </div>
+      <div class="fs-row"><div style="font-size:14px;color:#80c080;text-align:center;">↓ 處理後返回統一格式</div><div></div></div>
+
+      <div class="fs-row">
+        <div class="fs-node fsn-resp">前端收到統一JSON響應</div>
+        <div class="fs-desc"><span class="mono">{"code":1001,"message":"用戶不存在","data":null}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box">⚠️ <strong>關鍵原則：</strong>Service和Controller層<strong>不要try-catch業務異常</strong>，讓它自然傳播到全局處理器。只有在需要「異常後繼續執行」的場景才在局部catch。</div>
+</div>
+
+<!-- ══ 5. 全局異常處理器 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 全局異常處理器 — 最核心的代碼</div>
+
+  <div class="layer-label ll-global">🌍 GlobalExceptionHandler</div>
+  <div class="code-block">
+<span class="c-green">@ControllerAdvice</span>                          <span class="c-gray">← 全局異常處理器標識</span>
+<span class="c-green">@Slf4j</span>                                     <span class="c-gray">← Lombok日誌注解</span>
+<span class="c-purple">public class</span> <span class="c-yellow">GlobalExceptionHandler</span> {
+
+    <span class="c-gray">// ① 處理業務異常（BusinessException）</span>
+    <span class="c-green">@ExceptionHandler</span>(<span class="c-blue">BusinessException</span>.class)
+    <span class="c-green">@ResponseBody</span>
+    <span class="c-purple">public</span> Result&lt;?&gt; <span class="c-green">handleBusinessException</span>(<span class="c-blue">BusinessException</span> e) {
+        log.<span class="c-green">warn</span>(<span class="c-orange">"業務異常: code={}, message={}"</span>, e.getCode(), e.getMessage());
+        <span class="c-purple">return</span> Result.<span class="c-green">error</span>(e.getCode(), e.getMessage());
+    }
+
+    <span class="c-gray">// ② 處理參數驗證異常（@Valid觸發）</span>
+    <span class="c-green">@ExceptionHandler</span>(<span class="c-blue">MethodArgumentNotValidException</span>.class)
+    <span class="c-green">@ResponseBody</span>
+    <span class="c-purple">public</span> Result&lt;?&gt; <span class="c-green">handleValidException</span>(<span class="c-blue">MethodArgumentNotValidException</span> e) {
+        <span class="c-gray">// 提取第一個驗證錯誤信息</span>
+        <span class="c-blue">String</span> message = e.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(<span class="c-blue">FieldError</span>::getDefaultMessage)
+            .findFirst()
+            .orElse(<span class="c-orange">"參數驗證失敗"</span>);
+
+        log.<span class="c-green">warn</span>(<span class="c-orange">"參數驗證失敗: {}"</span>, message);
+        <span class="c-purple">return</span> Result.<span class="c-green">error</span>(<span class="c-teal">400</span>, message);
+    }
+
+    <span class="c-gray">// ③ 處理未授權異常</span>
+    <span class="c-green">@ExceptionHandler</span>(<span class="c-blue">UnauthorizedException</span>.class)
+    <span class="c-green">@ResponseBody</span>
+    <span class="c-purple">public</span> Result&lt;?&gt; <span class="c-green">handleUnauthorized</span>(<span class="c-blue">UnauthorizedException</span> e) {
+        <span class="c-purple">return</span> Result.<span class="c-green">error</span>(<span class="c-teal">401</span>, <span class="c-orange">"未登錄或Token過期，請重新登錄"</span>);
+    }
+
+    <span class="c-gray">// ④ 兜底：處理所有未預料的異常（最後一道防線）</span>
+    <span class="c-green">@ExceptionHandler</span>(<span class="c-blue">Exception</span>.class)
+    <span class="c-green">@ResponseBody</span>
+    <span class="c-purple">public</span> Result&lt;?&gt; <span class="c-green">handleException</span>(<span class="c-blue">Exception</span> e) {
+        <span class="c-gray">// 未知異常要記錄完整堆疊，方便排查</span>
+        log.<span class="c-green">error</span>(<span class="c-orange">"系統異常"</span>, e);
+        <span class="c-gray">// 不把詳細錯誤暴露給前端（安全性！）</span>
+        <span class="c-purple">return</span> Result.<span class="c-green">error</span>(<span class="c-teal">500</span>, <span class="c-orange">"系統繁忙，請稍後重試"</span>);
+    }
+}
+  </div>
+</div>
+
+<!-- ══ 6. 統一返回格式 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 統一返回格式 — Result類</div>
+
+  <div class="layer-label ll-ok">✅ Result工具類</div>
+  <div class="code-block">
+<span class="c-green">@Data</span>
+<span class="c-green">@AllArgsConstructor</span>
+<span class="c-purple">public class</span> <span class="c-yellow">Result</span>&lt;<span class="c-teal">T</span>&gt; {
+
+    <span class="c-purple">private</span> <span class="c-blue">Integer</span> code;           <span class="c-gray">← 狀態碼</span>
+    <span class="c-purple">private</span> <span class="c-blue">String</span> message;         <span class="c-gray">← 提示信息</span>
+    <span class="c-purple">private</span> <span class="c-teal">T</span> data;                 <span class="c-gray">← 響應數據（泛型）</span>
+    <span class="c-purple">private</span> <span class="c-blue">LocalDateTime</span> timestamp; <span class="c-gray">← 響應時間</span>
+
+    <span class="c-gray">// ── 靜態工廠方法（便捷使用）──</span>
+
+    <span class="c-gray">// 成功（帶數據）</span>
+    <span class="c-purple">public static</span> &lt;<span class="c-teal">T</span>&gt; Result&lt;<span class="c-teal">T</span>&gt; <span class="c-green">success</span>(<span class="c-teal">T</span> data) {
+        <span class="c-purple">return new</span> Result&lt;&gt;(<span class="c-teal">200</span>, <span class="c-orange">"success"</span>, data, LocalDateTime.now());
+    }
+
+    <span class="c-gray">// 成功（不帶數據，如刪除操作）</span>
+    <span class="c-purple">public static</span> Result&lt;<span class="c-purple">Void</span>&gt; <span class="c-green">success</span>() {
+        <span class="c-purple">return new</span> Result&lt;&gt;(<span class="c-teal">200</span>, <span class="c-orange">"success"</span>, <span class="c-purple">null</span>, LocalDateTime.now());
+    }
+
+    <span class="c-gray">// 失敗（自定義code和message）</span>
+    <span class="c-purple">public static</span> &lt;<span class="c-teal">T</span>&gt; Result&lt;<span class="c-teal">T</span>&gt; <span class="c-green">error</span>(<span class="c-blue">int</span> code, <span class="c-blue">String</span> message) {
+        <span class="c-purple">return new</span> Result&lt;&gt;(code, message, <span class="c-purple">null</span>, LocalDateTime.now());
+    }
+
+    <span class="c-gray">// 失敗（使用ErrorCode枚舉）</span>
+    <span class="c-purple">public static</span> &lt;<span class="c-teal">T</span>&gt; Result&lt;<span class="c-teal">T</span>&gt; <span class="c-green">error</span>(<span class="c-blue">ErrorCode</span> errorCode) {
+        <span class="c-purple">return new</span> Result&lt;&gt;(
+            errorCode.getCode(), errorCode.getMessage(),
+            <span class="c-purple">null</span>, LocalDateTime.now()
+        );
+    }
+}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div>
+      <div class="layer-label ll-ok">✅ 成功響應</div>
+      <div class="code-block" style="margin-bottom:0;font-size:11px;">
+{
+  <span class="c-orange">"code"</span>: <span class="c-teal">200</span>,
+  <span class="c-orange">"message"</span>: <span class="c-orange">"success"</span>,
+  <span class="c-orange">"data"</span>: {
+    <span class="c-orange">"id"</span>: <span class="c-teal">1</span>,
+    <span class="c-orange">"name"</span>: <span class="c-orange">"Alice"</span>
+  },
+  <span class="c-orange">"timestamp"</span>: <span class="c-orange">"2024-03-15T10:30:00"</span>
+}
+      </div>
+    </div>
+    <div>
+      <div class="layer-label ll-err">❌ 失敗響應</div>
+      <div class="code-block" style="margin-bottom:0;font-size:11px;">
+{
+  <span class="c-orange">"code"</span>: <span class="c-teal">1001</span>,
+  <span class="c-orange">"message"</span>: <span class="c-orange">"用戶不存在"</span>,
+  <span class="c-orange">"data"</span>: <span class="c-purple">null</span>,
+  <span class="c-orange">"timestamp"</span>: <span class="c-orange">"2024-03-15T10:30:01"</span>
+}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7. HTTP狀態碼 ══ -->
+<div class="sec">
+  <div class="sec-title">⑦ 常用HTTP狀態碼速查</div>
+  <div class="status-grid">
+    <div class="sg-item sg-2xx"><div class="code">200</div><div class="label">OK</div><div class="desc">請求成功</div></div>
+    <div class="sg-item sg-2xx"><div class="code">201</div><div class="label">Created</div><div class="desc">創建成功</div></div>
+    <div class="sg-item sg-4xx"><div class="code">400</div><div class="label">Bad Request</div><div class="desc">參數錯誤</div></div>
+    <div class="sg-item sg-4xx"><div class="code">401</div><div class="label">Unauthorized</div><div class="desc">未登錄</div></div>
+    <div class="sg-item sg-4xx"><div class="code">403</div><div class="label">Forbidden</div><div class="desc">無權限</div></div>
+    <div class="sg-item sg-4xx"><div class="code">404</div><div class="label">Not Found</div><div class="desc">資源不存在</div></div>
+    <div class="sg-item sg-5xx"><div class="code">500</div><div class="label">Server Error</div><div class="desc">服務器異常</div></div>
+    <div class="sg-item sg-5xx"><div class="code">503</div><div class="label">Unavailable</div><div class="desc">服務不可用</div></div>
+  </div>
+  <div class="tip">💡 <strong>業務錯誤碼 vs HTTP狀態碼：</strong><br>
+  HTTP狀態碼是協議層面的（4xx客戶端錯誤，5xx服務器錯誤）<br>
+  業務錯誤碼是應用層面的（1001用戶不存在，1002訂單不存在）<br>
+  實際開發中，HTTP狀態碼統一返回200，靠業務code來區分具體錯誤——這樣前端處理更統一。</div>
+</div>
+
+<div class="card-footer">
+  異常處理機制完全版 · 自定義異常 · 拋出點 · 傳播路徑 · 全局處理器 · 統一返回格式 · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
