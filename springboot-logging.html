@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot 日誌系統完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --trace:#888888;--trace-bg:#f8f8f8;
+  --debug:#1a5c8b;--debug-bg:#e0f0ff;
+  --info:#1a8b3a;--info-bg:#e0ffe8;
+  --warn:#8b6000;--warn-bg:#fff8e0;
+  --error:#8b1a1a;--error-bg:#fff0f0;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c0c14;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#c8d8f0;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#607080;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--spring);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--spring-dark);letter-spacing:4px;border-bottom:1.5px solid var(--spring);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #2d3a2d;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-gray{color:#6c7086;}.c-orange{color:#fab387;}
+.c-teal{color:#94e2d5;}.c-red{color:#f38ba8;}.c-white{color:#cdd6f4;}
+.c-trace{color:#aaaaaa;}.c-debug{color:#89dcff;}.c-info{color:#a8ff78;}
+.c-warn{color:#f9e2af;}.c-error{color:#f38ba8;}
+
+.layer-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:2px;}
+.ll-trace{background:var(--trace-bg);color:var(--trace);}
+.ll-debug{background:var(--debug-bg);color:var(--debug);}
+.ll-info{background:var(--info-bg);color:var(--info);}
+.ll-warn{background:var(--warn-bg);color:var(--warn);}
+.ll-error{background:var(--error-bg);color:var(--error);}
+.ll-config{background:#1a1208;color:#f5d87a;}
+
+/* ── 金字塔 ── */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:3px;margin-bottom:20px;}
+.py-level{border-radius:4px;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;font-weight:700;transition:all 0.2s;}
+.py-level:hover{transform:scaleX(1.02);}
+.py-trace{width:100%;background:var(--trace-bg);border:2px solid var(--trace);color:var(--trace);}
+.py-debug{width:88%;background:var(--debug-bg);border:2px solid var(--debug);color:var(--debug);}
+.py-info{width:75%;background:var(--info-bg);border:2px solid var(--info);color:var(--info);}
+.py-warn{width:60%;background:var(--warn-bg);border:2px solid var(--warn);color:var(--warn);}
+.py-error{width:45%;background:var(--error-bg);border:2px solid var(--error);color:var(--error);}
+.py-name{font-size:16px;letter-spacing:3px;}
+.py-desc{font-size:12px;font-weight:400;opacity:0.8;}
+.py-arrow{font-size:11px;color:#aaa;text-align:center;margin:2px 0;}
+
+/* ── 級別詳解卡片 ── */
+.level-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.lc-item{border-radius:6px;padding:14px 18px;border:2px solid;display:grid;grid-template-columns:120px 1fr 1fr;gap:14px;align-items:start;}
+.lc-trace{background:var(--trace-bg);border-color:var(--trace);}
+.lc-debug{background:var(--debug-bg);border-color:var(--debug);}
+.lc-info{background:var(--info-bg);border-color:var(--info);}
+.lc-warn{background:var(--warn-bg);border-color:var(--warn);}
+.lc-error{background:var(--error-bg);border-color:var(--error);}
+
+.lc-badge{text-align:center;}
+.lc-badge .badge-text{font-size:20px;font-weight:800;letter-spacing:3px;display:block;margin-bottom:4px;}
+.lc-trace .badge-text{color:var(--trace);}
+.lc-debug .badge-text{color:var(--debug);}
+.lc-info .badge-text{color:var(--info);}
+.lc-warn .badge-text{color:var(--warn);}
+.lc-error .badge-text{color:var(--error);}
+.lc-badge .badge-env{font-size:10px;padding:2px 8px;border-radius:8px;font-family:'Noto Sans TC',sans-serif;}
+.lc-trace .badge-env{background:var(--trace-bg);color:var(--trace);border:1px solid var(--trace);}
+.lc-debug .badge-env{background:var(--debug-bg);color:var(--debug);border:1px solid var(--debug);}
+.lc-info .badge-env{background:var(--info-bg);color:var(--info);border:1px solid var(--info);}
+.lc-warn .badge-env{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn);}
+.lc-error .badge-env{background:var(--error-bg);color:var(--error);border:1px solid var(--error);}
+
+.lc-when h5{font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#444;}
+.lc-when p{font-size:12px;color:#555;line-height:1.75;}
+.lc-example h5{font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#444;}
+
+/* ── 環境對比 ── */
+.env-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.env-box{border-radius:6px;padding:14px 16px;border:2px solid;}
+.env-dev{background:var(--debug-bg);border-color:var(--debug);}
+.env-test{background:var(--info-bg);border-color:var(--info);}
+.env-prod{background:var(--error-bg);border-color:var(--error);}
+.env-box h4{font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.env-dev h4{color:var(--debug);}.env-test h4{color:var(--info);}.env-prod h4{color:var(--error);}
+.env-box .env-level{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;margin-bottom:6px;}
+.env-dev .env-level{color:var(--debug);}
+.env-test .env-level{color:var(--info);}
+.env-prod .env-level{color:var(--warn);}
+.env-box p{font-size:12px;color:#555;line-height:1.75;}
+.env-box .show-levels{font-size:11px;color:#888;margin-top:6px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">日誌系統完全版</div>
+<div class="page-sub">TRACE · DEBUG · INFO · WARN · ERROR · Logback配置 · 使用示例</div>
+
+<div class="card">
+
+<!-- ══ 1. 金字塔 ══ -->
+<div class="sec">
+  <div class="sec-title">① 日誌級別金字塔 — 從低到高</div>
+
+  <div class="pyramid">
+    <div style="font-size:11px;color:#aaa;margin-bottom:4px;">← 信息量最多，性能消耗最大</div>
+    <div class="py-level py-trace">
+      <span class="py-name">TRACE</span>
+      <span class="py-desc">最詳細的追蹤信息，方法進出、每個變量值</span>
+      <span style="font-size:11px;">Level 1</span>
+    </div>
+    <div class="py-arrow">↑ 包含下面所有級別</div>
+    <div class="py-level py-debug">
+      <span class="py-name">DEBUG</span>
+      <span class="py-desc">調試信息，開發時用</span>
+      <span style="font-size:11px;">Level 2</span>
+    </div>
+    <div class="py-arrow">↑</div>
+    <div class="py-level py-info">
+      <span class="py-name">INFO</span>
+      <span class="py-desc">正常運行信息，生產環境標準</span>
+      <span style="font-size:11px;">Level 3</span>
+    </div>
+    <div class="py-arrow">↑</div>
+    <div class="py-level py-warn">
+      <span class="py-name">WARN</span>
+      <span class="py-desc">警告，可能有問題但不影響運行</span>
+      <span style="font-size:11px;">Level 4</span>
+    </div>
+    <div class="py-arrow">↑</div>
+    <div class="py-level py-error">
+      <span class="py-name">ERROR</span>
+      <span class="py-desc">錯誤，需要立即關注</span>
+      <span style="font-size:11px;">Level 5</span>
+    </div>
+    <div style="font-size:11px;color:#aaa;margin-top:4px;">← 信息量最少，最需要關注</div>
+  </div>
+
+  <div class="tip">💡 <strong>級別的繼承關係：</strong>設置為INFO意味著INFO、WARN、ERROR都會輸出，TRACE和DEBUG被過濾掉。<br>
+  設置為WARN意味著只輸出WARN和ERROR。<strong>級別越高，輸出越少，性能越好。</strong></div>
+</div>
+
+<!-- ══ 2. 五級詳解 ══ -->
+<div class="sec">
+  <div class="sec-title">② 五個級別詳解 — 什麼時候用哪個？</div>
+
+  <div class="level-cards">
+
+    <div class="lc-item lc-trace">
+      <div class="lc-badge">
+        <span class="badge-text">TRACE</span>
+        <span class="badge-env">極少使用</span>
+      </div>
+      <div class="lc-when">
+        <h5>使用場景</h5>
+        <p>追蹤方法的每一步執行，記錄所有輸入輸出參數。框架層面的底層調試。<br>一般不在業務代碼中使用。</p>
+      </div>
+      <div class="lc-example">
+        <h5>示例</h5>
+        <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-trace">log.trace("進入findById方法, id={}", id);
+log.trace("SQL執行完成, 返回結果: {}", result);
+log.trace("退出findById方法");</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-item lc-debug">
+      <div class="lc-badge">
+        <span class="badge-text">DEBUG</span>
+        <span class="badge-env">開發環境</span>
+      </div>
+      <div class="lc-when">
+        <h5>使用場景</h5>
+        <p>開發和測試時的調試信息。記錄關鍵變量值、方法參數、中間計算結果。<br><strong>生產環境關閉</strong>，避免日誌量過大。</p>
+      </div>
+      <div class="lc-example">
+        <h5>示例</h5>
+        <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-debug">log.debug("查詢用戶, id={}", userId);
+log.debug("分頁參數: page={}, size={}", pageNum, pageSize);
+log.debug("計算結果: totalAmount={}", amount);</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-item lc-info">
+      <div class="lc-badge">
+        <span class="badge-text">INFO</span>
+        <span class="badge-env">生產環境✅</span>
+      </div>
+      <div class="lc-when">
+        <h5>使用場景</h5>
+        <p>記錄系統正常運行的重要事件。<br>服務啟動/停止、用戶登錄、訂單創建、定時任務執行等<strong>業務里程碑</strong>。</p>
+      </div>
+      <div class="lc-example">
+        <h5>示例</h5>
+        <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-info">log.info("用戶登錄成功, userId={}", userId);
+log.info("訂單創建成功, orderId={}", orderId);
+log.info("定時任務開始執行: {}", taskName);
+log.info("服務啟動完成, port={}", port);</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-item lc-warn">
+      <div class="lc-badge">
+        <span class="badge-text">WARN</span>
+        <span class="badge-env">需要關注⚠️</span>
+      </div>
+      <div class="lc-when">
+        <h5>使用場景</h5>
+        <p>潛在問題，當前可以繼續運行但需要關注。<br>重試操作、接近閾值、使用了廢棄API、業務異常（用戶不存在等）。</p>
+      </div>
+      <div class="lc-example">
+        <h5>示例</h5>
+        <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-warn">log.warn("業務異常: code={}, msg={}", code, msg);
+log.warn("接口重試第{}次, url={}", retryCount, url);
+log.warn("緩存未命中, key={}", cacheKey);
+log.warn("內存使用率已達{}%", memoryUsage);</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-item lc-error">
+      <div class="lc-badge">
+        <span class="badge-text">ERROR</span>
+        <span class="badge-env">立即處理🚨</span>
+      </div>
+      <div class="lc-when">
+        <h5>使用場景</h5>
+        <p>系統錯誤，影響功能正常使用。<br>未捕獲異常、數據庫連接失敗、第三方接口異常、系統崩潰。<strong>必須記錄完整堆疊！</strong></p>
+      </div>
+      <div class="lc-example">
+        <h5>示例</h5>
+        <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-error">// 第二個參數傳入Exception，記錄完整堆疊
+log.error("系統異常", e);
+log.error("數據庫連接失敗, url={}", dbUrl, e);
+log.error("支付接口調用失敗, orderId={}", orderId, e);</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ 3. 不同環境配置 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 不同環境的日誌級別配置</div>
+
+  <div class="env-grid">
+    <div class="env-box env-dev">
+      <h4>💻 開發環境（dev）</h4>
+      <div class="env-level">DEBUG</div>
+      <p>看到最多信息，方便調試。SQL語句、參數、返回值全部輸出。</p>
+      <div class="show-levels">輸出：TRACE DEBUG INFO WARN ERROR</div>
+    </div>
+    <div class="env-box env-test">
+      <h4>🧪 測試環境（test）</h4>
+      <div class="env-level">INFO</div>
+      <p>模擬生產環境的日誌量，驗證功能正確性，不需要調試細節。</p>
+      <div class="show-levels">輸出：INFO WARN ERROR</div>
+    </div>
+    <div class="env-box env-prod">
+      <h4>🏭 生產環境（prod）</h4>
+      <div class="env-level">WARN</div>
+      <p>只記錄警告和錯誤，減少磁盤IO，保持高性能。敏感信息不輸出。</p>
+      <div class="show-levels">輸出：WARN ERROR</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 4. 代碼使用 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 代碼中如何使用日誌</div>
+
+  <div class="layer-label ll-info">📦 引入方式（推薦Lombok）</div>
+  <div class="code-block">
+<span class="c-gray">// 方式1：使用Lombok @Slf4j（推薦，最簡潔）</span>
+<span class="c-green">@Slf4j</span>                    <span class="c-gray">← 自動創建 log 變量</span>
+<span class="c-green">@Service</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserService</span> {
+    <span class="c-gray">// 直接使用 log.xxx() 即可，不需要手動聲明</span>
+}
+
+<span class="c-gray">// 方式2：手動聲明（不用Lombok）</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserService</span> {
+    <span class="c-purple">private static final</span> Logger log =
+        LoggerFactory.<span class="c-green">getLogger</span>(UserService.class);
+}
+  </div>
+
+  <div class="layer-label ll-debug">⭐ 完整Service層使用示例</div>
+  <div class="code-block">
+<span class="c-green">@Slf4j</span>
+<span class="c-green">@Service</span>
+<span class="c-purple">public class</span> <span class="c-yellow">OrderService</span> {
+
+    <span class="c-purple">public</span> <span class="c-blue">Order</span> <span class="c-green">createOrder</span>(<span class="c-blue">OrderDTO</span> dto) {
+
+        <span class="c-debug">log.debug("開始創建訂單, userId={}, amount={}", dto.getUserId(), dto.getAmount());</span>
+
+        <span class="c-gray">// 1. 驗證用戶</span>
+        <span class="c-blue">User</span> user = userService.<span class="c-green">findById</span>(dto.getUserId());
+        <span class="c-debug">log.debug("用戶驗證通過, userName={}", user.getName());</span>
+
+        <span class="c-gray">// 2. 檢查庫存</span>
+        <span class="c-purple">if</span> (stock &lt; dto.getQuantity()) {
+            <span class="c-warn">log.warn("庫存不足, productId={}, stock={}, required={}",</span>
+                     <span class="c-warn">productId, stock, dto.getQuantity());</span>
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(ErrorCode.INSUFFICIENT_STOCK);
+        }
+
+        <span class="c-gray">// 3. 創建訂單</span>
+        <span class="c-blue">Order</span> order = orderMapper.<span class="c-green">insert</span>(newOrder);
+        <span class="c-info">log.info("訂單創建成功, orderId={}, userId={}, amount={}",</span>
+                 <span class="c-info">order.getId(), dto.getUserId(), dto.getAmount());</span>
+
+        <span class="c-gray">// 4. 調用支付（可能失敗）</span>
+        <span class="c-purple">try</span> {
+            paymentService.<span class="c-green">pay</span>(order);
+        } <span class="c-purple">catch</span> (<span class="c-blue">Exception</span> e) {
+            <span class="c-error">log.error("支付服務調用失敗, orderId={}", order.getId(), e);</span>
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(ErrorCode.PAYMENT_FAILED);
+        }
+
+        <span class="c-purple">return</span> order;
+    }
+}
+  </div>
+
+  <div class="layer-label ll-error">⚠️ ERROR日誌的正確寫法</div>
+  <div class="code-block">
+<span class="c-gray">// ❌ 錯誤：只記錄message，丟失堆疊信息</span>
+<span class="c-error">log.error("支付失敗: " + e.getMessage());</span>
+
+<span class="c-gray">// ✅ 正確：把Exception作為最後一個參數，記錄完整堆疊</span>
+<span class="c-info">log.error("支付服務調用失敗, orderId={}", orderId, e);</span>
+
+<span class="c-gray">// ✅ 正確：記錄關鍵上下文 + 完整異常</span>
+<span class="c-info">log.error("數據庫操作失敗, table={}, operation={}", tableName, operation, e);</span>
+
+<span class="c-gray">// ❌ 錯誤：用String拼接（性能差，應用占位符{}）</span>
+<span class="c-error">log.debug("用戶ID是: " + userId + ", 名稱是: " + userName);</span>
+
+<span class="c-gray">// ✅ 正確：用{}占位符（未輸出時不做字串拼接，性能好）</span>
+<span class="c-info">log.debug("用戶: id={}, name={}", userId, userName);</span>
+  </div>
+</div>
+
+<!-- ══ 5. application.yml配置 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 日誌配置（application.yml）</div>
+
+  <div class="layer-label ll-config">⚙️ application.yml</div>
+  <div class="code-block">
+logging:
+  level:
+    root: <span class="c-warn">WARN</span>                          <span class="c-gray"># 全局默認級別</span>
+    com.example: <span class="c-info">INFO</span>                  <span class="c-gray"># 自己的包用INFO</span>
+    com.example.service: <span class="c-debug">DEBUG</span>         <span class="c-gray"># Service層用DEBUG（開發時）</span>
+    org.springframework: <span class="c-warn">WARN</span>          <span class="c-gray"># Spring框架本身WARN就夠</span>
+    org.mybatis: <span class="c-debug">DEBUG</span>                  <span class="c-gray"># MyBatis輸出SQL（開發時）</span>
+
+  file:
+    name: logs/application.log          <span class="c-gray"># 日誌輸出到文件</span>
+
+  pattern:
+    console: <span class="c-orange">"%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"</span>
+    file:    <span class="c-orange">"%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n"</span>
+
+<span class="c-gray"># 多環境配置（通過spring.profiles.active切換）</span>
+---
+spring.config.activate.on-profile: dev
+logging.level:
+  com.example: <span class="c-debug">DEBUG</span>
+  org.mybatis: <span class="c-debug">DEBUG</span>     <span class="c-gray"># 開發環境看SQL</span>
+
+---
+spring.config.activate.on-profile: prod
+logging.level:
+  root: <span class="c-warn">WARN</span>
+  com.example: <span class="c-info">INFO</span>    <span class="c-gray"># 生產環境只看INFO以上</span>
+  </div>
+</div>
+
+<!-- ══ 6. 日誌輸出格式解析 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 日誌輸出格式解析</div>
+
+  <div class="code-block">
+<span class="c-gray">// 一條典型的日誌輸出：</span>
+<span class="c-info">2024-03-15 10:30:45.123</span> <span class="c-info">[http-nio-8080-exec-1]</span> <span class="c-info">INFO</span>  <span class="c-yellow">c.e.service.UserService</span> - <span class="c-white">訂單創建成功, orderId=101, userId=1, amount=350.00</span>
+
+<span class="c-gray">// 各部分說明：</span>
+<span class="c-info">2024-03-15 10:30:45.123</span>     <span class="c-gray">← 時間戳（精確到毫秒）</span>
+<span class="c-info">[http-nio-8080-exec-1]</span>       <span class="c-gray">← 線程名（哪個線程處理的請求）</span>
+<span class="c-info">INFO</span>                          <span class="c-gray">← 日誌級別</span>
+<span class="c-yellow">c.e.service.UserService</span>       <span class="c-gray">← 類名縮寫（com.example.service.UserService）</span>
+<span class="c-white">訂單創建成功, orderId=101...</span>   <span class="c-gray">← 日誌消息</span>
+
+<span class="c-gray">// ERROR帶堆疊的輸出：</span>
+<span class="c-error">2024-03-15 10:30:50.456 [exec-2] ERROR c.e.service.OrderService - 支付服務調用失敗, orderId=102</span>
+<span class="c-error">java.net.ConnectException: Connection refused</span>
+<span class="c-error">    at com.example.service.PaymentService.pay(PaymentService.java:45)</span>
+<span class="c-error">    at com.example.service.OrderService.createOrder(OrderService.java:78)</span>
+<span class="c-error">    ...</span>
+  </div>
+
+  <div class="tip">
+    💡 <strong>三個最佳實踐：</strong><br>
+    ① <strong>用{}占位符</strong>不用字串拼接 → 未輸出時不消耗性能<br>
+    ② <strong>ERROR必須帶Exception參數</strong> → 保留完整堆疊，排查問題的唯一線索<br>
+    ③ <strong>生產環境設WARN或INFO</strong> → 減少磁盤IO，INFO級別的日誌量已經夠用
+  </div>
+</div>
+
+<div class="card-footer">
+  日誌系統完全版 · TRACE · DEBUG · INFO · WARN · ERROR · Logback · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
