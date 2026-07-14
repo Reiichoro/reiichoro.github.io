@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Security 完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --authn:#1a3a6b;--authn-bg:#e8f0ff;
+  --authz:#5c1a5c;--authz-bg:#f8e8ff;
+  --filter:#8b5c00;--filter-bg:#fff8e0;
+  --jwt:#1a5c5c;--jwt-bg:#e0f8f8;
+  --deny:#8b1a1a;--deny-bg:#fff0f0;
+  --ok:#1a5c1a;--ok-bg:#e8ffe8;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c0c14;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#c8c8f0;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#606080;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--authn);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--authn);letter-spacing:4px;border-bottom:1.5px solid var(--authn);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+.warn{background:rgba(139,26,26,0.07);border-left:3px solid var(--deny);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.warn strong{color:var(--deny);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #2d2d3a;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-gray{color:#6c7086;}.c-orange{color:#fab387;}
+.c-teal{color:#94e2d5;}.c-red{color:#f38ba8;}.c-white{color:#cdd6f4;}
+.c-pink{color:#f5c2e7;}
+
+.layer-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:2px;}
+.ll-authn{background:var(--authn-bg);color:var(--authn);}
+.ll-authz{background:var(--authz-bg);color:var(--authz);}
+.ll-filter{background:var(--filter-bg);color:var(--filter);}
+.ll-jwt{background:var(--jwt-bg);color:var(--jwt);}
+.ll-ok{background:var(--ok-bg);color:var(--ok);}
+.ll-deny{background:var(--deny-bg);color:var(--deny);}
+
+/* ── 認證 vs 授權對比 ── */
+.vs-box{display:grid;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:stretch;margin-bottom:16px;}
+.vs-authn{background:var(--authn-bg);border:2px solid var(--authn);border-radius:6px;padding:16px 18px;}
+.vs-authz{background:var(--authz-bg);border:2px solid var(--authz);border-radius:6px;padding:16px 18px;}
+.vs-mid{display:flex;align-items:center;justify-content:center;font-family:'Shippori Mincho',serif;font-size:20px;font-weight:800;color:var(--gold);}
+.vs-authn h4{color:var(--authn);font-size:13px;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.vs-authz h4{color:var(--authz);font-size:13px;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.vs-row{display:flex;gap:8px;align-items:baseline;margin-bottom:6px;font-size:12.5px;color:#333;line-height:1.7;}
+.vs-icon{font-size:14px;flex-shrink:0;}
+
+/* ── 過濾器鏈流程 ── */
+.filter-chain{display:flex;flex-direction:column;gap:3px;margin-bottom:14px;}
+.fc-item{border-radius:4px;padding:10px 14px;border:1.5px solid;display:grid;grid-template-columns:220px 1fr;gap:12px;align-items:center;}
+.fc-http{background:#e8e8f8;border-color:#8080c0;}
+.fc-cors{background:#f8f8e8;border-color:#a0a030;}
+.fc-csrf{background:#f8f8e8;border-color:#a0a030;}
+.fc-jwt{background:var(--jwt-bg);border-color:var(--jwt);}
+.fc-authn{background:var(--authn-bg);border-color:var(--authn);}
+.fc-authz{background:var(--authz-bg);border-color:var(--authz);}
+.fc-ctrl{background:var(--ok-bg);border-color:var(--ok);}
+.fc-name{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;}
+.fc-http .fc-name{color:#5050b0;}
+.fc-cors .fc-name,.fc-csrf .fc-name{color:#808020;}
+.fc-jwt .fc-name{color:var(--jwt);}
+.fc-authn .fc-name{color:var(--authn);}
+.fc-authz .fc-name{color:var(--authz);}
+.fc-ctrl .fc-name{color:var(--ok);}
+.fc-desc{font-size:12px;color:#555;line-height:1.65;}
+.fc-arrow{text-align:center;font-size:14px;color:#9090c0;padding:1px 0;}
+
+/* ── 角色權限表 ── */
+.role-table{overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:14px;}
+table{border-collapse:collapse;width:100%;}
+thead tr{background:var(--authn);}
+thead th{padding:9px 12px;font-size:12px;color:#f5e6c0;text-align:center;letter-spacing:1px;}
+tbody tr:nth-child(even){background:var(--paper2);}
+td{padding:8px 12px;text-align:center;border-right:1px solid #e0d4bc;font-size:12.5px;vertical-align:middle;}
+td:last-child{border-right:none;}
+td.role-name{font-family:'DM Mono',monospace;font-weight:700;color:var(--authn);}
+td.perm-yes{color:var(--ok);font-weight:700;}
+td.perm-no{color:#ccc;}
+
+/* ── JWT流程 ── */
+.jwt-flow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.jf-box{border-radius:6px;padding:14px 16px;border:2px solid var(--jwt);background:var(--jwt-bg);}
+.jf-box h4{color:var(--jwt);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;}
+.jf-step{display:flex;gap:8px;align-items:baseline;margin-bottom:6px;font-size:12px;color:#333;line-height:1.7;}
+.jf-num{font-family:'DM Mono',monospace;font-weight:700;color:var(--jwt);min-width:18px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">Spring Security 完全版</div>
+<div class="page-sub">認證 vs 授權 · 過濾器鏈 · JWT · 權限控制 · 完整代碼</div>
+
+<div class="card">
+
+<!-- ══ 1. 認證 vs 授權 ══ -->
+<div class="sec">
+  <div class="sec-title">① 認證（Authentication）vs 授權（Authorization）</div>
+
+  <div class="vs-box">
+    <div class="vs-authn">
+      <h4>🔑 認證（Authentication）</h4>
+      <div class="vs-row"><span class="vs-icon">❓</span><span><strong>你是誰？</strong> 驗證身份</span></div>
+      <div class="vs-row"><span class="vs-icon">📋</span><span>用戶名＋密碼登錄</span></div>
+      <div class="vs-row"><span class="vs-icon">🎫</span><span>驗證成功 → 發放Token（JWT）</span></div>
+      <div class="vs-row"><span class="vs-icon">🏨</span><span>類比：酒店前台核對身份，發房卡</span></div>
+      <div class="vs-row"><span class="vs-icon">🔄</span><span>每次請求攜帶Token，系統識別身份</span></div>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-authz">
+      <h4>🛡️ 授權（Authorization）</h4>
+      <div class="vs-row"><span class="vs-icon">❓</span><span><strong>你能做什麼？</strong> 驗證權限</span></div>
+      <div class="vs-row"><span class="vs-icon">👤</span><span>根據角色（ROLE_ADMIN/USER）決定</span></div>
+      <div class="vs-row"><span class="vs-icon">🚪</span><span>有權限 → 放行 ／ 無權限 → 403</span></div>
+      <div class="vs-row"><span class="vs-icon">🏨</span><span>類比：房卡只能開自己的房間</span></div>
+      <div class="vs-row"><span class="vs-icon">⚡</span><span>認證之後才能做授權檢查</span></div>
+    </div>
+  </div>
+
+  <div class="tip">💡 <strong>順序很重要：先認證，再授權。</strong><br>
+  沒有登錄（認證失敗）→ 返回 <strong>401 Unauthorized</strong>（未認證）<br>
+  登錄了但沒有權限（授權失敗）→ 返回 <strong>403 Forbidden</strong>（已認證但無權）</div>
+</div>
+
+<!-- ══ 2. 過濾器鏈 ══ -->
+<div class="sec">
+  <div class="sec-title">② 權限控制流程 — HTTP請求通過安全過濾器鏈</div>
+
+  <div class="filter-chain">
+    <div class="fc-item fc-http">
+      <div class="fc-name">🌐 HTTP Request</div>
+      <div class="fc-desc">客戶端發送請求，Header中帶有 Authorization: Bearer {token}</div>
+    </div>
+    <div class="fc-arrow">↓ 進入Spring Security過濾器鏈</div>
+
+    <div class="fc-item fc-cors">
+      <div class="fc-name">CorsFilter</div>
+      <div class="fc-desc">處理跨域請求（CORS），允許前端域名訪問</div>
+    </div>
+    <div class="fc-arrow">↓</div>
+
+    <div class="fc-item fc-csrf">
+      <div class="fc-name">CsrfFilter</div>
+      <div class="fc-desc">防止跨站請求偽造攻擊。REST API通常關閉此過濾器</div>
+    </div>
+    <div class="fc-arrow">↓</div>
+
+    <div class="fc-item fc-jwt">
+      <div class="fc-name">⭐ JwtAuthFilter（自定義）</div>
+      <div class="fc-desc"><strong>最關鍵！</strong>從Header取出JWT Token → 驗證Token有效性 → 解析用戶信息 → 放入SecurityContext</div>
+    </div>
+    <div class="fc-arrow">↓ Token有效，認證信息已放入上下文</div>
+
+    <div class="fc-item fc-authn">
+      <div class="fc-name">UsernamePasswordAuthenticationFilter</div>
+      <div class="fc-desc">處理表單登錄（用戶名密碼）。已用JWT時一般跳過</div>
+    </div>
+    <div class="fc-arrow">↓</div>
+
+    <div class="fc-item fc-authz">
+      <div class="fc-name">⭐ AuthorizationFilter（權限檢查）</div>
+      <div class="fc-desc"><strong>關鍵！</strong>讀取SecurityContext中的用戶角色 → 對比請求路徑所需權限 → 有權限放行，無權限返回403</div>
+    </div>
+    <div class="fc-arrow">↓ 通過所有過濾器</div>
+
+    <div class="fc-item fc-ctrl">
+      <div class="fc-name">✅ Controller（目標方法）</div>
+      <div class="fc-desc">請求成功抵達Controller，執行業務邏輯，返回響應</div>
+    </div>
+  </div>
+
+  <div class="warn"><strong>兩條拒絕路徑：</strong><br>
+  JWT驗證失敗（Token過期/無效）→ 直接返回 <strong>401</strong>，不繼續執行<br>
+  JWT有效但角色不夠 → AuthorizationFilter返回 <strong>403</strong></div>
+</div>
+
+<!-- ══ 3. JWT Token ══ -->
+<div class="sec">
+  <div class="sec-title">③ JWT Token — 認證信息的載體</div>
+
+  <div class="jwt-flow">
+    <div class="jf-box">
+      <h4>🔐 登錄流程（獲取Token）</h4>
+      <div class="jf-step"><span class="jf-num">1.</span><span>前端發送 POST /login {username, password}</span></div>
+      <div class="jf-step"><span class="jf-num">2.</span><span>Security驗證用戶名密碼是否正確</span></div>
+      <div class="jf-step"><span class="jf-num">3.</span><span>正確 → 生成JWT Token（包含userId、roles、過期時間）</span></div>
+      <div class="jf-step"><span class="jf-num">4.</span><span>返回Token給前端</span></div>
+      <div class="jf-step"><span class="jf-num">5.</span><span>前端保存Token（localStorage或Cookie）</span></div>
+    </div>
+    <div class="jf-box">
+      <h4>🔓 後續請求（使用Token）</h4>
+      <div class="jf-step"><span class="jf-num">1.</span><span>前端每次請求帶上Header：</span></div>
+      <div class="jf-step"><span class="jf-num"></span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--jwt);">Authorization: Bearer eyJhbGci...</span></div>
+      <div class="jf-step"><span class="jf-num">2.</span><span>JwtAuthFilter解析Token，取出用戶信息</span></div>
+      <div class="jf-step"><span class="jf-num">3.</span><span>放入SecurityContext，後續可直接獲取當前用戶</span></div>
+      <div class="jf-step"><span class="jf-num">4.</span><span>Token過期（通常7天）→ 重新登錄</span></div>
+    </div>
+  </div>
+
+  <div class="layer-label ll-jwt">🔑 JWT Token結構（三段Base64）</div>
+  <div class="code-block">
+<span class="c-gray">// JWT = Header.Payload.Signature（用.分隔）</span>
+eyJhbGciOiJIUzI1NiJ9                    <span class="c-gray">← Header（算法）</span>
+.
+eyJ1c2VySWQiOjEsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiZXhwIjoxNzE2MDAwMDAwfQ==
+<span class="c-gray">← Payload（解碼後）：{"userId":1, "roles":["ROLE_ADMIN"], "exp":1716000000}</span>
+.
+HMACSHA256(base64(header)+"."+base64(payload), secretKey)
+                                         <span class="c-gray">← Signature（防篡改）</span>
+  </div>
+</div>
+
+<!-- ══ 4. 角色與權限 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 角色與權限設計</div>
+
+  <div class="role-table">
+    <table>
+      <thead>
+        <tr>
+          <th>角色</th>
+          <th>查看用戶列表</th>
+          <th>創建用戶</th>
+          <th>刪除用戶</th>
+          <th>查看訂單</th>
+          <th>管理系統配置</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="role-name">ROLE_ADMIN</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-yes">✅</td>
+        </tr>
+        <tr>
+          <td class="role-name">ROLE_MANAGER</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-no">❌</td>
+          <td class="perm-yes">✅</td>
+          <td class="perm-no">❌</td>
+        </tr>
+        <tr>
+          <td class="role-name">ROLE_USER</td>
+          <td class="perm-no">❌</td>
+          <td class="perm-no">❌</td>
+          <td class="perm-no">❌</td>
+          <td class="perm-yes">✅（只看自己）</td>
+          <td class="perm-no">❌</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 5. 完整代碼 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ 完整代碼實現</div>
+
+  <div class="layer-label ll-filter">⚙️ SecurityConfig — 安全配置</div>
+  <div class="code-block">
+<span class="c-green">@Configuration</span>
+<span class="c-green">@EnableMethodSecurity</span>                     <span class="c-gray">← 開啟方法級別權限控制</span>
+<span class="c-purple">public class</span> <span class="c-yellow">SecurityConfig</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">JwtAuthFilter</span> jwtAuthFilter;
+
+    <span class="c-green">@Bean</span>
+    <span class="c-purple">public</span> SecurityFilterChain <span class="c-green">filterChain</span>(HttpSecurity http) <span class="c-purple">throws</span> Exception {
+        http
+            <span class="c-gray">// 關閉CSRF（REST API不需要）</span>
+            .csrf(csrf -> csrf.<span class="c-green">disable</span>())
+
+            <span class="c-gray">// 設置各路徑的訪問規則</span>
+            .authorizeHttpRequests(auth -> auth
+                <span class="c-gray">// 這些路徑不需要登錄</span>
+                .<span class="c-green">requestMatchers</span>(<span class="c-orange">"/api/auth/**"</span>).<span class="c-green">permitAll</span>()
+                .<span class="c-green">requestMatchers</span>(<span class="c-orange">"/api/public/**"</span>).<span class="c-green">permitAll</span>()
+
+                <span class="c-gray">// 管理員才能訪問</span>
+                .<span class="c-green">requestMatchers</span>(<span class="c-orange">"/api/admin/**"</span>).<span class="c-green">hasRole</span>(<span class="c-orange">"ADMIN"</span>)
+
+                <span class="c-gray">// 其他所有路徑都需要登錄</span>
+                .<span class="c-green">anyRequest</span>().<span class="c-green">authenticated</span>()
+            )
+
+            <span class="c-gray">// 無狀態Session（JWT不需要Session）</span>
+            .sessionManagement(s -> s
+                .<span class="c-green">sessionCreationPolicy</span>(SessionCreationPolicy.STATELESS))
+
+            <span class="c-gray">// 在UsernamePassword過濾器之前插入JWT過濾器</span>
+            .<span class="c-green">addFilterBefore</span>(jwtAuthFilter,
+                UsernamePasswordAuthenticationFilter.class);
+
+        <span class="c-purple">return</span> http.<span class="c-green">build</span>();
+    }
+}
+  </div>
+
+  <div class="layer-label ll-jwt">🔐 JwtAuthFilter — 認證信息放入上下文</div>
+  <div class="code-block">
+<span class="c-green">@Component</span>
+<span class="c-green">@Slf4j</span>
+<span class="c-purple">public class</span> <span class="c-yellow">JwtAuthFilter</span> <span class="c-purple">extends</span> <span class="c-blue">OncePerRequestFilter</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">JwtUtils</span> jwtUtils;
+
+    <span class="c-green">@Override</span>
+    <span class="c-purple">protected void</span> <span class="c-green">doFilterInternal</span>(HttpServletRequest req,
+                                        HttpServletResponse res,
+                                        FilterChain chain) <span class="c-purple">throws</span> Exception {
+
+        <span class="c-gray">// 1. 從Header取Token</span>
+        <span class="c-blue">String</span> header = req.<span class="c-green">getHeader</span>(<span class="c-orange">"Authorization"</span>);
+
+        <span class="c-gray">// 2. 格式驗證</span>
+        <span class="c-purple">if</span> (header == <span class="c-purple">null</span> || !header.<span class="c-green">startsWith</span>(<span class="c-orange">"Bearer "</span>)) {
+            chain.<span class="c-green">doFilter</span>(req, res);   <span class="c-gray">← 無Token，繼續（後面會被攔截）</span>
+            <span class="c-purple">return</span>;
+        }
+
+        <span class="c-blue">String</span> token = header.<span class="c-green">substring</span>(<span class="c-teal">7</span>);  <span class="c-gray">← 去掉"Bearer "前綴</span>
+
+        <span class="c-purple">try</span> {
+            <span class="c-gray">// 3. 驗證Token並解析用戶信息</span>
+            <span class="c-blue">Claims</span> claims = jwtUtils.<span class="c-green">parseToken</span>(token);
+            <span class="c-blue">Long</span> userId = claims.<span class="c-green">get</span>(<span class="c-orange">"userId"</span>, Long.class);
+            List&lt;<span class="c-blue">String</span>&gt; roles = claims.<span class="c-green">get</span>(<span class="c-orange">"roles"</span>, List.class);
+
+            <span class="c-gray">// 4. 構建認證信息（核心！）</span>
+            List&lt;<span class="c-blue">GrantedAuthority</span>&gt; authorities = roles.stream()
+                .<span class="c-green">map</span>(SimpleGrantedAuthority::<span class="c-purple">new</span>)
+                .<span class="c-green">collect</span>(Collectors.toList());
+
+            <span class="c-blue">UsernamePasswordAuthenticationToken</span> authentication =
+                <span class="c-purple">new</span> <span class="c-blue">UsernamePasswordAuthenticationToken</span>(userId, <span class="c-purple">null</span>, authorities);
+
+            <span class="c-gray">// 5. 放入SecurityContext（關鍵！後續過濾器和Controller都能獲取）</span>
+            SecurityContextHolder.<span class="c-green">getContext</span>().<span class="c-green">setAuthentication</span>(authentication);
+
+            log.<span class="c-green">debug</span>(<span class="c-orange">"JWT驗證成功, userId={}, roles={}"</span>, userId, roles);
+
+        } <span class="c-purple">catch</span> (<span class="c-blue">ExpiredJwtException</span> e) {
+            log.<span class="c-green">warn</span>(<span class="c-orange">"Token已過期"</span>);
+            res.<span class="c-green">sendError</span>(<span class="c-teal">401</span>, <span class="c-orange">"Token已過期，請重新登錄"</span>);
+            <span class="c-purple">return</span>;
+        } <span class="c-purple">catch</span> (<span class="c-blue">Exception</span> e) {
+            log.<span class="c-green">warn</span>(<span class="c-orange">"Token無效"</span>);
+            res.<span class="c-green">sendError</span>(<span class="c-teal">401</span>, <span class="c-orange">"Token無效"</span>);
+            <span class="c-purple">return</span>;
+        }
+
+        chain.<span class="c-green">doFilter</span>(req, res);   <span class="c-gray">← 繼續執行後面的過濾器</span>
+    }
+}
+  </div>
+
+  <div class="layer-label ll-authz">🛡️ Controller — 權限檢查注解</div>
+  <div class="code-block">
+<span class="c-green">@RestController</span>
+<span class="c-green">@RequestMapping</span>(<span class="c-orange">"/api/users"</span>)
+<span class="c-purple">public class</span> <span class="c-yellow">UserController</span> {
+
+    <span class="c-gray">// 所有登錄用戶可以訪問</span>
+    <span class="c-green">@GetMapping</span>(<span class="c-orange">"/{id}"</span>)
+    <span class="c-purple">public</span> Result&lt;<span class="c-blue">UserVO</span>&gt; <span class="c-green">getUser</span>(<span class="c-green">@PathVariable</span> <span class="c-blue">Long</span> id) {
+        <span class="c-purple">return</span> Result.<span class="c-green">success</span>(userService.<span class="c-green">findById</span>(id));
+    }
+
+    <span class="c-gray">// 只有ADMIN可以訪問</span>
+    <span class="c-green">@GetMapping</span>
+    <span class="c-green">@PreAuthorize</span>(<span class="c-orange">"hasRole('ADMIN')"</span>)          <span class="c-gray">← 方法級別權限控制</span>
+    <span class="c-purple">public</span> Result&lt;PageResult&lt;<span class="c-blue">UserVO</span>&gt;&gt; <span class="c-green">getAllUsers</span>(...) { ... }
+
+    <span class="c-gray">// ADMIN或MANAGER可以訪問</span>
+    <span class="c-green">@PostMapping</span>
+    <span class="c-green">@PreAuthorize</span>(<span class="c-orange">"hasAnyRole('ADMIN', 'MANAGER')"</span>)
+    <span class="c-purple">public</span> Result&lt;<span class="c-blue">UserVO</span>&gt; <span class="c-green">createUser</span>(<span class="c-green">@RequestBody</span> <span class="c-blue">UserDTO</span> dto) { ... }
+
+    <span class="c-gray">// 只有ADMIN可以刪除</span>
+    <span class="c-green">@DeleteMapping</span>(<span class="c-orange">"/{id}"</span>)
+    <span class="c-green">@PreAuthorize</span>(<span class="c-orange">"hasRole('ADMIN')"</span>)
+    <span class="c-purple">public</span> Result&lt;<span class="c-blue">Void</span>&gt; <span class="c-green">deleteUser</span>(<span class="c-green">@PathVariable</span> <span class="c-blue">Long</span> id) { ... }
+
+    <span class="c-gray">// 在方法內獲取當前登錄用戶</span>
+    <span class="c-green">@GetMapping</span>(<span class="c-orange">"/me"</span>)
+    <span class="c-purple">public</span> Result&lt;<span class="c-blue">UserVO</span>&gt; <span class="c-green">getCurrentUser</span>(
+        <span class="c-green">@AuthenticationPrincipal</span> <span class="c-blue">Long</span> userId    <span class="c-gray">← 自動注入當前登錄的userId</span>
+    ) {
+        <span class="c-purple">return</span> Result.<span class="c-green">success</span>(userService.<span class="c-green">findById</span>(userId));
+    }
+}
+  </div>
+
+  <div class="layer-label ll-authn">🔑 AuthController — 登錄接口</div>
+  <div class="code-block">
+<span class="c-green">@RestController</span>
+<span class="c-green">@RequestMapping</span>(<span class="c-orange">"/api/auth"</span>)
+<span class="c-purple">public class</span> <span class="c-yellow">AuthController</span> {
+
+    <span class="c-green">@PostMapping</span>(<span class="c-orange">"/login"</span>)
+    <span class="c-purple">public</span> Result&lt;<span class="c-blue">String</span>&gt; <span class="c-green">login</span>(<span class="c-green">@RequestBody</span> <span class="c-blue">LoginDTO</span> dto) {
+
+        <span class="c-gray">// 1. 驗證用戶名密碼</span>
+        <span class="c-blue">User</span> user = userService.<span class="c-green">findByUsername</span>(dto.getUsername());
+        <span class="c-purple">if</span> (user == <span class="c-purple">null</span> || !passwordEncoder.<span class="c-green">matches</span>(dto.getPassword(), user.getPassword())) {
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(ErrorCode.LOGIN_FAILED);
+        }
+
+        <span class="c-gray">// 2. 生成JWT Token（包含userId和角色列表）</span>
+        <span class="c-blue">String</span> token = jwtUtils.<span class="c-green">generateToken</span>(user.getId(), user.getRoles());
+
+        <span class="c-gray">// 3. 返回Token</span>
+        <span class="c-purple">return</span> Result.<span class="c-green">success</span>(token);
+    }
+}
+  </div>
+</div>
+
+<!-- ══ 6. 完整請求流程 ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ 完整請求流程總結</div>
+  <div class="code-block">
+<span class="c-gray">// 場景：ROLE_USER嘗試訪問 DELETE /api/users/1（需要ADMIN）</span>
+
+客戶端 → DELETE /api/users/1
+         Header: Authorization: Bearer {token}
+         ↓
+JwtAuthFilter：
+  解析Token → userId=5, roles=["ROLE_USER"]
+  放入SecurityContext ✅
+         ↓
+AuthorizationFilter：
+  檢查路徑 DELETE /api/users/** → 需要 ROLE_ADMIN
+  當前用戶只有 ROLE_USER
+  ❌ 權限不足 → 返回 403 Forbidden
+         ↓
+前端收到：
+{
+  <span class="c-orange">"code"</span>: <span class="c-teal">403</span>,
+  <span class="c-orange">"message"</span>: <span class="c-orange">"無權限訪問"</span>
+}
+
+<span class="c-gray">// 場景：ROLE_ADMIN訪問同一接口</span>
+
+JwtAuthFilter：userId=1, roles=["ROLE_ADMIN"] ✅
+AuthorizationFilter：ROLE_ADMIN 匹配 ✅
+Controller.deleteUser()執行 ✅
+返回 200 success ✅
+  </div>
+</div>
+
+<div class="card-footer">
+  Spring Security完全版 · 認證vs授權 · 過濾器鏈 · JWT · @PreAuthorize · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
