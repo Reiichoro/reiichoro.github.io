@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecurityConfig 深度解析完全版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --ink:#1a1208;--paper:#f8f4ee;--paper2:#f0ece0;--rule:#c8b89a;--gold:#b8860b;
+  --spring:#6db33f;--spring-bg:#f0fff0;--spring-dark:#4a8a2a;
+  --cfg:#1a3a6b;--cfg-bg:#e8f0ff;
+  --permit:#1a5c1a;--permit-bg:#e8ffe8;
+  --deny:#8b1a1a;--deny-bg:#fff0f0;
+  --auth:#5c1a5c;--auth-bg:#f8e8ff;
+  --role:#8b5c00;--role-bg:#fff8e0;
+  --jwt:#1a5c5c;--jwt-bg:#e0f8f8;
+  --accent:#c44b00;
+  --code-bg:#1e1e2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c0c14;display:flex;flex-direction:column;align-items:center;padding:28px 14px 60px;font-family:'Noto Sans TC',sans-serif;}
+.page-title{font-family:'Shippori Mincho',serif;font-size:clamp(18px,3.5vw,26px);font-weight:800;color:#c8c8f0;letter-spacing:5px;margin-bottom:4px;text-align:center;}
+.page-sub{font-size:11px;color:#606080;letter-spacing:3px;margin-bottom:26px;text-align:center;}
+.card{background:var(--paper);border-radius:4px;width:100%;max-width:1040px;padding:36px 28px 48px;box-shadow:0 8px 60px rgba(0,0,0,0.7),0 2px 0 var(--cfg);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 31px,var(--rule) 31px,var(--rule) 32px);opacity:0.2;pointer-events:none;}
+.sec{position:relative;z-index:1;margin-bottom:32px;}
+.sec-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--cfg);letter-spacing:4px;border-bottom:1.5px solid var(--cfg);padding-bottom:5px;margin-bottom:16px;}
+.tip{background:rgba(109,179,63,0.08);border-left:3px solid var(--spring);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.tip strong{color:var(--spring-dark);}
+.warn{background:rgba(139,26,26,0.07);border-left:3px solid var(--deny);border-radius:0 4px 4px 0;padding:11px 16px;font-size:12.5px;color:var(--ink);line-height:1.85;margin-bottom:14px;}
+.warn strong{color:var(--deny);}
+
+.code-block{background:var(--code-bg);border-radius:6px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.85;margin-bottom:12px;overflow-x:auto;border:1px solid #2d2d3a;}
+.c-green{color:#a8ff78;}.c-blue{color:#89dcff;}.c-yellow{color:#f9e2af;}
+.c-purple{color:#cba6f7;}.c-gray{color:#6c7086;}.c-orange{color:#fab387;}
+.c-teal{color:#94e2d5;}.c-red{color:#f38ba8;}.c-white{color:#cdd6f4;}
+.c-pink{color:#f5c2e7;}
+
+.layer-label{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:2px;}
+.ll-cfg{background:var(--cfg-bg);color:var(--cfg);}
+.ll-permit{background:var(--permit-bg);color:var(--permit);}
+.ll-deny{background:var(--deny-bg);color:var(--deny);}
+.ll-auth{background:var(--auth-bg);color:var(--auth);}
+.ll-role{background:var(--role-bg);color:var(--role);}
+.ll-jwt{background:var(--jwt-bg);color:var(--jwt);}
+.ll-spring{background:var(--spring-bg);color:var(--spring-dark);}
+
+/* ── 注解說明卡 ── */
+.anno-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.anno-box{border-radius:6px;padding:13px 15px;border:1.5px solid;}
+.ab-cfg{background:var(--cfg-bg);border-color:var(--cfg);}
+.ab-enable{background:var(--spring-bg);border-color:var(--spring);}
+.ab-bean{background:var(--permit-bg);border-color:var(--permit);}
+.ab-slf4j{background:var(--jwt-bg);border-color:var(--jwt);}
+.anno-box h5{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;margin-bottom:6px;}
+.ab-cfg h5{color:var(--cfg);}.ab-enable h5{color:var(--spring-dark);}
+.ab-bean h5{color:var(--permit);}.ab-slf4j h5{color:var(--jwt);}
+.anno-box p{font-size:12px;color:#555;line-height:1.75;}
+
+/* ── 路徑規則表 ── */
+.rule-table{overflow-x:auto;border:1px solid #d8ccb8;border-radius:4px;margin-bottom:14px;}
+table{border-collapse:collapse;width:100%;}
+thead tr{background:var(--cfg);}
+thead th{padding:9px 12px;font-size:12px;color:#f5e6c0;text-align:center;letter-spacing:1px;}
+tbody tr:nth-child(even){background:var(--paper2);}
+td{padding:8px 12px;border-right:1px solid #e0d4bc;font-size:12px;vertical-align:middle;line-height:1.6;}
+td:last-child{border-right:none;}
+td.method-cell{font-family:'DM Mono',monospace;font-weight:700;color:var(--cfg);}
+td.result-ok{color:var(--permit);font-weight:700;}
+td.result-no{color:var(--deny);font-weight:700;}
+
+/* ── 比較卡 ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.cg-good{background:var(--permit-bg);border:2px solid var(--permit);border-radius:6px;padding:14px 16px;}
+.cg-bad{background:var(--deny-bg);border:2px solid var(--deny);border-radius:6px;padding:14px 16px;}
+.cg-good h4{color:var(--permit);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.cg-bad h4{color:var(--deny);font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+
+/* ── 方法表 ── */
+.method-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.ml-item{border-radius:4px;padding:11px 14px;background:white;border:1.5px solid #d8ccb8;display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start;}
+.ml-method{font-family:'DM Mono',monospace;font-size:12.5px;font-weight:700;color:var(--cfg);}
+.ml-desc{font-size:12px;color:#555;line-height:1.7;}
+.ml-desc strong{color:var(--accent);}
+.ml-desc .eg{font-family:'DM Mono',monospace;font-size:11px;color:var(--cfg);background:var(--cfg-bg);padding:2px 6px;border-radius:2px;display:inline-block;margin-top:3px;}
+
+.card-footer{margin-top:24px;padding-top:12px;border-top:1px dashed var(--rule);font-size:10px;color:#bbb;text-align:center;letter-spacing:1px;position:relative;z-index:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp 0.5s ease both;}
+</style>
+</head>
+<body>
+<div class="page-title">SecurityConfig 深度解析</div>
+<div class="page-sub">@Configuration · 路徑規則 · 密碼加密 · 異常處理 · 完整配置</div>
+
+<div class="card">
+
+<!-- ══ 1. 類級別注解解析 ══ -->
+<div class="sec">
+  <div class="sec-title">① 類級別注解解析</div>
+
+  <div class="anno-grid">
+    <div class="anno-box ab-cfg">
+      <h5>@Configuration</h5>
+      <p>告訴Spring這是一個配置類，裡面的@Bean方法會被Spring管理。<br>相當於XML配置的替代方案。</p>
+    </div>
+    <div class="anno-box ab-enable">
+      <h5>@EnableMethodSecurity</h5>
+      <p>開啟方法級別的權限控制。<br>沒有這個注解，@PreAuthorize就不生效！<br>必加。</p>
+    </div>
+    <div class="anno-box ab-bean">
+      <h5>@Bean</h5>
+      <p>方法返回的物件交由Spring容器管理。<br>SecurityFilterChain、PasswordEncoder等都通過@Bean注冊。</p>
+    </div>
+    <div class="anno-box ab-slf4j">
+      <h5>@Slf4j</h5>
+      <p>Lombok提供的日誌注解，自動創建log變量。<br>可以記錄配置加載、認證失敗等關鍵事件。</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="c-green">@Configuration</span>                    <span class="c-gray">← 這是Spring配置類</span>
+<span class="c-green">@EnableMethodSecurity</span>              <span class="c-gray">← 開啟@PreAuthorize等方法級別權限</span>
+<span class="c-green">@Slf4j</span>                             <span class="c-gray">← 日誌（可選）</span>
+<span class="c-purple">public class</span> <span class="c-yellow">SecurityConfig</span> {
+
+    <span class="c-gray">// 所有Security相關的Bean都在這裡配置</span>
+
+}
+  </div>
+</div>
+
+<!-- ══ 2. 完整SecurityConfig ══ -->
+<div class="sec">
+  <div class="sec-title">② 完整SecurityConfig — 逐行注解解析</div>
+
+  <div class="layer-label ll-cfg">⚙️ SecurityConfig完整版</div>
+  <div class="code-block">
+<span class="c-green">@Configuration</span>
+<span class="c-green">@EnableMethodSecurity</span>
+<span class="c-green">@Slf4j</span>
+<span class="c-purple">public class</span> <span class="c-yellow">SecurityConfig</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">JwtAuthFilter</span> jwtAuthFilter;        <span class="c-gray">← 注入自定義JWT過濾器</span>
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">UserDetailsService</span> userDetailsService; <span class="c-gray">← 注入用戶詳情服務</span>
+
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-gray">// Bean①：核心安全過濾器鏈配置</span>
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-green">@Bean</span>
+    <span class="c-purple">public</span> <span class="c-blue">SecurityFilterChain</span> <span class="c-green">filterChain</span>(<span class="c-blue">HttpSecurity</span> http) <span class="c-purple">throws</span> Exception {
+
+        http
+            <span class="c-gray">// ── 1. 關閉CSRF（REST API使用JWT，不需要CSRF保護）──</span>
+            .csrf(csrf -> csrf.<span class="c-green">disable</span>())
+
+            <span class="c-gray">// ── 2. 跨域配置 ──</span>
+            .cors(cors -> cors.<span class="c-green">configurationSource</span>(<span class="c-green">corsConfigurationSource</span>()))
+
+            <span class="c-gray">// ── 3. Session策略（JWT是無狀態的，不用Session）──</span>
+            .sessionManagement(session -> session
+                .<span class="c-green">sessionCreationPolicy</span>(<span class="c-blue">SessionCreationPolicy</span>.STATELESS))
+
+            <span class="c-gray">// ── 4. 路徑訪問規則（最核心！）──</span>
+            .authorizeHttpRequests(auth -> auth
+
+                <span class="c-gray">// 公開路徑：不需要登錄</span>
+                .<span class="c-green">requestMatchers</span>(
+                    <span class="c-orange">"/api/auth/login"</span>,      <span class="c-gray">← 登錄接口</span>
+                    <span class="c-orange">"/api/auth/register"</span>,   <span class="c-gray">← 注冊接口</span>
+                    <span class="c-orange">"/api/public/**"</span>,        <span class="c-gray">← 所有公開接口</span>
+                    <span class="c-orange">"/swagger-ui/**"</span>,        <span class="c-gray">← API文檔</span>
+                    <span class="c-orange">"/v3/api-docs/**"</span>        <span class="c-gray">← OpenAPI文檔</span>
+                ).<span class="c-green">permitAll</span>()             <span class="c-gray">← 全部放行</span>
+
+                <span class="c-gray">// 管理員路徑：只有ADMIN才能訪問</span>
+                .<span class="c-green">requestMatchers</span>(<span class="c-orange">"/api/admin/**"</span>)
+                .<span class="c-green">hasRole</span>(<span class="c-orange">"ADMIN"</span>)
+
+                <span class="c-gray">// 管理員或經理可以訪問</span>
+                .<span class="c-green">requestMatchers</span>(<span class="c-orange">"/api/manage/**"</span>)
+                .<span class="c-green">hasAnyRole</span>(<span class="c-orange">"ADMIN"</span>, <span class="c-orange">"MANAGER"</span>)
+
+                <span class="c-gray">// 其餘所有路徑：必須登錄（認證）</span>
+                .<span class="c-green">anyRequest</span>().<span class="c-green">authenticated</span>()
+            )
+
+            <span class="c-gray">// ── 5. 異常處理 ──</span>
+            .exceptionHandling(ex -> ex
+                <span class="c-gray">// 未認證（401）：沒有Token或Token無效</span>
+                .<span class="c-green">authenticationEntryPoint</span>((req, res, e) -> {
+                    log.<span class="c-green">warn</span>(<span class="c-orange">"未認證訪問: {}"</span>, req.<span class="c-green">getRequestURI</span>());
+                    res.<span class="c-green">setContentType</span>(<span class="c-orange">"application/json;charset=UTF-8"</span>);
+                    res.<span class="c-green">setStatus</span>(<span class="c-teal">401</span>);
+                    res.<span class="c-green">getWriter</span>().<span class="c-green">write</span>(<span class="c-orange">"""
+                        {"code":401,"message":"請先登錄"}
+                    """</span>);
+                })
+                <span class="c-gray">// 無權限（403）：已登錄但角色不夠</span>
+                .<span class="c-green">accessDeniedHandler</span>((req, res, e) -> {
+                    log.<span class="c-green">warn</span>(<span class="c-orange">"無權限訪問: {}"</span>, req.<span class="c-green">getRequestURI</span>());
+                    res.<span class="c-green">setContentType</span>(<span class="c-orange">"application/json;charset=UTF-8"</span>);
+                    res.<span class="c-green">setStatus</span>(<span class="c-teal">403</span>);
+                    res.<span class="c-green">getWriter</span>().<span class="c-green">write</span>(<span class="c-orange">"""
+                        {"code":403,"message":"無權限訪問"}
+                    """</span>);
+                })
+            )
+
+            <span class="c-gray">// ── 6. 在認證過濾器之前插入JWT過濾器 ──</span>
+            .<span class="c-green">addFilterBefore</span>(jwtAuthFilter,
+                <span class="c-blue">UsernamePasswordAuthenticationFilter</span>.class);
+
+        <span class="c-purple">return</span> http.<span class="c-green">build</span>();
+    }
+
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-gray">// Bean②：密碼加密器（BCrypt是業界標準）</span>
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-green">@Bean</span>
+    <span class="c-purple">public</span> <span class="c-blue">PasswordEncoder</span> <span class="c-green">passwordEncoder</span>() {
+        <span class="c-purple">return new</span> <span class="c-blue">BCryptPasswordEncoder</span>();
+        <span class="c-gray">// BCrypt：每次加密結果不同，防彩虹表攻擊</span>
+        <span class="c-gray">// 用法：encoder.encode("明文") 和 encoder.matches("明文", "密文")</span>
+    }
+
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-gray">// Bean③：認證管理器（登錄時使用）</span>
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-green">@Bean</span>
+    <span class="c-purple">public</span> <span class="c-blue">AuthenticationManager</span> <span class="c-green">authenticationManager</span>(
+        <span class="c-blue">AuthenticationConfiguration</span> config) <span class="c-purple">throws</span> Exception {
+        <span class="c-purple">return</span> config.<span class="c-green">getAuthenticationManager</span>();
+    }
+
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-gray">// Bean④：跨域配置</span>
+    <span class="c-gray">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span class="c-green">@Bean</span>
+    <span class="c-purple">public</span> <span class="c-blue">CorsConfigurationSource</span> <span class="c-green">corsConfigurationSource</span>() {
+        <span class="c-blue">CorsConfiguration</span> config = <span class="c-purple">new</span> <span class="c-blue">CorsConfiguration</span>();
+        config.<span class="c-green">setAllowedOrigins</span>(List.of(<span class="c-orange">"http://localhost:3000"</span>, <span class="c-orange">"https://yourdomain.com"</span>));
+        config.<span class="c-green">setAllowedMethods</span>(List.of(<span class="c-orange">"GET"</span>, <span class="c-orange">"POST"</span>, <span class="c-orange">"PUT"</span>, <span class="c-orange">"DELETE"</span>));
+        config.<span class="c-green">setAllowedHeaders</span>(List.of(<span class="c-orange">"*"</span>));
+        config.<span class="c-green">setAllowCredentials</span>(<span class="c-purple">true</span>);
+        <span class="c-blue">UrlBasedCorsConfigurationSource</span> source = <span class="c-purple">new</span> <span class="c-blue">UrlBasedCorsConfigurationSource</span>();
+        source.<span class="c-green">registerCorsConfiguration</span>(<span class="c-orange">"/**"</span>, config);
+        <span class="c-purple">return</span> source;
+    }
+}
+  </div>
+</div>
+
+<!-- ══ 3. 路徑規則方法速查 ══ -->
+<div class="sec">
+  <div class="sec-title">③ 路徑規則方法速查</div>
+
+  <div class="method-list">
+    <div class="ml-item">
+      <div class="ml-method">.permitAll()</div>
+      <div class="ml-desc">所有人都可以訪問，不需要登錄<br><span class="eg">/api/auth/login</span> <span class="eg">/api/public/**</span></div>
+    </div>
+    <div class="ml-item">
+      <div class="ml-method">.authenticated()</div>
+      <div class="ml-desc">必須已登錄（有有效Token），不限角色<br><span class="eg">anyRequest().authenticated()</span></div>
+    </div>
+    <div class="ml-item">
+      <div class="ml-method">.hasRole("ADMIN")</div>
+      <div class="ml-desc">必須有指定角色。<strong>注意：Spring自動加ROLE_前綴</strong><br>hasRole("ADMIN") → 實際匹配 ROLE_ADMIN<br><span class="eg">/api/admin/**</span></div>
+    </div>
+    <div class="ml-item">
+      <div class="ml-method">.hasAnyRole("A","B")</div>
+      <div class="ml-desc">有其中任意一個角色即可訪問<br><span class="eg">hasAnyRole("ADMIN", "MANAGER")</span></div>
+    </div>
+    <div class="ml-item">
+      <div class="ml-method">.hasAuthority("perm")</div>
+      <div class="ml-desc">匹配具體的權限字串，<strong>不會自動加ROLE_前綴</strong><br>更細粒度的權限控制，如 user:delete、order:view<br><span class="eg">hasAuthority("user:delete")</span></div>
+    </div>
+    <div class="ml-item">
+      <div class="ml-method">.denyAll()</div>
+      <div class="ml-desc">所有人都拒絕，通常用於臨時關閉某接口<br><span class="eg">requestMatchers("/api/deprecated/**").denyAll()</span></div>
+    </div>
+  </div>
+
+  <div class="warn">⚠️ <strong>路徑規則的順序很重要！</strong><br>
+  Spring Security從上到下依次匹配，第一個匹配的規則生效。<br>
+  <strong>越具體的路徑放前面，anyRequest()必須放最後。</strong><br>
+  如果把 anyRequest().permitAll() 放在最前面，後面所有規則都失效！</div>
+</div>
+
+<!-- ══ 4. 路徑匹配規則 ══ -->
+<div class="sec">
+  <div class="sec-title">④ 路徑匹配規則（requestMatchers的寫法）</div>
+
+  <div class="rule-table">
+    <table>
+      <thead>
+        <tr><th>寫法</th><th>匹配範圍</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="method-cell">/api/login</td>
+          <td>精確匹配，只匹配這一個路徑</td>
+          <td>只匹配 /api/login</td>
+        </tr>
+        <tr>
+          <td class="method-cell">/api/users/**</td>
+          <td>** 匹配任意深度路徑</td>
+          <td>/api/users/1, /api/users/1/orders 都匹配</td>
+        </tr>
+        <tr>
+          <td class="method-cell">/api/users/*</td>
+          <td>* 只匹配單層路徑</td>
+          <td>/api/users/1 匹配，/api/users/1/orders 不匹配</td>
+        </tr>
+        <tr>
+          <td class="method-cell">HttpMethod.GET, "/api/**"</td>
+          <td>指定HTTP方法+路徑</td>
+          <td>只有GET請求的/api/**才匹配</td>
+        </tr>
+        <tr>
+          <td class="method-cell">anyRequest()</td>
+          <td>匹配所有請求（兜底）</td>
+          <td>必須放最後，覆蓋前面未匹配的</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 5. @PreAuthorize vs Config規則 ══ -->
+<div class="sec">
+  <div class="sec-title">⑤ SecurityConfig路徑規則 vs @PreAuthorize — 兩種控制方式</div>
+
+  <div class="compare-grid">
+    <div class="cg-good">
+      <h4>🛡️ SecurityConfig路徑規則</h4>
+      <div class="code-block" style="margin-bottom:8px;font-size:11px;">
+<span class="c-gray">// 在SecurityConfig中統一配置</span>
+.<span class="c-green">requestMatchers</span>(<span class="c-orange">"/api/admin/**"</span>)
+.<span class="c-green">hasRole</span>(<span class="c-orange">"ADMIN"</span>)
+      </div>
+      <p style="font-size:12px;color:#444;line-height:1.75;">
+        ✅ 集中管理，一目了然<br>
+        ✅ 在過濾器層就攔截，效率高<br>
+        ✅ 適合粗粒度的路徑級別控制<br>
+        ❌ 不能做複雜的業務邏輯判斷
+      </p>
+    </div>
+    <div class="cg-good">
+      <h4>🔐 @PreAuthorize方法注解</h4>
+      <div class="code-block" style="margin-bottom:8px;font-size:11px;">
+<span class="c-gray">// 直接在方法上加注解</span>
+<span class="c-green">@PreAuthorize</span>(<span class="c-orange">"hasRole('ADMIN') and #id == authentication.principal"</span>)
+<span class="c-purple">public void</span> <span class="c-green">deleteUser</span>(<span class="c-blue">Long</span> id) { }
+      </div>
+      <p style="font-size:12px;color:#444;line-height:1.75;">
+        ✅ 可以訪問方法參數（#id）<br>
+        ✅ 支持SpEL表達式，靈活強大<br>
+        ✅ 適合細粒度的業務邏輯控制<br>
+        ✅ 需要@EnableMethodSecurity開啟
+      </p>
+    </div>
+  </div>
+
+  <div class="tip">💡 <strong>最佳實踐：兩種方式搭配使用</strong><br>
+  SecurityConfig → 控制粗粒度路徑（/admin/**需要ADMIN）<br>
+  @PreAuthorize → 控制細粒度業務（只能刪除自己的資源）</div>
+</div>
+
+<!-- ══ 6. UserDetailsService ══ -->
+<div class="sec">
+  <div class="sec-title">⑥ UserDetailsService — 從數據庫加載用戶</div>
+
+  <div class="layer-label ll-auth">👤 UserDetailsService實現</div>
+  <div class="code-block">
+<span class="c-green">@Service</span>
+<span class="c-purple">public class</span> <span class="c-yellow">UserDetailsServiceImpl</span> <span class="c-purple">implements</span> <span class="c-blue">UserDetailsService</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">UserMapper</span> userMapper;
+
+    <span class="c-green">@Override</span>
+    <span class="c-purple">public</span> <span class="c-blue">UserDetails</span> <span class="c-green">loadUserByUsername</span>(<span class="c-blue">String</span> username)
+        <span class="c-purple">throws</span> UsernameNotFoundException {
+
+        <span class="c-gray">// 從數據庫查詢用戶</span>
+        <span class="c-blue">User</span> user = userMapper.<span class="c-green">findByUsername</span>(username);
+        <span class="c-purple">if</span> (user == <span class="c-purple">null</span>) {
+            <span class="c-purple">throw new</span> <span class="c-blue">UsernameNotFoundException</span>(<span class="c-orange">"用戶不存在: "</span> + username);
+        }
+
+        <span class="c-gray">// 轉換角色為GrantedAuthority</span>
+        List&lt;<span class="c-blue">GrantedAuthority</span>&gt; authorities = user.getRoles().stream()
+            .<span class="c-green">map</span>(role -> <span class="c-purple">new</span> <span class="c-blue">SimpleGrantedAuthority</span>(<span class="c-orange">"ROLE_"</span> + role))
+            .<span class="c-green">collect</span>(Collectors.toList());
+
+        <span class="c-gray">// 返回Spring Security的UserDetails物件</span>
+        <span class="c-purple">return new</span> <span class="c-blue">org.springframework.security.core.userdetails.User</span>(
+            user.getUsername(),
+            user.getPassword(),    <span class="c-gray">← 必須是BCrypt加密後的密碼</span>
+            authorities
+        );
+    }
+}
+  </div>
+
+  <div class="layer-label ll-spring">🔑 登錄時如何使用AuthenticationManager</div>
+  <div class="code-block">
+<span class="c-green">@RestController</span>
+<span class="c-green">@RequestMapping</span>(<span class="c-orange">"/api/auth"</span>)
+<span class="c-purple">public class</span> <span class="c-yellow">AuthController</span> {
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">AuthenticationManager</span> authenticationManager;
+
+    <span class="c-green">@Autowired</span>
+    <span class="c-purple">private</span> <span class="c-blue">JwtUtils</span> jwtUtils;
+
+    <span class="c-green">@PostMapping</span>(<span class="c-orange">"/login"</span>)
+    <span class="c-purple">public</span> Result&lt;<span class="c-blue">String</span>&gt; <span class="c-green">login</span>(<span class="c-green">@RequestBody</span> <span class="c-blue">LoginDTO</span> dto) {
+        <span class="c-purple">try</span> {
+            <span class="c-gray">// 1. 調用AuthenticationManager驗證用戶名密碼</span>
+            <span class="c-gray">// 內部會調用UserDetailsService.loadUserByUsername</span>
+            <span class="c-gray">// 再用BCrypt比對密碼</span>
+            <span class="c-blue">Authentication</span> authentication = authenticationManager.<span class="c-green">authenticate</span>(
+                <span class="c-purple">new</span> <span class="c-blue">UsernamePasswordAuthenticationToken</span>(
+                    dto.getUsername(), dto.getPassword()
+                )
+            );
+
+            <span class="c-gray">// 2. 認證成功，取出用戶信息</span>
+            <span class="c-blue">UserDetails</span> userDetails = (<span class="c-blue">UserDetails</span>) authentication.<span class="c-green">getPrincipal</span>();
+
+            <span class="c-gray">// 3. 生成JWT Token</span>
+            <span class="c-blue">String</span> token = jwtUtils.<span class="c-green">generateToken</span>(userDetails);
+
+            <span class="c-purple">return</span> Result.<span class="c-green">success</span>(token);
+
+        } <span class="c-purple">catch</span> (<span class="c-blue">BadCredentialsException</span> e) {
+            <span class="c-purple">throw new</span> <span class="c-yellow">BusinessException</span>(ErrorCode.LOGIN_FAILED, <span class="c-orange">"用戶名或密碼錯誤"</span>);
+        }
+    }
+}
+  </div>
+</div>
+
+<!-- ══ 7. 密碼加密 ══ -->
+<div class="sec">
+  <div class="sec-title">⑦ 密碼加密 — BCrypt是業界標準</div>
+
+  <div class="compare-grid">
+    <div class="cg-bad">
+      <h4>❌ 絕對不能這樣做</h4>
+      <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-red">// 明文儲存密碼（嚴重安全漏洞！）
+user.setPassword("123456");
+
+// MD5加密（已被破解，不安全）
+user.setPassword(MD5.encode("123456"));</span>
+      </div>
+    </div>
+    <div class="cg-good">
+      <h4>✅ 正確做法：BCrypt</h4>
+      <div class="code-block" style="margin-bottom:0;font-size:11px;">
+<span class="c-gray">// 注冊時加密保存</span>
+<span class="c-blue">String</span> encoded = passwordEncoder.<span class="c-green">encode</span>(<span class="c-orange">"123456"</span>);
+user.<span class="c-green">setPassword</span>(encoded);
+
+<span class="c-gray">// 登錄時驗證（Spring Security自動做）</span>
+<span class="c-purple">boolean</span> ok = passwordEncoder.<span class="c-green">matches</span>(<span class="c-orange">"123456"</span>, encodedPassword);
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="c-gray">// BCrypt的特點：</span>
+<span class="c-gray">// 同一個密碼每次加密結果都不同！</span>
+passwordEncoder.<span class="c-green">encode</span>(<span class="c-orange">"123456"</span>)
+<span class="c-gray">// 第一次：$2a$10$abcdefghijklmnopqrstuuV9mJ...</span>
+<span class="c-gray">// 第二次：$2a$10$XYZabcdefghijklmnopqrstuu...</span>
+<span class="c-gray">// 兩次結果完全不同！但matches()都能驗證成功</span>
+<span class="c-gray">// 原因：鹽值（salt）被內嵌在密文中，每次隨機生成</span>
+  </div>
+</div>
+
+<div class="card-footer">
+  SecurityConfig深度解析 · 路徑規則 · UserDetailsService · BCrypt · @PreAuthorize · おにひめ技術筆記
+</div>
+</div>
+</body>
+</html>
